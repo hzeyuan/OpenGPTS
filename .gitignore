@@ -35,3 +35,17 @@ yarn-error.log*
 
 
 .next
+apps/web/node_modules/.bin/autoprefixer
+apps/web/node_modules/.bin/browserslist
+apps/web/node_modules/.bin/next
+apps/web/node_modules/.bin/tailwind
+apps/web/node_modules/.bin/tailwindcss
+apps/web/node_modules/.bin/tsc
+apps/web/node_modules/.bin/tsserver
+packages/config-eslint/node_modules/.bin/acorn
+packages/config-eslint/node_modules/.bin/browserslist
+packages/config-eslint/node_modules/.bin/eslint
+packages/config-eslint/node_modules/.bin/tsc
+packages/config-eslint/node_modules/.bin/tsserver
+packages/tailwind-config/node_modules/.bin/tailwind
+packages/tailwind-config/node_modules/.bin/tailwindcss
