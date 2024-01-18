@@ -92,6 +92,7 @@ export async function getLatestRows(
   const res =
     await sql`SELECT * FROM gpts WHERE id > ${last_id} ORDER BY created_at DESC LIMIT ${limit}`;
 
+  // console.log("getLatestRows: ", res.rowCount)
   return getGptsFromSqlResult(res);
 }
 
@@ -141,6 +142,9 @@ export async function findByUuid(uuid: string): Promise<Gpts | undefined> {
 }
 
 function getGptsFromSqlResult(res: QueryResult<QueryResultRow>): Gpts[] {
+
+  // console.log("getGptsFromSqlResult: ", res)
+
   if (res.rowCount === 0) {
     return [];
   }

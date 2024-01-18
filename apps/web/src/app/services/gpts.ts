@@ -66,6 +66,7 @@ export function isGptsSensitive(gpts: Gpts): boolean {
   const keywordsArr = sensitiveKeywords.split(",");
   for (let i = 0, l = keywordsArr.length; i < l; i++) {
     const keyword = keywordsArr[i].trim();
+    if (keyword === '') return false;
     if (
       (gpts.name && gpts.name.includes(keyword)) ||
       (gpts.author_name && gpts.author_name.includes(keyword)) ||

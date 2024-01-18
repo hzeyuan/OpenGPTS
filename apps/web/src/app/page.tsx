@@ -67,7 +67,7 @@ export default function Page(): JSX.Element {
       <ProductHunt />
       <Search setGpts={setGpts} setLoading={setLoading} />
       <Tab tabValue={tabValue} setTabValue={setTabValue} />
-      <div className="relative flex place-items-center ">
+      <div className="absolute flex  place-items-center">
         <div className="font-sans w-auto pb-16 pt-[48px] md:pb-24 lg:pb-32 md:pt-16 lg:pt-20 flex justify-between gap-8 items-center flex-col relative z-0">
           <Gradient
             className="top-[-500px] opacity-[0.15] w-[1000px] h-[1000px]"

@@ -37,3 +37,4 @@ yarn-error.log*
 .next
 
 /apps/web/.next/
+apps/web/.next/*
