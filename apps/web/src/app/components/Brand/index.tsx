@@ -4,21 +4,21 @@ interface Props {
   count: number;
 }
 
-export default ({ count }: Props) => {
+export default function({ count }: Props) {
   return (
     <section className="relatve">
-      <div className="mx-auto w-full max-w-7xl px-4 mt-12 md:mt-24">
-        <div className="mx-auto w-full max-w-6xl text-center">
+      <div className="w-full px-4 mx-auto mt-12 max-w-7xl md:mt-24">
+        <div className="w-full max-w-6xl mx-auto text-center">
           <h2 className="text-3xl font-bold md:text-7xl">
             Third-party GPTs store
           </h2>
           <p className="mt-4 mb-4 md:mt-12 md:mb-8 text:lg md:text-4xl">
-            <span className="text-primary font-bold">{count}</span> fantastic
+            <span className="font-bold text-primary">{count}</span> fantastic
             GPTs stored
             <a
+              className="mx-2 text-sm text-primary"
               href="https://github.com/all-in-aigc/gpts-works/issues/5"
-              target="_blank"
-              className="text-sm text-primary mx-2"
+              rel="noopener" target="_blank"
             >
               Submit yours 👉
             </a>
@@ -26,14 +26,14 @@ export default ({ count }: Props) => {
         </div>
       </div>
       <img
-        src="/bgstar.svg"
         alt=""
         className="absolute bottom-[auto] left-[auto] right-0 top-24 -z-10 inline-block max-[767px]:hidden"
+        src="/bgstar.svg"
       />
       <img
-        src="/bgstar.svg"
         alt=""
         className="absolute bottom-[auto] right-[auto] left-0 top-60 -z-10 inline-block max-[767px]:hidden"
+        src="/bgstar.svg"
       />
     </section>
   );
