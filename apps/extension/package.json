@@ -1,0 +1,108 @@
+{
+  "name": "OpenGPTS",
+  "displayName": "Open GPTS",
+  "version": "0.0.1",
+  "description": "Open GPTS",
+  "author": " hzeyuan.github.com <yixotieq@gmail.com>",
+  "scripts": {
+    "start": "next start",
+    "dev": "run-p dev:*",
+    "dev:plasmo": "plasmo dev",
+    "dev:next": "next dev --port 1947",
+    "build": "run-s build:*",
+    "build:plasmo": "plasmo build",
+    "build:next": "next build",
+    "package": "plasmo package"
+  },
+  "dependencies": {
+    "@ant-design/cssinjs": "^1.18.1",
+    "@ant-design/icons": "^5.2.6",
+    "@ant-design/pro-components": "^2.6.46",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@plasmohq/messaging": "0.6.0",
+    "@plasmohq/storage": "^1.9.0",
+    "@rahsheen/react-wizard": "^2.1.2",
+    "@tiptap/extension-mention": "^2.1.13",
+    "@tiptap/pm": "^2.1.13",
+    "@tiptap/react": "^2.1.13",
+    "@tiptap/starter-kit": "^2.1.13",
+    "ahooks": "^3.7.8",
+    "antd": "^5.12.1",
+    "cheerio": "1.0.0-rc.12",
+    "copy-to-clipboard": "^3.3.3",
+    "dayjs": "^1.11.10",
+    "framer-motion": "^10.16.16",
+    "i18next": "^23.7.16",
+    "jquery": "^3.7.1",
+    "nanoid": "^5.0.4",
+    "next": "14.0.2",
+    "nextjs-cors": "^2.2.0",
+    "ofetch": "^1.3.3",
+    "plasmo": "0.84.0",
+    "rc-tween-one": "^3.0.6",
+    "rc-virtual-list": "^3.11.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-i18next": "^14.0.0",
+    "react-markdown": "^9.0.1",
+    "react-node-to-string": "^0.1.2",
+    "react-syntax-highlighter": "^15.5.0",
+    "react-tabs": "^6.0.2",
+    "rehype-highlight": "^6.0.0",
+    "swr": "^2.2.4",
+    "unist-util-visit-parents": "^6.0.1",
+    "use-debounce": "^10.0.0",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "4.1.1",
+    "@plasmohq/rps": "1.8.7",
+    "@types/chrome": "0.0.251",
+    "@types/node": "20.9.0",
+    "@types/react": "18.2.37",
+    "@types/react-dom": "18.2.15",
+    "autoprefixer": "^10.4.16",
+    "immer": "^10.0.3",
+    "postcss": "^8.4.32",
+    "postcss-import": "^15.1.0",
+    "prettier": "3.0.3",
+    "tailwindcss": "^3.3.6",
+    "typescript": "5.2.2"
+  },
+  "manifest": {
+    "default_locale": "en",
+    "permissions": [
+      "tabs",
+      "sidePanel",
+      "scripting",
+      "webRequest",
+      "webRequestBlocking",
+      "declarativeNetRequest",
+      "<all_urls>"
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": [
+          "options.html"
+        ],
+        "matches": [
+          "<all_urls>"
+        ],
+        "extension_ids": [
+          "$CRX_ID"
+        ]
+      }
+    ],
+    "key": "$CRX_KEY",
+    "host_permissions": [
+      "*://*/*",
+      "<all_urls>"
+    ],
+    "externally_connectable": {
+      "matches": [
+        "*://*.localhost.com/*"
+      ]
+    }
+  }
+}

@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root[data-gpts-theme="dark"],
+:host([data-gpts-theme="dark"]) {
+  --gptreat-gutter-bg-color: #1414145c;
+  --gptreat-gutter-handle-bg-color: #fafafa33;
+
+  --gptreat-primary-color: rgb(55, 113, 224);
+  --gptreat-primary-text-color: rgba(var(--gptreat-fg-rgb), 0.65);
+  --gptreat-primary-content-text-color: rgba(var(--gptreat-fg-rgb), 0.65);
+  --gptreat-secondary-text-color: rgba(var(--gptreat-fg-rgb), 0.45);
+  --gptreat-third-text-color: rgba(var(--gptreat-fg-rgb), 0.25);
+  --gptreat-html-bg-color: black;
+  --gptreat-option-box-bg-color: #1d1d1d;
+  --gptreat-option-card-bg-color: #141414;
+  --gptreat-option-card-border: 1px solid #303030;
+  --gptreat-option-template-group-header-bg-color: var(--gptreat-option-box-bg-color);
+  --gptreat-option-template-group-item-visible-bg-color: #242424;
+  --gptreat-option-template-group-item-invisible-bg-color: #1d1d1d;
+  --gptreat-attention-bg-color: #202020;
+  --gptreat-attention-title-color: #2b6e62;
+  --gptreat-sidebar-bg-color: #28282b;
+  --gptreat-sidebar-shadow: 0 0 0 1px #303030;
+  --gptreat-sidebar-footer-bg-color: #1f1f1f;
+  --gptreat-sidebar-border-color: #303030;
+  --gptreat-sidebar-footer-btn-bg-color: #424242;
+  --gptreat-sidebar-footer-btn-color: var(--gptreat-primary-text-color);
+  --gptreat-sidebar-model-btn-bg-color: #1f1f1f;
+  --gptreat-sidebar-model-btn-elevated-bg-color: var(--gptreat-sidebar-bg-color);
+  --gptreat-sidebar-model-btn-color: rgba(var(--gptreat-fg-rgb), 0.45);
+  --gptreat-sidebar-model-btn-hover-bg-color: #353535;
+  --gptreat-sidebar-image-action-btn-bg-color: #2f2f33;
+  --gptreat-sidebar-image-action-btn-hover-bg-color: #39393d;
+  --gptreat-sidebar-modal-btn-bg-color: #141414;
+
+  --gptreat-sidebar-icon-bg-color: #1d1b36;
+  --gptreat-sidebar-icon-hover-bg-color: rgb(92 91 96);
+
+  --gptreat-sidebar-icon-border-color: #373638;
+  --gptreat-sidebar-scrollbar-color: #363636;
+  --gptreat-sidebar-scrollbar-hover-color: #2e2e2e;
+  --gptreat-paste-btn-bg-color: var(--gptreat-sidebar-model-btn-bg-color);
+  --gptreat-paste-btn-color: white;
+  --gptreat-option-dropbox-bg-color: var(--gptreat-html-bg-color);
+  --gptreat-tab-switch-color: rgba(255, 255, 255, 0.4);
+  --gptreat-tab-switch-indicator-ask-bg-color: #1f3051;
+  --gptreat-tab-switch-indicator-chat-bg-color: #372854;
+  --gptreat-sidebar-vip-card-bg-color: #1f1f1f;
+  --gptreat-message-divider-bg-color: #2b2b2e;
+  --gptreat-webaccess-modal-banner-gradient: linear-gradient(
+      312.41deg,
+      rgba(50, 50, 50, 0.8) 33.24%,
+      rgba(80, 80, 80, 0.8) 78.13%
+    ),
+    linear-gradient(318.56deg, rgba(50, 50, 50, 0.5) 41.66%, rgba(90, 90, 90, 0.5) 100.22%);
+  --gptreat-float-btn-bg-color: #1d1b36;
+  --gptreat-float-btn-border-color: #373638;
+  --gptreat-float-btn-item-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --gptreat-search-bg-color: black;
+  --gptreat-search-border-color: #3c4043;
+  --gptreat-list-answer-color: #9aa0a6;
+  --gptreat-markdown-code-btn-bg-color: #21262d;
+  --gptreat-markdown-code-btn-border-color: rgba(240, 246, 252, 0.1);
+  --gptreat-markdown-code-btn-hover-bg-color: #30363d;
+  --gptreat-markdown-code-btn-hover-border-color: #8b949e;
+  --gptreat-new-five-star-bg-color: rgba(240, 245, 255, 0.09);
+  --gptreat-chat-page-bg-color: black;
+  --gptreat-chat-page-bg-elps-1-op: 0.3;
+  --gptreat-chat-page-bg-elps-2-op: 0.6;
+  --gptreat-chat-page-bg-elps-3-op: 0.6;
+  --gptreat-chat-page-bg-elps-4-bg-color: #000;
+  --gptreat-chat-page-main-border: 1px solid var(--gptreat-sidebar-border-color);
+  --gptreat-chat-ai-bubble-bg-color: #303034;
+  --gptreat-chat-user-bubble-color: rgba(var(--gptreat-fg-rgb), 0.9);
+  --gptreat-chat-user-bubble-prompt-color: rgba(var(--gptreat-fg-rgb), 0.5);
+  --gptreat-chat-primary-color: #784dca;
+  --gptreat-chat-primary-opacity-color: rgba(121, 77, 202, 0.75);
+  --gptreat-chat-primary-bg-color: #1f1f1f;
+  --gptreat-chat-error-color: #f44336;
+  --gptreat-chat-wel-bg-color: #251f36;
+  --gptreat-chat-new-btn-bg-color: #372854;
+  --gptreat-chat-send-btn-hover-color: #a078e0;
+  --gptreat-chat-ai-bubble-sup-bg-color: rgb(139 87 234 / 23%);
+  --gptreat-dropdown-item-hover-bg-color: rgba(255, 255, 255, 0.08);
+  --gptreat-dropdown-item-selected-color: #1c1729;
+  --gptreat-dropdown-item-selected-hover-bg-color: #291f40;
+  --gptreat-chatgpt-msg-block-bg-color: rgba(0, 0, 0, 0.45);
+  --gptreat-chatgpt-msg-block-running-bg-color: rgba(220, 252, 231, 0.2);
+  --gptreat-chatgpt-msg-block-hover-bg-color: black;
+  --gptreat-quote-bg-color: rgba(245, 245, 255, 0.09);
+  --gptreat-quote-popup-bg-color: #3a3a3e;
+  --gptreat-file-action-btn-bg-color: #424247;
+  --gptreat-compose-opts-bg-color: rgba(var(--gptreat-fg-rgb), 0.1);
+  --gptreat-compose-opts-btn-bg-color: #424242;
+  --gptreat-translate-resultbox-bg-color: #212123;
+  --gptreat-translate-resultbox-border-color: #2b2b2e;
+  --gptreat-OCR-box-bg-color: #222;
+  --gptreat-OCR-border-color: #353535;
+  --gptreat-enchance-bg-color: #000;
+  --gptreat-quick-action-bg-color: #000;
+  --gptreat-quick-action-bg-color-2: #333;
+  --gptreat-quick-action-btn-bg-color: #111;
+  --gptreat-quick-action-border-color: #444;
+  --gptreat-quick-action-item-selected-bg-color: #8a57ea;
+  --gptreat-fg-rgb: 255, 255, 255;
+  --gptreat-bg-rgb: 0, 0, 0;
+  --gptreat-switchbar-bg-color: #212123;
+  --gptreat-switchbar-btn-hover-bg-color: #2f2f32;
+  --gptreat-switchbar-shadow: var(--gptreat-sidebar-shadow);
+  --gptreat-fivestar-bg-color: #1c1c1c;
+  --gptreat-fivestar-feedback-btn-bg-color: #111;
+  --gptreat-upgrade-modal-list-bg-color: rgba(62, 46, 91, 0.5);
+  --gptreat-upgrade-modal-title-bg: linear-gradient(0deg, rgba(50, 197, 255, 1), rgba(182, 32, 224, 1));
+  --gptreat-upgrade-modal-title-bg-color: linear-gradient(152.9deg, #3e2e5b 0%, #28282b 44.24%),
+    linear-gradient(95.96deg, #8a57ea 8.04%, #3771e0 57.11%);
+  --gptreat-upgrade-modal-rockets-bg: linear-gradient(90deg, rgba(197, 171, 245, 0.3) 0%, rgba(197, 171, 245, 0) 100%);
+}
+
+:root,
+:host {
+  --gptreat-gutter-bg-color: #e5e7eb;
+  --gptreat-gutter-handle-bg-color: #fff;
+
+  --plasmo-opengpts-sidebar-width: 458px;
+  --plasmo-sidebar-border-color: #ececec;
+  --plasmo-sidebar-bg-color: rgba(255, 255, 255, 1);
+
+  --gptreat-primary-color: #3771e0;
+  --gptreat-primary-text-color: rgba(var(--gptreat-fg-rgb), 0.8);
+  --gptreat-primary-content-text-color: rgba(var(--gptreat-fg-rgb), 0.65);
+  --gptreat-primary-title-color: rgba(var(--gptreat-fg-rgb), 0.8);
+  --gptreat-secondary-text-color: rgba(var(--gptreat-fg-rgb), 0.4);
+  --gptreat-third-text-color: rgba(var(--gptreat-fg-rgb), 0.25);
+  --gptreat-html-bg-color: rgb(240, 242, 245);
+  --gptreat-option-box-bg-color: #f9fafc;
+  --gptreat-option-card-bg-color: white;
+  --gptreat-option-card-border: 1px solid #f0f0f0;
+  --gptreat-border-radius-lg: 12px;
+  --gptreat-border-radius: 8px;
+  --gptreat-option-dropbox-bg-color: rgb(235, 236, 240);
+  --gptreat-option-template-group-header-bg-color: #fafafa;
+  --gptreat-option-template-group-item-visible-bg-color: white;
+  --gptreat-option-template-group-item-invisible-bg-color: rgba(255, 255, 255, 0.6);
+  --gptreat-attention-bg-color: #f4fbf9;
+  --gptreat-attention-title-color: #2b6e62;
+  --gptreat-sidebar-bg-color: white;
+  --gptreat-sidebar-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  --gptreat-sidebar-footer-bg-color: #f8f8f8;
+  --gptreat-sidebar-border-color: #ececec;
+  --gptreat-sidebar-footer-btn-bg-color: white;
+  --gptreat-sidebar-footer-btn-color: #858585;
+  --gptreat-sidebar-model-btn-bg-color: #f7f7f8;
+  --gptreat-sidebar-model-btn-elevated-bg-color: var(--gptreat-sidebar-bg-color);
+  --gptreat-sidebar-model-btn-color: rgba(var(--gptreat-fg-rgb), 0.45);
+  --gptreat-sidebar-model-btn-hover-bg-color: #ededed;
+  --gptreat-sidebar-image-action-btn-bg-color: #f5f5f5;
+  --gptreat-sidebar-image-action-btn-hover-bg-color: #efefef;
+  --gptreat-sidebar-modal-btn-bg-color: #ebecef;
+
+  --gptreat-sidebar-icon-bg-color: #f8f8f8;
+  --gptreat-sidebar-icon-hover-bg-color: var(--gptreat-primary-color);
+
+  --gptreat-sidebar-icon-border-color: #ececee;
+  --gptreat-sidebar-scrollbar-color: #e1e1e1;
+  --gptreat-sidebar-scrollbar-hover-color: #d9d9d9;
+  --gptreat-paste-btn-bg-color: #cbcbcb;
+  --gptreat-paste-btn-color: white;
+  --gptreat-tab-switch-color: rgba(0, 0, 0, 0.4);
+  --gptreat-tab-switch-indicator-ask-bg-color: rgba(55, 113, 224, 0.1);
+  --gptreat-tab-switch-indicator-chat-bg-color: rgba(237, 231, 246, 1);
+  --gptreat-sidebar-vip-card-bg-color: #f6f4fa;
+  --gptreat-message-divider-bg-color: #e9e9ef;
+  --gptreat-webaccess-modal-banner-gradient: linear-gradient(
+      312.41deg,
+      rgba(255, 255, 255, 0.8) 33.24%,
+      rgba(231, 229, 252, 0.8) 78.13%
+    ),
+    linear-gradient(318.56deg, rgba(255, 255, 255, 0.5) 41.66%, rgba(251, 198, 159, 0.5) 100.22%);
+  --gptreat-float-btn-bg-color: #f8f8f8;
+  --gptreat-float-btn-border-color: #e9e9ef;
+  --gptreat-float-btn-item-hover-bg-color: #f0f1f5;
+  --gptreat-search-bg-color: white;
+  --gptreat-search-border-color: #dadce1;
+  --gptreat-list-answer-color: #4d5156;
+  --gptreat-markdown-code-btn-bg-color: #f6f8fa;
+  --gptreat-markdown-code-btn-border-color: rgba(27, 31, 36, 0.15);
+  --gptreat-markdown-code-btn-hover-bg-color: #f3f4f6;
+  --gptreat-markdown-code-btn-hover-border-color: rgba(27, 31, 36, 0.15);
+  --gptreat-new-five-star-bg-color: #f0f1f5;
+  --gptreat-chat-page-bg-color: #fafafa;
+  --gptreat-chat-page-bg-elps-1-op: 0.4;
+  --gptreat-chat-page-bg-elps-2-op: 0.4;
+  --gptreat-chat-page-bg-elps-3-op: 0.2;
+  --gptreat-chat-page-bg-elps-4-bg-color: var(--gptreat-chat-page-bg-color);
+  --gptreat-chat-page-main-border: 1px solid transparent;
+  --gptreat-chat-ai-bubble-bg-color: var(--gptreat-switchbar-bg-color);
+  --gptreat-chat-user-bubble-color: rgba(var(--gptreat-bg-rgb), 0.9);
+  --gptreat-chat-user-bubble-prompt-color: rgba(var(--gptreat-bg-rgb), 0.5);
+  --gptreat-chat-primary-color: #784dca;
+  --gptreat-chat-primary-opacity-color: rgba(139, 87, 234, 0.75);
+  --gptreat-chat-primary-bg-color: #e8ddfb;
+  --gptreat-chat-func-bg-color: #fff7ea;
+  --gptreat-chat-error-color: #f44336;
+  --gptreat-chat-wel-bg-color: rgba(138, 87, 234, 0.05);
+  --gptreat-chat-new-btn-bg-color: #ede7f6;
+  --gptreat-chat-send-btn-hover-color: #b083f7;
+  --gptreat-chat-ai-bubble-sup-bg-color: rgb(139 87 234 / 23%);
+  --gptreat-dropdown-item-hover-bg-color: rgba(0, 0, 0, 0.04);
+  --gptreat-dropdown-item-selected-color: #e6f4ff;
+  --gptreat-dropdown-item-selected-hover-bg-color: #bae0ff;
+  --gptreat-chatgpt-msg-block-bg-color: #eae6e6;
+  --gptreat-chatgpt-msg-block-running-bg-color: rgb(220, 252, 231);
+  --gptreat-chatgpt-msg-block-hover-bg-color: #e7e7e9;
+  --gptreat-quote-bg-color: rgba(25, 25, 26, 0.09);
+  --gptreat-quote-popup-bg-color: #e5e5e9;
+  --gptreat-file-action-btn-bg-color: white;
+  --gptreat-compose-opts-bg-color: #f8f7f8;
+  --gptreat-compose-opts-btn-bg-color: white;
+  --gptreat-compose-check-group-item-color: rgba(var(--gptreat-fg-rgb), 0.6);
+  --gptreat-translate-customization-tips-color: rgba(var(--gptreat-fg-rgb), 0.4);
+  --gptreat-translate-resultbox-bg-color: #f0f1f5;
+  --gptreat-translate-resultbox-border-color: #e9e9ef;
+  --gptreat-OCR-box-bg-color: #f0f1f5;
+  --gptreat-OCR-border-color: #ededf4;
+  --gptreat-OCR-drop-bg-color: rgba(232, 221, 251, 0.4);
+  --gptreat-enchance-bg-color: #fff;
+  --gptreat-quick-action-bg-color: #fff;
+  --gptreat-quick-action-bg-color-2: #f7f7f8;
+  --gptreat-quick-action-btn-bg-color: #e0e1e5;
+  --gptreat-quick-action-border-color: #e9e9ef;
+  --gptreat-quick-action-item-selected-bg-color: #e8ddfb;
+  --gptreat-fg-rgb: 0, 0, 0;
+  --gptreat-bg-rgb: 255, 255, 255;
+  --gptreat-topmost-zindex: 2147483647;
+  --gptreat-switchbar-bg-color: #f0f1f5;
+  --gptreat-switchbar-btn-hover-bg-color: #e9e9ef;
+  --gptreat-switchbar-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.15);
+  --gptreat-fivestar-bg-color: #fefefe;
+  --gptreat-fivestar-feedback-btn-bg-color: #f5f5f5;
+  --gptreat-upgrade-modal-list-bg-color: rgba(197, 171, 245, 0.1);
+  --gptreat-upgrade-modal-title-bg: linear-gradient(0deg, rgba(50, 197, 255, 1), rgba(182, 32, 224, 1));
+  --gptreat-upgrade-modal-title-bg-color: linear-gradient(153deg, #e7effe 0%, #f0eafc 0%, #fff 44.24%), #c4c4c4;
+  --gptreat-upgrade-modal-rockets-bg: linear-gradient(90deg, rgba(197, 171, 245, 0.3) 0%, rgba(197, 171, 245, 0) 100%);
+  /* * {
+    box-sizing: border-box;
+    outline: none;
+  } */
+}
+

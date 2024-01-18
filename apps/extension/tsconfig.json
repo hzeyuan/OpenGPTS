@@ -1,0 +1,30 @@
+{
+  "extends": "plasmo/templates/tsconfig.base",
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    ".plasmo/index.d.ts",
+    "next-env.d.ts",
+    "window.d.ts",
+    "./**/*.ts",
+    "./**/*.tsx",
+    "./contents/google-sidebar.tsx",
+    ".next/types/**/*.ts"
+  ],
+  "compilerOptions": {
+    "paths": {
+      "~*": [
+        "./*"
+      ]
+    },
+    "baseUrl": ".",
+    "isolatedModules": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  }
+}

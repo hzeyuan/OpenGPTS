@@ -1,0 +1,39 @@
+./private.key
+./build
+/.plasmo
+
+# dependencies
+node_modules
+.pnp
+.pnp.js
+
+# testing
+coverage
+
+# next.js
+.next/
+out/
+build
+dist/
+
+# electron bundle
+**/resources/app
+
+# misc
+.DS_Store
+*.pem
+.idea
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files
+.env*.local
+
+# turbo
+.turbo
+
+.tsbuildinfo
