@@ -1,0 +1,11 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/api/gpts/random/route": "app/api/gpts/random/route.js",
+  "/api/gpts/search/route": "app/api/gpts/search/route.js",
+  "/api/gpts/all/route": "app/api/gpts/all/route.js",
+  "/api/process/update-gpts/route": "app/api/process/update-gpts/route.js",
+  "/page": "app/page.js",
+  "/g/[uuid]/page": "app/g/[uuid]/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
+}

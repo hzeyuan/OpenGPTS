@@ -1,0 +1,39 @@
+
+> web@1.0.0 build /Users/hzy/Code/chatgptThing/madan/app/OpenGPTS/my-turborepo/apps/web
+> next build
+
+   ▲ Next.js 14.0.4
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+ ⨯ ESLint: Failed to load config "@vue/standard" to extend from. Referenced from: /Users/hzy/Code/chatgptThing/madan/.eslintrc.cjs
+   Collecting page data ...
+   Generating static pages (0/10) ...
+   Generating static pages (2/10) 
+   Generating static pages (4/10) 
+   Generating static pages (7/10) 
+ ✓ Generating static pages (10/10) 
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    14.5 kB        96.4 kB
+├ ○ /_not-found                          874 B          82.7 kB
+├ λ /api/gpts/all                        0 B                0 B
+├ ○ /api/gpts/random                     0 B                0 B
+├ λ /api/gpts/search                     0 B                0 B
+├ λ /api/process/update-gpts             0 B                0 B
+├ λ /g/[uuid]                            141 B            82 kB
+└ ○ /privacy                             141 B            82 kB
++ First Load JS shared by all            81.9 kB
+  ├ chunks/0d9284fb-6bc78803d64e36ec.js  53.3 kB
+  ├ chunks/275-94c3883dc6e29bf5.js       26.7 kB
+  ├ chunks/main-app-567eb0772fc6d063.js  220 B
+  └ chunks/webpack-d29cd076c70f72d2.js   1.67 kB
+
+
+○  (Static)   prerendered as static content
+λ  (Dynamic)  server-rendered on demand using Node.js
+
