@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
-// import { Tab } from "/types/tab";
+// import { Tab } from "@/types/tab";
 
 interface Props {
   tabValue: string;
@@ -35,9 +35,8 @@ export default ({ tabValue, setTabValue }: Props) => {
               <a
                 role="tab"
                 key={idx}
-                className={`tab ${
-                  tabValue === tab.name ? "bg-primary text-white" : ""
-                }`}
+                className={`tab cursor-pointer ${tabValue === tab.name ? "bg-[#030712] text-white " : ""
+                  } border  border-gray-500 text-sm rounded-md px-3 py-1 mx-1 `}
                 onClick={() => setTabValue(tab.name)}
               >
                 {tab.title}
