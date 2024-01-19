@@ -15,7 +15,7 @@
 
 ## 2. 亮点功能：
 |功能名称|功能描述|
-|:-|:-|
+|:-:|:-:|
 |一键同步|自动同步官网GPTs所有数据：对话数，收藏数，用户数|
 |批量管理|批量管理自己的所有GPTs：自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）|
 |一键生成|输入标题，一键生成GPTs|
@@ -42,7 +42,7 @@ typescipt; react;
 
 
 ## Todo List
-- [x] 自动优化提示词
+- [ ] 自动优化提示词
 
 ## Credits:
 Special thanks to the following projects and contributors:
