@@ -23,6 +23,7 @@ interface Display {
 interface VanityMetrics {
     num_conversations_str: string;
     num_pins: number;
+    num_conversations: number;
     num_users_interacted_with: number;
 }
 

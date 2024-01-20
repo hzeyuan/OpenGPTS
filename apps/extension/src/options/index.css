@@ -1,7 +1,7 @@
 body {
   padding: 0;
   margin: 0;
-  background-color: var(--gptreat-html-bg-color);
+  background-color: var(--opengpts-html-bg-color);
 }
 
 .option-page .inner-container .menu-area {
@@ -19,9 +19,9 @@ body {
 }
 
 .option-page .inner-container .card {
-  border-radius: var(--gptreat-border-radius-lg);
-  background-color: var(--gptreat-option-card-bg-color);
-  border: var(--gptreat-option-card-border);
+  border-radius: var(--opengpts-border-radius-lg);
+  background-color: var(--opengpts-option-card-bg-color);
+  border: var(--opengpts-option-card-border);
 }
 
 .option-area .section .section-title {
@@ -35,7 +35,7 @@ body {
 }
 
 .option-area .section .sub-section .sub-section-desc {
-  color: var(--gptreat-secondary-text-color);
+  color: var(--opengpts-secondary-text-color);
   font-size: 13px;
   font-weight: 600;
 }
@@ -45,9 +45,9 @@ body {
 }
 .option-area .section .sub-section .content-box .option-box {
   padding: 24px;
-  border-radius: var(--gptreat-border-radius-lg);
-  background-color: var(--gptreat-option-box-bg-color);
-  border: var(--gptreat-option-box-border);
+  border-radius: var(--opengpts-border-radius-lg);
+  background-color: var(--opengpts-option-box-bg-color);
+  border: var(--opengpts-option-box-border);
 }
 
 .option-area .section .sub-section {

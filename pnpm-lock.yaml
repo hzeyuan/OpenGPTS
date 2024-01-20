@@ -82,6 +82,9 @@ importers:
       jquery:
         specifier: ^3.7.1
         version: registry.npmmirror.com/jquery@3.7.1
+      lodash:
+        specifier: ^4.17.21
+        version: registry.npmmirror.com/lodash@4.17.21
       nanoid:
         specifier: ^5.0.4
         version: registry.npmmirror.com/nanoid@5.0.4
@@ -96,7 +99,7 @@ importers:
         version: registry.npmmirror.com/ofetch@1.3.3
       plasmo:
         specifier: 0.84.0
-        version: registry.npmmirror.com/plasmo@0.84.0(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)
+        version: registry.npmmirror.com/plasmo@0.84.0(lodash@4.17.21)(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)
       rc-tween-one:
         specifier: ^3.0.6
         version: registry.npmmirror.com/rc-tween-one@3.0.6(react-dom@18.2.0)(react@18.2.0)
@@ -136,6 +139,12 @@ importers:
       use-debounce:
         specifier: ^10.0.0
         version: registry.npmmirror.com/use-debounce@10.0.0(react@18.2.0)
+      uuid:
+        specifier: ^9.0.1
+        version: registry.npmmirror.com/uuid@9.0.1
+      webextension-polyfill:
+        specifier: ^0.10.0
+        version: registry.npmmirror.com/webextension-polyfill@0.10.0
       zustand:
         specifier: ^4.4.7
         version: registry.npmmirror.com/zustand@4.4.7(@types/react@18.2.37)(immer@10.0.3)(react@18.2.0)
@@ -1739,7 +1748,7 @@ packages:
       indent-string: 4.0.0
       is-builtin-module: 3.2.1
       jsesc: 3.0.2
-      lodash: 4.17.21
+      lodash: registry.npmmirror.com/lodash@4.17.21
       pluralize: 8.0.0
       read-pkg-up: 7.0.1
       regexp-tree: 0.1.27
@@ -2554,10 +2563,6 @@ packages:
 
   /lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
-    dev: true
-
-  /lodash@4.17.21:
-    resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
     dev: true
 
   /loose-envify@1.4.0:
@@ -6634,7 +6639,7 @@ packages:
       nullthrows: registry.npmmirror.com/nullthrows@1.1.1
     dev: false
 
-  registry.npmmirror.com/@plasmohq/consolidate@0.17.0(react-dom@18.2.0)(react@18.2.0):
+  registry.npmmirror.com/@plasmohq/consolidate@0.17.0(lodash@4.17.21)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-Na8imBnvzYPtzkK+9Uv9hPZ/oJti/0jgiQWD222SHxHw2QCVuR4KzslxXCy/rS8gGluSiTs1BGVvc3d2O6aJCA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@plasmohq/consolidate/-/consolidate-0.17.0.tgz}
     id: registry.npmmirror.com/@plasmohq/consolidate/0.17.0
     name: '@plasmohq/consolidate'
@@ -6782,6 +6787,7 @@ packages:
         optional: true
     dependencies:
       bluebird: registry.npmmirror.com/bluebird@3.7.2
+      lodash: registry.npmmirror.com/lodash@4.17.21
       react: registry.npmmirror.com/react@18.2.0
       react-dom: registry.npmmirror.com/react-dom@18.2.0(react@18.2.0)
     dev: false
@@ -6834,7 +6840,7 @@ packages:
       - '@parcel/core'
     dev: false
 
-  registry.npmmirror.com/@plasmohq/parcel-config@0.40.0(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
+  registry.npmmirror.com/@plasmohq/parcel-config@0.40.0(lodash@4.17.21)(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2):
     resolution: {integrity: sha512-aDyZIL3ScTmA1CsB/Sym7SxOMVSFUgNQrFovD+sl1M2nrYytqkLDFs7mspCpBlsxCGt97s8rD/kufke21UUHRA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@plasmohq/parcel-config/-/parcel-config-0.40.0.tgz}
     id: registry.npmmirror.com/@plasmohq/parcel-config/0.40.0
     name: '@plasmohq/parcel-config'
@@ -6874,7 +6880,7 @@ packages:
       '@plasmohq/parcel-transformer-inline-css': registry.npmmirror.com/@plasmohq/parcel-transformer-inline-css@0.3.9
       '@plasmohq/parcel-transformer-manifest': registry.npmmirror.com/@plasmohq/parcel-transformer-manifest@0.17.8
       '@plasmohq/parcel-transformer-svelte': registry.npmmirror.com/@plasmohq/parcel-transformer-svelte@0.5.2
-      '@plasmohq/parcel-transformer-vue': registry.npmmirror.com/@plasmohq/parcel-transformer-vue@0.5.0(react-dom@18.2.0)(react@18.2.0)
+      '@plasmohq/parcel-transformer-vue': registry.npmmirror.com/@plasmohq/parcel-transformer-vue@0.5.0(lodash@4.17.21)(react-dom@18.2.0)(react@18.2.0)
     transitivePeerDependencies:
       - '@swc/core'
       - '@swc/helpers'
@@ -7117,7 +7123,7 @@ packages:
       svelte: registry.npmmirror.com/svelte@4.0.1
     dev: false
 
-  registry.npmmirror.com/@plasmohq/parcel-transformer-vue@0.5.0(react-dom@18.2.0)(react@18.2.0):
+  registry.npmmirror.com/@plasmohq/parcel-transformer-vue@0.5.0(lodash@4.17.21)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-/3oVbajt+DRqtbM0RkKFtfyZR8DVjcsYpj1jHqPParGVBiXwgP0D/8Bj5p5/5Iqihs08gzasTcjKcwQKKdj0og==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@plasmohq/parcel-transformer-vue/-/parcel-transformer-vue-0.5.0.tgz}
     id: registry.npmmirror.com/@plasmohq/parcel-transformer-vue/0.5.0
     name: '@plasmohq/parcel-transformer-vue'
@@ -7130,7 +7136,7 @@ packages:
       '@parcel/source-map': registry.npmmirror.com/@parcel/source-map@2.1.1
       '@parcel/types': registry.npmmirror.com/@parcel/types@2.9.3(@parcel/core@2.9.3)
       '@parcel/utils': registry.npmmirror.com/@parcel/utils@2.9.3
-      '@plasmohq/consolidate': registry.npmmirror.com/@plasmohq/consolidate@0.17.0(react-dom@18.2.0)(react@18.2.0)
+      '@plasmohq/consolidate': registry.npmmirror.com/@plasmohq/consolidate@0.17.0(lodash@4.17.21)(react-dom@18.2.0)(react@18.2.0)
       '@vue/compiler-sfc': registry.npmmirror.com/@vue/compiler-sfc@3.3.4
       nullthrows: registry.npmmirror.com/nullthrows@1.1.1
       semver: registry.npmmirror.com/semver@7.5.4
@@ -12100,7 +12106,6 @@ packages:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/lodash/-/lodash-4.17.21.tgz}
     name: lodash
     version: 4.17.21
-    dev: false
 
   registry.npmmirror.com/log-driver@1.2.7:
     resolution: {integrity: sha512-U7KCmLdqsGHBLeWqYlFA0V0Sl6P08EE1ZrmA9cxjUE0WVqT9qnyVDPz1kzpFEP0jdJuFnasWIfSd7fsaNXkpbg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/log-driver/-/log-driver-1.2.7.tgz}
@@ -13399,7 +13404,7 @@ packages:
     version: 4.0.6
     engines: {node: '>= 6'}
 
-  registry.npmmirror.com/plasmo@0.84.0(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0):
+  registry.npmmirror.com/plasmo@0.84.0(lodash@4.17.21)(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-SK6A/uX5mo4EsYiF7JySTOCp2aMo3ejfpbNey89M0zat9p0yDTKEClvMs9MWKXld5Ae0CXPaMYcZPAMvCMngPQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/plasmo/-/plasmo-0.84.0.tgz}
     id: registry.npmmirror.com/plasmo/0.84.0
     name: plasmo
@@ -13412,7 +13417,7 @@ packages:
       '@parcel/package-manager': registry.npmmirror.com/@parcel/package-manager@2.9.3(@parcel/core@2.9.3)
       '@parcel/watcher': registry.npmmirror.com/@parcel/watcher@2.2.0
       '@plasmohq/init': registry.npmmirror.com/@plasmohq/init@0.7.0
-      '@plasmohq/parcel-config': registry.npmmirror.com/@plasmohq/parcel-config@0.40.0(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
+      '@plasmohq/parcel-config': registry.npmmirror.com/@plasmohq/parcel-config@0.40.0(lodash@4.17.21)(postcss@8.4.33)(react-dom@18.2.0)(react@18.2.0)(typescript@5.2.2)
       '@plasmohq/parcel-core': registry.npmmirror.com/@plasmohq/parcel-core@0.1.8
       buffer: registry.npmmirror.com/buffer@6.0.3
       chalk: registry.npmmirror.com/chalk@5.3.0
@@ -16542,6 +16547,13 @@ packages:
     hasBin: true
     dev: false
 
+  registry.npmmirror.com/uuid@9.0.1:
+    resolution: {integrity: sha512-b+1eJOlsR9K8HJpow9Ok3fiWOWSIcIzXodvv0rQjVoOVNpWMpxf1wZNpt4y9h10odCNrqnYp1OBzRktckBe3sA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/uuid/-/uuid-9.0.1.tgz}
+    name: uuid
+    version: 9.0.1
+    hasBin: true
+    dev: false
+
   registry.npmmirror.com/validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/validate-npm-package-license/-/validate-npm-package-license-3.0.4.tgz}
     name: validate-npm-package-license
@@ -16663,6 +16675,12 @@ packages:
     resolution: {integrity: sha512-DEAoo25RfSYMuTGc9vPJzZcZullwIqRDSI9LOy+fkCJPi6hykCnfKaXTuPBDuXAUcqHXyOgFtHNp/kB2FjYHbw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/weak-lru-cache/-/weak-lru-cache-1.2.2.tgz}
     name: weak-lru-cache
     version: 1.2.2
+    dev: false
+
+  registry.npmmirror.com/webextension-polyfill@0.10.0:
+    resolution: {integrity: sha512-c5s35LgVa5tFaHhrZDnr3FpQpjj1BB+RXhLTYUxGqBVN460HkbM8TBtEqdXWbpTKfzwCcjAZVF7zXCYSKtcp9g==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/webextension-polyfill/-/webextension-polyfill-0.10.0.tgz}
+    name: webextension-polyfill
+    version: 0.10.0
     dev: false
 
   registry.npmmirror.com/webidl-conversions@4.0.2:

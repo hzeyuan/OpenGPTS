@@ -17,7 +17,7 @@ import { Storage } from "@plasmohq/storage";
 import type { ThemeMode } from "~index";
 import { useTranslation } from 'react-i18next';
 import GPTsCreatorPanel from '~src/components/GPTsCreatorPanel';
-
+import settingIcon from '~assets/settings.svg';
 
 
 const shakeAnimation = {
@@ -82,10 +82,7 @@ function IndexSidePanel() {
 
 
     const handleSetting = () => {
-        sendToBackground({
-            name: "openOptionsPage",
-            extensionId: Browser.runtime.id // 确保这是您的扩展ID
-        });
+        chrome.runtime.openOptionsPage()
     }
 
     useEffect(() => {
@@ -118,12 +115,9 @@ function IndexSidePanel() {
                 algorithm: theme === 'dark' ? themeStyle.darkAlgorithm : themeStyle.defaultAlgorithm,
                 components: {
                     Input: {
-                        colorBgContainer: 'var(--gptreat-option-card-bg-color)',
-                        colorText: 'var(--gptreat-primary-text-color)'
-                    },
-                    Drawer: {
-
-                    },
+                        colorBgContainer: 'var(--opengpts-option-card-bg-color)',
+                        colorText: 'var(--opengpts-primary-text-color)'
+                    }
                 }
             }}
         >
@@ -137,7 +131,7 @@ function IndexSidePanel() {
                         }}>
                         <div className="flex w-full h-full overflow-hidden">
                             <TabList className='letTabBar'>
-                                <div className="switch-bar bg-[var(--gptreat-switchbar-bg-color)] flex flex-col items-center gap-4 h-full">
+                                <div className="switch-bar bg-[var(--opengpts-switchbar-bg-color)] flex flex-col items-center gap-4 h-full">
                                     <div className="opengpts-sidebarr-wrapper">
                                         <div className="opengpts-sidebarr-header-content">
                                             <div className="opengpts-sidebarr-logo">
@@ -148,7 +142,7 @@ function IndexSidePanel() {
                                                 {tabs.map((item, index) =>
                                                     <Tab
                                                         key={item.title}
-                                                        className={`outline-none opengpts-sidebarr-tab ${tabIndex === index && 'bg-[var(--gptreat-sidebar-bg-color)]'} hover:bg-[var(--gptreat-sidebar-bg-color)]`}
+                                                        className={`outline-none opengpts-sidebarr-tab ${tabIndex === index && 'bg-[var(--opengpts-sidebar-bg-color)]'} hover:bg-[var(--opengpts-sidebar-bg-color)]`}
                                                     >
                                                         <motion.img
                                                             className="cursor-pointer"
@@ -157,20 +151,6 @@ function IndexSidePanel() {
 
                                                     </Tab>
                                                 )}
-                                                <Tab tabIndex='create' className='opengpts-sidebarr-tab  outline-none hover:bg-[var(--gptreat-sidebar-bg-color)]'>
-                                                    <motion.svg
-                                                        className="outline-none cursor-pointer"
-                                                        viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1445" width="100%" height="100%"
-                                                        whileTap={{
-                                                            scale: 0.85,
-                                                            fill: 'var(--gptreat-primary-color)',
-                                                            transition: {
-                                                                duration: 0.2
-                                                            }
-                                                        }}
-                                                    >
-                                                        <path d="M474 152m8 0l60 0q8 0 8 8l0 704q0 8-8 8l-60 0q-8 0-8-8l0-704q0-8 8-8Z" fill="#000000" p-id="1446"></path><path d="M168 474m8 0l672 0q8 0 8 8l0 60q0 8-8 8l-672 0q-8 0-8-8l0-60q0-8 8-8Z" fill="#000000" p-id="1447"></path></motion.svg>
-                                                </Tab>
                                             </div>
                                         </div>
                                         <div className="opengpts-sidebarr-footer ">
@@ -178,14 +158,16 @@ function IndexSidePanel() {
                                                 <div className='opengpts-sidebarr-tab'>
                                                     <motion.img whileTap={shakeAnimation}
                                                         onClick={handleSetting}
-                                                        style={{ cursor: 'pointer' }} src="chrome-extension://afdfpkhbdpioonfeknablodaejkklbdn/img/icon_settings.svg" />
+                                                        style={{ cursor: 'pointer' }} src={settingIcon} />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </TabList>
-                            {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>{item.panel}</TabPanel>)}
+                            {/* <div className='bg-[var(--opengpts-option-card-bg-color)]'> */}
+                                {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>{item.panel}</TabPanel>)}
+                            {/* </div> */}
                         </div>
                     </Tabs>
 

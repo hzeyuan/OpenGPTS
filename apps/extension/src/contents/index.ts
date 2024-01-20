@@ -5,7 +5,6 @@ import { sendToBackground } from "@plasmohq/messaging"
 import $ from 'jquery'
 import { Storage } from "@plasmohq/storage";
 import _ from "lodash";
-import { message } from 'antd';
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
   all_frames: true,
@@ -240,7 +239,7 @@ const createGPTsFlow = async (
         welcome_message: start_text,
         prompt_starters: prompts || [],
       },
-      tools: currentGPTInfo.tools || [],
+      tools: currentGPTInfo?.tools || [],
       "files": [],
       "training_disabled": false
     }, gptId)

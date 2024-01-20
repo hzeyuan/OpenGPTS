@@ -50,46 +50,12 @@ body {
 }
 
 .opengpts-sidebar-rnd {
-  box-shadow: var(--gptreat-sidebar-shadow);
-  background-color: var(--gptreat-sidebar-bg-color);
-  color: var(--gptreat-primary-text-color);
+  box-shadow: var(--opengpts-sidebar-shadow);
+  background-color: var(--opengpts-sidebar-bg-color);
+  color: var(--opengpts-primary-text-color);
 }
 
-.chat-gpt-quick-query-container {
-  color: var(--gptreat-primary-text-color);
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    Segoe UI,
-    Roboto,
-    Ubuntu,
-    Cantarell,
-    Noto Sans,
-    sans-serif,
-    Helvetica Neue,
-    Arial,
-    Apple Color Emoji,
-    Segoe UI Emoji,
-    Segoe UI Symbol,
-    Noto Color Emoji;
-  font-size: 14px;
-  font-variant: normal;
-  font-weight: 400;
-  letter-spacing: normal;
-  word-spacing: normal;
-  line-height: 1.5;
-  text-align: start;
-  visibility: visible !important;
-  white-space: normal;
-  word-break: break-word;
-  word-wrap: break-word;
-  -webkit-font-smoothing: auto;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  user-select: none;
-  pointer-events: all;
-}
+
 
 #plasmo-shadow-container {
   /* z-index:999999 !important; */
@@ -175,7 +141,7 @@ body {
   padding: 0 16px;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid var(--gptreat-sidebar-border-color);
+  border-bottom: 1px solid var(--opengpts-sidebar-border-color);
 }
 
 .chatgpt-quick-query-float {
@@ -187,8 +153,8 @@ body {
   visibility: visible !important;
   /* pointer-events: none; */
   transition: all 0.3s ease 0.2s;
-  background-color: var(--gptreat-sidebar-icon-bg-color);
-  border-color: var(--gptreat-sidebar-icon-border-color);
+  background-color: var(--opengpts-sidebar-icon-bg-color);
+  border-color: var(--opengpts-sidebar-icon-border-color);
   box-shadow: 0 0 8px 4px #00000014;
   pointer-events: all;
   opacity: 1;
@@ -199,7 +165,7 @@ body {
   padding: 0 8px;
   border: none;
   pointer-events: all;
-  /* background-color: var(--gptreat-sidebar-icon-bg-color); */
+  /* background-color: var(--opengpts-sidebar-icon-bg-color); */
   border-radius: 23px 0 0 23px;
   -webkit-user-select: none;
   -moz-user-select: none;

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import '../i18n.js';
 import "./index.css"
 import '../base.css'
-import { Button, ConfigProvider, Divider, Menu, Radio, Select, Space, Spin, Typography, theme as themeStyle } from "antd"
+import { ConfigProvider, Divider, Menu, Radio, Space, Typography, theme as themeStyle } from "antd"
 const { Title, Text } = Typography;
 function IndexOptions() {
     const { t, i18n } = useTranslation();
@@ -68,20 +68,6 @@ function IndexOptions() {
                         <div className="sub-section">
 
                             {/* <div className='sub-section-title'>
-                                如何访问 ChatGPT 并在任何地方使用它
-                            </div> */}
-                            <Title level={3}> 如何访问 ChatGPT 并在任何地方使用它</Title>
-                            <div className='sub-section-desc'>我们为大家提供了最全面的接入ChatGPT 方式，以帮助所有人都可以方便的使用AI。</div>
-                            <div className='content-box'>
-                                <div className="option-box">
-                                    <Text>12312312312312</Text>
-                                </div>
-                            </div>
-
-                        </div>
-                        <div className="sub-section">
-
-                            {/* <div className='sub-section-title'>
                                 主题
                             </div> */}
                             <Title level={3}>{t('Theme')}</Title>
@@ -98,10 +84,6 @@ function IndexOptions() {
                             </div>
                         </div>
                         <div className="sub-section">
-
-                            {/* <div className='sub-section-title'>
-                                语言
-                            </div> */}
                             <Title level={3}>{t('Language')}</Title>
                             <div className='content-box'>
                                 <div className="option-box">
@@ -144,8 +126,8 @@ function IndexOptions() {
                 algorithm: theme === 'dark' ? themeStyle.darkAlgorithm : themeStyle.defaultAlgorithm,
                 components: {
                     Input: {
-                        colorBgContainer: 'var(--gptreat-option-card-bg-color)',
-                        colorText: 'var(--gptreat-primary-text-color)'
+                        colorBgContainer: 'var(--opengpts-option-card-bg-color)',
+                        colorText: 'var(--opengpts-primary-text-color)'
                     },
                     Drawer: {
                     }

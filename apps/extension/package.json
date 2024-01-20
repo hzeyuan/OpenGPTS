@@ -35,6 +35,7 @@
     "framer-motion": "^10.16.16",
     "i18next": "^23.7.16",
     "jquery": "^3.7.1",
+    "lodash": "^4.17.21",
     "nanoid": "^5.0.4",
     "next": "14.0.2",
     "nextjs-cors": "^2.2.0",
@@ -53,6 +54,8 @@
     "swr": "^2.2.4",
     "unist-util-visit-parents": "^6.0.1",
     "use-debounce": "^10.0.0",
+    "uuid": "^9.0.1",
+    "webextension-polyfill": "^0.10.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

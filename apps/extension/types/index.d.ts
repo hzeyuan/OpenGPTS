@@ -14,7 +14,7 @@ interface GPTInfo {
 	capabilities: string[][];
 	prompt: string;
 	image_url: string;
-	from ?: string;
+	from?: string;
 	created_at?: string;
 	status?: string;
 	error?: string;
@@ -48,14 +48,23 @@ interface UploadGPTInfo {
 
 interface Window {
 	relay: {
-	  description: string
-	  tryRelay: () => Promise<string>
+		description: string
+		tryRelay: () => Promise<string>
 	}
 	clientHub: {
-	  description: string
-	  connect: () => void
-	  send: (message: string) => void
-	  port?: chrome.runtime.Port
+		description: string
+		connect: () => void
+		send: (message: string) => void
+		port?: chrome.runtime.Port
 	}
-  }
-  
+}
+
+
+interface Config {
+	customChatGptWebApiUrl: string;
+	customChatGptWebApiPath: string;
+	disableWebModeHistory: boolean;
+	chatgptArkoseReqParams: string;
+	chatgptArkoseReqUrl?: string;
+	chatgptArkoseReqForm?: string;
+} 
