@@ -4,13 +4,15 @@ import TextArea from "antd/es/input/TextArea";
 import Popover from "antd/es/popover";
 import { useState } from "react";
 import _ from "lodash";
-import { Select, Space } from "antd";
+import { Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
+import { useTranslation } from "react-i18next";
 
-const PromptTextArea = ({ onChange }) => {
+const PromptTextArea = ({ value, onChange }) => {
     return (
         <div className="w-full">
             <TextArea
+                value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 5 }}
@@ -31,6 +33,7 @@ const OnePromptClonePopover: React.FC<{
     const [tools, setTools] = useState(['browser', 'dalle'])
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
+    const { t, i18n } = useTranslation();
 
 
     const handleGenerateName = async () => {
@@ -65,11 +68,17 @@ const OnePromptClonePopover: React.FC<{
             }
         })
         console.log('handleGenerateName', result)
+
+        if (!result.ok) {
+            throw new Error(`Create GPTs Name Error:${result.error}`)
+        }
+
         // 提取名称
-        // const name = result.data.split('name:')[1]?.trim()
-        const name = result.data.split('name:')[1]?.trim() || result.data.split('Name:')[1]?.trim();
-        console.log('handleGenerateName name', name)
-        
+        const output = result.data.replace(/[\n\r:'":：]/g, '').toLowerCase();
+        const name = output.split('name')[1]?.trim();
+
+        console.log('name', name)
+
         return name
     }
 
@@ -95,7 +104,15 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
-        const desc = result.data.split('Description:')[1]?.trim()
+        if (!result.ok) {
+            throw new Error(`Create GPTs Desc Error:${result.error}`)
+        }
+
+        const output = result.data.replace(/[\n\r:'":：]/g, '').toLowerCase();
+        const desc = output?.split('description')[1]?.trim()
+
+        console.log('desc', desc, output)
+
         return desc
     }
 
@@ -124,16 +141,16 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
-        console.log('handleGenerateStarters', result)
-        const starter1 = result.data.split('1:')[1]?.split('2.')[0]?.trim()
-        const starter2 = result.data.split('2.')[1]?.split('3.')[0]?.trim()
-        const starter3 = result.data.split('3.')[1]?.split('4.')[0]?.trim()
-        const starter4 = result.data.split('4.')[1]?.split('\n')[0]?.trim()
-        console.log('starter1', starter1)
-        console.log('starter2', starter2)
-        console.log('starter3', starter3)
-        console.log('starter4', starter4)
-        return _.filter([starter1, starter2, starter3, starter4], (item) => item)
+
+        if (!result.ok) {
+            throw new Error(`Create GPTs Starters Error:${result.error}`)
+        }
+        const starters = result.data.match(/(?<=\d:\s).+?(?=\s*\d:|$)/g) || [];
+
+        console.log('starters', starters)
+
+        return _.filter(starters, (item) => item.trim());
+
     }
 
     const handleGeneratePrompt = async (name, desc) => {
@@ -155,6 +172,10 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
+        if (!result.ok) {
+            throw new Error(`Create GPTs Prompt Error:${result.error}`)
+        }
+
         console.log('handleGeneratePrompt', result)
         // 提取名称
         const answer = result.data.split('Current GPTs Prompt:')[1]?.trim()
@@ -213,9 +234,10 @@ const OnePromptClonePopover: React.FC<{
             console.log('prompt', prompt)
             console.log('starters', starters)
 
-
-            // 创建新的gizmo
-            const newGizmo = await sendToBackground({
+            const GPTsResult: {
+                data: Gizmo,
+                error: string
+            } = await sendToBackground({
                 name: 'openai',
                 body: {
                     action: 'create',
@@ -231,6 +253,7 @@ const OnePromptClonePopover: React.FC<{
                     tools: tools
                 }
             })
+            const newGizmo = GPTsResult.data
             notificationApi.success({
                 message: 'Create GPTs Success',
                 description: <div>You can See At <a href={newGizmo.short_url} target="_blank"> {newGizmo.short_url}</a></div>
@@ -238,7 +261,7 @@ const OnePromptClonePopover: React.FC<{
             console.log('newGizmo', newGizmo)
 
         } catch (error) {
-
+            message.error(error.message)
         } finally {
             setLoading(false)
             setOpen(false)
@@ -251,9 +274,9 @@ const OnePromptClonePopover: React.FC<{
     }
     const content = (
         <div>
-            <h3 className="pb-3 text-sm font-normal text-gray-500 ">One prompt  quickly create new GPTs</h3>
-            <PromptTextArea onChange={setPrompt} ></PromptTextArea>
-            <div className="block py-2 font-medium text-token-text-primary">Capabilities</div>
+            <h3 className="pb-3 text-sm font-normal text-gray-500 ">{t('onePromptCreationText')}</h3>
+            <PromptTextArea value={prompt} onChange={setPrompt} ></PromptTextArea>
+            <div className="block py-2 font-medium text-token-text-primary">{t('capabilitiesLabel')}</div>
             <div className="pb-2">
                 <Select
                     mode="multiple"
@@ -264,13 +287,13 @@ const OnePromptClonePopover: React.FC<{
                     onChange={(value) => setTools(value)}
                     options={[
                         {
-                            label: 'Web Browsing',
+                            label: t('webBrowsing'),
                             value: 'browser',
                         }, {
-                            label: 'DALL·E Image Generation',
+                            label: t('imageGeneration'),
                             value: 'dalle'
                         }, {
-                            label: 'Code Interpreter',
+                            label: t('codeInterpreter'),
                             value: 'python'
                         }
                     ]}
@@ -278,16 +301,16 @@ const OnePromptClonePopover: React.FC<{
             </div>
             {/* 确定，关闭 */}
             <footer className="flex items-center justify-end mt-2 gap-x-2 ">
-                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">Confirm</Button>
-                <Button onClick={handleClose} type="link" size="small">Cancel</Button>
+                <Button onClick={handleClose} type="link" size="small">{t('Cancel')}</Button>
+                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">{t('Confirm')}</Button>
+
             </footer>
         </div>
     )
 
     return (
         <Popover
-
-            title='One Prompt GPTS builder'
+            title={t('selectLanguageTitle')}
             trigger="click"
             open={open}
             content={content}>

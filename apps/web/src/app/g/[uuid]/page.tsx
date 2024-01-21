@@ -1,8 +1,8 @@
-import { BsDownload } from "react-icons/bs";
+// import { BsDownload } from "react-icons/bs";
 import { Gpts } from "../../types/gpts";
 import GptsDetail from "../../components/GptsDetail";
-import Image from "next/image";
-import extensionSrc from "@/public/extension.png";
+// import Image from "next/image";
+// import extensionSrc from "@/public/extension.png";
 import { findByUuid } from "../../models/gpts";
 
 async function getData(uuid: string): Promise<Gpts | undefined> {
@@ -20,7 +20,7 @@ export default async ({ params }: { params: { uuid: string } }) => {
 
   return (
     <section className="relatve">
-      <div className="mx-auto w-full max-w-7xl px-5 py-2">
+      <div className="w-full px-5 py-2 mx-auto max-w-7xl">
         {data && <GptsDetail gpts={data} />}
       </div>
     </section>

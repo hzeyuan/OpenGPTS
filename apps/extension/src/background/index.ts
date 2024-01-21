@@ -83,3 +83,13 @@ Browser.webRequest.onBeforeRequest.addListener(
     },
     ['requestBody'],
 )
+
+
+
+storage.setItem('config', {
+    ...defaultConfig,
+})
+
+chrome.sidePanel
+    .setPanelBehavior({ openPanelOnActionClick: true })
+    .catch((error) => console.error(error));

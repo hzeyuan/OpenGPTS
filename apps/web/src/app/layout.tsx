@@ -5,15 +5,15 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
+import Gradient from './components/Gradient'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GPTs Works - Third-party GPTs store",
+  title: "OpenGPTs  - The Best GPTs Copilot",
   description:
-    "GPTs Works is a Third-party GPTs store. Support seach GPTs by chatting.",
+    "OpenGPTs GPTs Copilot, Chatgpt GPTs Manager",
   keywords:
-    "GPTs, GPTs store, GPTs Works, ChatGPT, OpenAI GPTs, vector search GPTs",
+    "GPTs, GPTs store, GPTs Works, ChatGPT, OpenAI GPTs, vector search GPTs, GPTs Manager",
 };
 
 export default function RootLayout({
@@ -29,15 +29,25 @@ export default function RootLayout({
       <body className={inter.className}>
         <main>
           <Header />
-          {children}
+          <div className="absolute flex place-items-center">
+            <div className="font-sans w-auto pb-16 pt-[48px] md:pb-24 lg:pb-32 md:pt-16 lg:pt-20 flex justify-between gap-8 items-center flex-col relative z-0">
+              <Gradient
+                className="top-[-500px] opacity-[0.15] w-[1000px] h-[1000px]"
+                conic
+              />
+            </div>
+          </div>
+          <div className="relative z-50 ">
+            {children}
+          </div>
           <Footer />
         </main>
 
-        <script
+        {/* <script
           defer
           data-domain="gpts.works"
           src="https://plausible.io/js/script.js"
-        ></script>
+        ></script> */}
       </body>
     </html>
   );
