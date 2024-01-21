@@ -50,6 +50,8 @@
 2. 等待数据同步完成
 3. 如果想临时中断同步，可以关闭侧边栏，再打开。
 
+![演示效果图](https://github.com/hzeyuan/OpenGPTS/blob/master/images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
+
 
 
 
