@@ -18,8 +18,7 @@ import type { ThemeMode } from "~index";
 import { useTranslation } from 'react-i18next';
 import GPTsCreatorPanel from '~src/components/GPTsCreatorPanel';
 import settingIcon from '~assets/settings.svg';
-import zhCN from 'antd/locale/zh_CN';
-import enUS from 'antd/locale/en_US';
+
 
 const shakeAnimation = {
     scale: 0.85,
@@ -121,8 +120,6 @@ function IndexSidePanel() {
                     }
                 }
             }}
-            locale={language === 'en' ? enUS : zhCN}
-
         >
             <StyleProvider >
                 <div
@@ -169,7 +166,7 @@ function IndexSidePanel() {
                                 </div>
                             </TabList>
                             {/* <div className='bg-[var(--opengpts-option-card-bg-color)]'> */}
-                            {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>{item.panel}</TabPanel>)}
+                                {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>{item.panel}</TabPanel>)}
                             {/* </div> */}
                         </div>
                     </Tabs>

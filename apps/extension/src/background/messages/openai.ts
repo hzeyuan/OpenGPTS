@@ -285,9 +285,8 @@ export async function generateAnswersWithChatgptWebApi(session: {
     modelName?: string;
     gizmoId?: string;
 }, authorization: string): Promise<{
-    ok: boolean;
-    data?: string;
-    error?: string
+    done: boolean;
+    answer: string;
 }> {
     session.messageId = uuidv4()
     if (session.parentMessageId == null) {
@@ -295,8 +294,8 @@ export async function generateAnswersWithChatgptWebApi(session: {
     }
     const question = session.question
     if (!question) return {
-        ok: false,
-        error: 'question is empty',
+        done: false,
+        answer: ''
     }
     // const { controller, messageListener, disconnectListener } = setAbortController(port, null, () => {
     //     if (session.autoClean) deleteConversation(accessToken, session.conversationId)
@@ -307,7 +306,10 @@ export async function generateAnswersWithChatgptWebApi(session: {
 
     console.log('config', config)
     if (!config) {
-        return { ok: false, error: 'config is empty' }
+        return {
+            done: false,
+            answer: ''
+        }
     }
 
     const models = await getModels()
@@ -357,7 +359,7 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 .then((resp) => resp.token)
                 .catch(() => null)
             : null
-        // console.debug('arkoseToken', arkoseToken)
+        console.debug('arkoseToken', arkoseToken)
         if (needArkoseToken && !arkoseToken)
             throw new Error(
                 // t('Failed to get arkose token.') +
@@ -414,9 +416,13 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 // console.debug('sse message', message)
                 if (message.trim() === '[DONE]') {
                     // pushRecord(session, question, answer)
+                    console.log("answer", answer)
                     // console.debug('conversation history', { content: session.conversationRecords })
                     // port.postMessage({ answer: null, done: true, session: session })
-                    resolve({ ok: true, data: answer })
+                    resolve({
+                        done: true,
+                        answer
+                    })
                     return answer
                 }
                 let data
@@ -448,9 +454,13 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 // sendModerations(accessToken, question, session.conversationId, session.messageId)
             },
             async onEnd() {
+                // port.postMessage({ done: true })
                 // port.onMessage.removeListener(messageListener)
                 // port.onDisconnect.removeListener(disconnectListener)
-                resolve({ ok: true, data: answer })
+                resolve({
+                    done: true,
+                    answer,
+                })
             },
             async onError(resp) {
                 // port.onMessage.removeListener(messageListener)
@@ -504,7 +514,7 @@ const checkGPTWebAuth = async () => {
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     let error = '';
-    const { action, discovery, gizmoId, gizmo, record } = req.body;
+    const { action, discovery, gizmoId, gizmo } = req.body;
 
     const authorization = await storage.getItem('Authorization')
     try {
@@ -578,8 +588,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             })
         } else if (action === 'chatWithWeb') {
             const result = await generateAnswersWithChatgptWebApi(req.body.session, authorization)
-            console.debug('result', result)
-            res.send(result)
+            console.log('result', result)
+            res.send({
+                ok: result.done,
+                error: '',
+                data: result.answer
+            })
+
         } else if (action == 'getModels') {
             const models = await getModels()
             res.send({
@@ -606,10 +621,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             const tools = req.body.tools || []
             const newGizmo = await createGPT(gizmo, tools)
             console.log('createGPT', newGizmo)
-            await createItem({
-                ...newGizmo,
-                record
-            })
+            await createItem(newGizmo)
             res.send({
                 ok: true,
                 error: '',

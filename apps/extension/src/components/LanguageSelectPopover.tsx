@@ -1,9 +1,7 @@
 import { sendToBackground } from "@plasmohq/messaging";
 import { Button, Popover, Select, Space, Switch } from "antd"
-import type { NotificationInstance } from "antd/es/notification/interface";
 import { useState } from "react";
-import _ from 'lodash'
-import { useTranslation } from "react-i18next";
+
 
 const LanguageSelect = ({ onChange }) => {
     const languages = [
@@ -63,16 +61,11 @@ const LanguageSelect = ({ onChange }) => {
 
 }
 
-const LanguageSelectPopover: React.FC<{
-    gizmo: Gizmo,
-    notificationApi: NotificationInstance
-}> = ({ gizmo, notificationApi }) => {
+const LanguageSelectPopover = ({ gizmo, notificationApi }) => {
 
     const [language, setLanguage] = useState('zh')
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
-
-    const { t, i18n } = useTranslation();
     const handleConfirm = async () => {
         console.debug('language', language)
 
@@ -123,92 +116,54 @@ const LanguageSelectPopover: React.FC<{
                     
                     Here is demo:
                     Demo GPTs:
-                    {title: Quantum Physics
-                    description: This GPT helps users understand complex concepts in quantum physics by simplifying them into more comprehensible explanations.
-                    starter: "Please explain the concept of quantum entanglement in simple terms."
-                    prompt: "Create easy-to-understand explanations for complex quantum physics topics, focusing on breaking down advanced concepts into simpler, more digestible information suitable for beginners. Emphasize clarity and avoid technical jargon."
+                    {Title: Quantum Physics
+                    Description: This GPT helps users understand complex concepts in quantum physics by simplifying them into more comprehensible explanations.
+                    Starter: "Please explain the concept of quantum entanglement in simple terms."
+                    Prompt: "Create easy-to-understand explanations for complex quantum physics topics, focusing on breaking down advanced concepts into simpler, more digestible information suitable for beginners. Emphasize clarity and avoid technical jargon."
                     }
                     
                     Demo User Instruction
                     "Make the GPT more interactive and suitable for high school students. Include analogies and ask guiding questions to encourage deeper thinking."
                     
                     Demo Modified GPT Structure
-                    {title: Quantum Physics for High School Students
-                    description: This GPT engages high school students in quantum physics by using analogies and interactive questions, making complex concepts more accessible and thought-provoking.
-                    starter: "How can we relate quantum entanglement to something you experience in your daily life? Think about connections that are instant and inseparable."
-                    prompt: "Craft explanations for quantum physics topics using everyday analogies and interactive questions, tailored for high school students. Focus on simplifying advanced concepts into relatable, engaging content that stimulates curiosity and deeper understanding. Encourage exploration and critical thinking by integrating thought-provoking questions into the explanations."}
+                    {Title: Quantum Physics for High School Students
+                    Description: This GPT engages high school students in quantum physics by using analogies and interactive questions, making complex concepts more accessible and thought-provoking.
+                    Starter: "How can we relate quantum entanglement to something you experience in your daily life? Think about connections that are instant and inseparable."
+                    Prompt: "Craft explanations for quantum physics topics using everyday analogies and interactive questions, tailored for high school students. Focus on simplifying advanced concepts into relatable, engaging content that stimulates curiosity and deeper understanding. Encourage exploration and critical thinking by integrating thought-provoking questions into the explanations."}
                     
-                    Current User instruction: Please modify language to ${language}
+                    Current User instruction: 将当前的gpts修改为语言:${language} 
                     Current GPTs: 
-                    {title: ${gizmo.display.name}
-                    description:${gizmo.display.description}
-                    starter: ${gizmo.display.prompt_starters.join(',')}
-                    prompt: ${gizmo.instructions}
+                    {Title: ${gizmo.display.name}
+                    Description:${gizmo.display.description}
+                    Starter: ${gizmo.display.prompt_starters.join(',')}
+                    Prompt: ${gizmo.instructions}
                     }
                     `,
                 },
             }
         })
-        if (result.error) {
-            notificationApi.error({
-                message: `Update GPTs: ${result.error}`,
-            });
-            setLoading(false)
-            setOpen(false)
-            return
-        }
-        const output = (result?.data || '')
-            .replace(/[\n\r]+/g, ' ')
-            .replace(/['"]+/g, '')
-            .replace(/\s{2,}/g, ' ')
-            .replace(/[\{\}]/g, '')
-            .toLowerCase()
-            .trim();
-
-        const extractWithRegex = (text, startPattern, endPattern) => {
-            const pattern = new RegExp(`${startPattern}(.*?)${endPattern}`, 'is');
-            const match = text.match(pattern);
-            return match ? match[1].trim() : '';
-        };
-
-        const titlePattern = 'title:';
-        const descriptionPattern = 'description:';
-        const starterPattern = 'starter:';
-        const promptPattern = 'prompt:';
-
-        const name = extractWithRegex(output, titlePattern, descriptionPattern);
-        const desc = extractWithRegex(output, descriptionPattern, starterPattern);
-        const startersStr = extractWithRegex(output, starterPattern, promptPattern);
-        const instructions = extractWithRegex(output, promptPattern, '$'); // Assuming prompt is the last section
-        const starters = startersStr ? startersStr.split(',').map(item => item.trim()) : [];
-        console.log('result?.data', output)
-        console.log('name', name, 'desc', desc, 'starters', starters, 'instructions', instructions)
-
-        // Sending a request to create the modified GPTs
+        const name = result?.data?.split('Title:')[1]?.split('Description:')[0]?.trim()
+        const desc = result?.data?.split('Description:')[1]?.split('Starter:')[0]?.trim()
+        const startersStr = result?.data?.split('Starter:')[1]?.split('Prompt:')[0]?.trim()
+        const instructions = result?.data?.split('Prompt:')[1]?.trim()
+        const starters = startersStr?.split(',')?.map((item) => item.trim()) || []
         const GPTsResult: {
             data: Gizmo,
             error: string
         } = await sendToBackground({
             name: 'openai',
             body: {
-                action: 'create',
+                action: 'update',
+                gizmoId: gizmo.id,
                 gizmo: {
                     display: {
                         name,
                         description: desc || "",
                         prompt_starters: starters,
-                        welcome_message: "",
-                        profile_picture_url: gizmo.display.profile_picture_url
+                        welcome_message: ""
                     },
                     instructions: instructions
                 },
-                record: {
-                    action: 'translate',
-                    log: {
-                        language: language,
-                        gizmo: gizmo,
-                    }
-                }
             }
         })
         console.log('GPTsResult.data', GPTsResult)
@@ -222,6 +177,7 @@ const LanguageSelectPopover: React.FC<{
                 description: <div>You can See At <a href={GPTsResult.data?.short_url} target="_blank"> {GPTsResult.data?.short_url}</a></div>
             });
         }
+
         setLoading(false)
         setOpen(false)
 
@@ -231,11 +187,11 @@ const LanguageSelectPopover: React.FC<{
     }
     const content = (
         <div>
-            <h3 className="pb-3 text-sm font-normal text-gray-500 ">{t('changeLanguageText')} </h3>
+            <h3 className="pb-3 text-sm font-normal text-gray-500 ">You can Change GPT language </h3>
             <LanguageSelect onChange={setLanguage} ></LanguageSelect>
             <footer className="flex items-center justify-end mt-2 gap-x-2 ">
-                <Button onClick={handleClose} type="link" size="small">{t('Cancel')}</Button>
-                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">{t('Confirm')}</Button>
+                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">Confirm</Button>
+                <Button onClick={handleClose} type="link" size="small">Cancel</Button>
             </footer>
         </div>
     )
@@ -243,7 +199,7 @@ const LanguageSelectPopover: React.FC<{
     return (
         <Popover
             destroyTooltipOnHide
-            title={t('onePromptBuilderTitle')}
+            title='Select Language'
             trigger="click"
             open={open}
             key={'LanguageSelectPopover'}

@@ -1,7 +1,7 @@
 import { CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
 import { sendToBackground } from '@plasmohq/messaging';
-import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message } from 'antd';
+import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification } from 'antd';
 import Browser from "webextension-polyfill";
 import { Storage } from "@plasmohq/storage";
 import type { Key } from 'react';
@@ -14,7 +14,6 @@ import LanguageSelectPopover from './LanguageSelectPopover';
 import OnePromptClonePopover from './OnePromptClonePopover';
 import GPTForm from './GPTForm';
 import openaiSvg from "data-base64:~assets/openai.svg"
-import { useTranslation } from 'react-i18next';
 
 const storage = new Storage({
   area: "local",
@@ -31,14 +30,12 @@ export default () => {
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [spinning, setSpinning] = useState(false)
   const [syncing, setSyncing] = useState(false)
-
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: Key[]) => setSelectedRowKeys(keys),
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
-  const { t, i18n } = useTranslation();
   const [notificationApi, notificationContextHolder] = notification.useNotification();
   const [modal, modalContextHolder] = Modal.useModal();
 
@@ -100,9 +97,7 @@ export default () => {
         content: (
           <div
           >
-            <Tooltip title={gizmo.instructions}>
-              <div className="mx-2 my-1 text-xs truncate whitespace-pre-wrap line-clamp-5">{gizmo.instructions || "暂无prompt"}</div>
-            </Tooltip>
+            <div className="mx-2 my-1 text-xs truncate whitespace-pre-wrap line-clamp-2">{gizmo.instructions || "暂无prompt"}</div>
           </div>
         ),
       }
@@ -150,7 +145,7 @@ export default () => {
     }
 
     let cursor = ''
-    messageApi.info(t('syncStart'));
+    messageApi.info('开始同步ChatGPT中的GPTs');
     setSyncing(true)
     const refreshInterval = setInterval(handleGetGptsList, 1000);
     while (true) {
@@ -181,7 +176,7 @@ export default () => {
         break
       }
     }
-    messageApi.success(t('syncComplete'));
+    messageApi.success('同步完成');
     setSyncing(false)
     clearInterval(refreshInterval)
   }
@@ -214,19 +209,19 @@ export default () => {
       messageApi.error(result?.error)
       return
     }
-    messageApi.success(t('shareSuccess', { name: gizmo.display.name }));
+    messageApi.success(`Share ${gizmo.display.name} success`);
   }
 
   const handleUpdatedGPT = (gizmo, values) => {
     hideModal()
-    messageApi.success(t('updateSuccess', { name: gizmo.name }));
+    messageApi.success(`update ${gizmo.name} success`);
   }
 
   const handleGoGPTs = (gizmo: Gizmo) => {
     console.log('gizmo.tags', gizmo.tags)
     if (gizmo.tags?.includes('private')) {
       window.open(`https://chat.openai.com/gpts/editor/${gizmo.short_url}`)
-      messageApi.warning(t('privateGPTWarning'));
+      messageApi.warning('Private GPT can not chat,So we open the editor for you')
       return
     } else {
       window.open(`https://chat.openai.com/g/${gizmo.short_url}`)
@@ -234,7 +229,7 @@ export default () => {
   }
 
   const handleCopyGPTInfo = (gizmo: Gizmo) => {
-    messageApi.success(t('copySuccess', { name: gizmo.display.name }));
+    messageApi.success(`copy ${gizmo.display.name} at clipboard success`);
     navigator.clipboard.writeText(JSON.stringify(gizmo))
   }
 
@@ -248,15 +243,15 @@ export default () => {
 
   const handleEditGPT = (gizmo: Gizmo) => {
     console.log('handleEditGPT')
-    setCurGizmo(gizmo)
     setOpen(true)
+    setCurGizmo(gizmo)
   }
 
   const handlePublish = async (gizmo: Gizmo) => {
     const gizmoId = gizmo.id
     const isPublic = gizmo?.tags?.includes('public')
     if (isPublic) {
-      messageApi.error(t('publishError'));
+      messageApi.error('Public GPT can not publish Again')
       return
     }
     try {
@@ -268,27 +263,10 @@ export default () => {
         },
         extensionId: Browser.runtime.id,
       })
-      messageApi.success(t('publishSuccess'));
+      messageApi.success('Publish Success');
     } catch (error) {
       messageApi.error(error)
     }
-  }
-
-  const handleBatchDelete = async (gizmoIds, onCleanSelected) => {
-    console.log('selectedRowKeys', gizmoIds)
-    try {
-      setSpinning(true)
-      onCleanSelected()
-      for (let gizmoId of gizmoIds) {
-        await handleRemoveGPT(gizmoId)
-      }
-      messageApi.success(t('deleteSuccess'));
-    } catch (error) {
-      messageApi.error(error)
-    } finally {
-      setSpinning(false)
-    }
-
   }
 
   useEffect(() => {
@@ -303,7 +281,7 @@ export default () => {
   })
 
   return (
-    <div className='py-2 bg-[var(--opengpts-option-card-bg-color)] h-full'>
+    <div className='py-2 bg-[var(--opengpts-option-card-bg-color)]'>
 
       <div className='mx-4'>
         <div className='mb-2 text-2xl font-semibold '><Typography.Title level={2}>Open GPTS</Typography.Title></div>
@@ -317,7 +295,7 @@ export default () => {
                 handleAsyncGptsList()
               }}
             >
-              {t('AsyncGPTsFromChatGPT')}
+              同步GPTS数据
             </Button>
           </Tooltip>
           <OnePromptClonePopover
@@ -325,9 +303,48 @@ export default () => {
           >
             <Button
             >
-              {t('CloneGPT')}
+              一键生成GPTs
             </Button>
           </OnePromptClonePopover>
+
+          {/* <Button
+            size="small"
+            key="testChat"
+            loading={syncing}
+            type="primary"
+            onClick={() => {
+              sendToBackground({
+                name: "openai",
+                body: {
+                  action: 'chatWithWeb',
+                  question: '你好',
+                  session: {
+                    gizmoId: 'g-9D86OXon4',
+                  },
+                },
+                extensionId: Browser.runtime.id,
+              })
+            }}
+          >
+            测试对话
+          </Button> */}
+          {/* <Button
+            key="getModels"
+            size="small"
+            loading={syncing}
+            type="primary"
+            onClick={() => {
+              sendToBackground({
+                name: "openai",
+                body: {
+                  action: 'getModels',
+                },
+                extensionId: Browser.runtime.id,
+              })
+            }}
+          >
+            获取模型列表
+          </Button> */}
 
         </div>
       </div>
@@ -400,11 +417,9 @@ export default () => {
                     </div>
                     {/* Delete GPT */}
                     <Popconfirm
-                      title={t('confirmDeleteTitle')}
-                      description={t('confirmDeleteDescription')}
+                      title="Delete the GPT"
+                      description="Are you sure to delete this GPT?"
                       onConfirm={() => handleRemoveGPT(record.id)}
-                      okText={t('Confirm')}
-                      cancelText={t('Cancel')}
                       icon={<DeleteOutlined style={{ color: 'red' }} />}
                     >
                       <div
@@ -415,11 +430,9 @@ export default () => {
                     </Popconfirm>
                     {/* share to Store */}
                     <Popconfirm
-                      title={t('shareGPTTitle')}
-                      description={t('shareGPTDescription')}
+                      title="Share My GPT Store"
+                      description="Are you sure to Share this GPT to Our GPT Store?"
                       onConfirm={() => handleShareGPT(record.gizmo)}
-                      okText={t('Confirm')}
-                      cancelText={t('Cancel')}
                       icon={<ShareAltOutlined style={{ color: '' }} />}
                     >
                       <div
@@ -438,10 +451,8 @@ export default () => {
                       </div>
                     </OnePromptClonePopover>
                     <Popconfirm
-                      title={t('publishGPTTitle')}
-                      description={t('publishGPTDescription')}
-                      okText={t('Confirm')}
-                      cancelText={t('Cancel')}
+                      title="Publish the GPT"
+                      description="Are you sure to Publish this GPT?"
                       onConfirm={() => handlePublish(record.gizmo)}
                       icon={<SendOutlined style={{ color: 'blueviolet' }} />}
                     >
@@ -460,23 +471,44 @@ export default () => {
           }}
           toolbar={{
             title: <div className='flex items-center gap-x-2'>
-              <span className=' whitespace-nowrap'>{t('MyGPTs')}</span>
-              <Tag color='#2196F3'>{t('Count')}: {GPTSCount}</Tag>
-              <Tag color='#4CAF50'>{t('Pinned')}: {PinnedCount}</Tag>
-              <Tag color='#5BD8A6'>{t('Public')}: {PublicCount}</Tag>
-              <Tag color='#FFA500'>{t('Private')}: {PrivateCount}</Tag>
+              <span className=' whitespace-nowrap'>My GPTS</span>
+              <Tag color='#2196F3'>Count: {GPTSCount}</Tag>
+              <Tag color='#4CAF50'>Pinned: {PinnedCount}</Tag>
+              <Tag color='#5BD8A6'>Public: {PublicCount}</Tag>
+              <Tag color='#FFA500'>Private: {PrivateCount}</Tag>
             </div>,
-
+            // menu: {
+            //   activeKey,
+            //   items: [
+            //     {
+            //       key: 'tab1',
+            //       label: (
+            //         <span>全部实验室{renderBadge(99, activeKey === 'tab1')}</span>
+            //       ),
+            //     },
+            //     {
+            //       key: 'tab2',
+            //       label: (
+            //         <span>
+            //           我创建的实验室{renderBadge(32, activeKey === 'tab2')}
+            //         </span>
+            //       ),
+            //     },
+            //   ],
+            //   onChange(key) {
+            //     setActiveKey(key);
+            //   },
+            // },
             search: false,
             actions: [
               <Dropdown
                 menu={{
                   items: [{
                     key: 'desc',
-                    label: t('HighToLow'),
+                    label: '从高到低',
                   }, {
                     key: 'asc',
-                    label: t('LowToHigh'),
+                    label: '从低到高',
                   }],
                   selectable: true,
                   defaultSelectedKeys: ['desc'],
@@ -486,7 +518,7 @@ export default () => {
                 }}
               >
                 <div className='flex items-center justify-center w-full'>
-                  <span className=' min-w-[64px]'>{sortOrder === 'desc' ? t('HighToLow') : t('LowToHigh')}</span>
+                  <span className=' min-w-[56px]'>{sortOrder === 'desc' ? '从高到低' : '从低到高'}</span>
                   <DownOutlined />
                 </div>
 
@@ -496,16 +528,16 @@ export default () => {
                   items: [
                     {
                       key: 'time',
-                      label: t('sort.byTime'), // Translated label
+                      label: '按时间排序',
                     }, {
                       key: 'chat',
-                      label: t('sort.byChats'), // Translated label
+                      label: '按聊天数排序',
                     }, {
                       key: 'user',
-                      label: t('sort.byUsers'), // Translated label
+                      label: '按用户数排序',
                     }, {
                       key: 'pin',
-                      label: t('sort.byPins'), // Translated label
+                      label: '按收藏数排序',
                     }],
                   selectable: true,
                   defaultSelectedKeys: ['time'],
@@ -515,12 +547,12 @@ export default () => {
                 }}
               >
                 <div className='flex items-center justify-center w-full'>
-                  <span className=' min-w-[48px]'>
+                  <span className=' min-w-[85px]'>
                     {
-                      sortType === 'time' ? t('sort.byTime') :
-                        sortType === 'chat' ? t('sort.byChats') :
-                          sortType === 'user' ? t('sort.byUsers') :
-                            sortType === 'pin' ? t('sort.byPins') : ''
+                      sortType === 'time' ? '按时间排序' :
+                        sortType === 'chat' ? '按聊天数排序' :
+                          sortType === 'user' ? '按用户数排序' :
+                            sortType === 'pin' ? '按收藏数排序' : ''
                     }
                   </span>
                   <DownOutlined />
@@ -528,7 +560,7 @@ export default () => {
               </Dropdown>,
               <Search onSearch={(value) => { handleGetGptsList(value) }} placeholder="input search text" allowClear />,
               <Button onClick={handleReset} type="primary" key="primary">
-                {t('Reset')}
+                重置
               </Button>,
             ],
 
@@ -589,18 +621,8 @@ export default () => {
           }}
           rowKey={(record) => record.id}
           itemLayout="vertical"
-          headerTitle={t('modal.openGPTS')}
+          headerTitle="Open GPTS"
           rowSelection={rowSelection}
-          tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
-            return (
-              <Space size={16}>
-                <Button danger onClick={() => handleBatchDelete(selectedRowKeys, onCleanSelected)}>删除</Button>
-                {/* <span>
-                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
-                </span> */}
-              </Space>
-            )
-          }}
           dataSource={dataSource}
 
           pagination={{
@@ -619,7 +641,7 @@ export default () => {
       {contextHolder}
       {notificationContextHolder}
       <Modal
-        title={t('modal.editGPT')}
+        title="Edit GPT"
         open={open}
         onOk={hideModal}
         onCancel={hideModal}

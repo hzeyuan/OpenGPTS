@@ -40,7 +40,6 @@ function IndexOptions() {
     ]
 
 
-
     const handleChangeTheme = (e) => {
         console.log('e.target.value', e.target.value)
         setTheme(e.target.value)
@@ -74,7 +73,7 @@ function IndexOptions() {
                             <Title level={3}>{t('Theme')}</Title>
                             <div className='content-box'>
                                 <div className="option-box">
-                                    <Radio.Group value={theme} onChange={handleChangeTheme}>
+                                    <Radio.Group defaultValue={theme} onChange={handleChangeTheme}>
                                         <Space direction="vertical">
                                             <Radio value={'auto'}> <span className='text-base font-bold'>{t('Auto')}</span></Radio>
                                             <Radio value={'light'}><span className='text-base font-bold'>{t('Light')}</span></Radio>
@@ -88,7 +87,7 @@ function IndexOptions() {
                             <Title level={3}>{t('Language')}</Title>
                             <div className='content-box'>
                                 <div className="option-box">
-                                    <Radio.Group value={language} onChange={handleChangeLanguage}>
+                                    <Radio.Group defaultValue={language} onChange={handleChangeLanguage}>
                                         <Space direction="vertical">
                                             <Radio value={'en'}><span className='text-base font-bold'>English</span></Radio>
                                             <Radio value={'zh'}><span className='text-base font-bold'>中文</span></Radio>
