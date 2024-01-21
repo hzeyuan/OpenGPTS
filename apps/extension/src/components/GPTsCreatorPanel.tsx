@@ -1,7 +1,7 @@
 import { CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
 import { sendToBackground } from '@plasmohq/messaging';
-import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification } from 'antd';
+import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message } from 'antd';
 import Browser from "webextension-polyfill";
 import { Storage } from "@plasmohq/storage";
 import type { Key } from 'react';
@@ -97,7 +97,9 @@ export default () => {
         content: (
           <div
           >
-            <div className="mx-2 my-1 text-xs truncate whitespace-pre-wrap line-clamp-2">{gizmo.instructions || "暂无prompt"}</div>
+            <Tooltip title={gizmo.instructions}>
+              <div className="mx-2 my-1 text-xs truncate whitespace-pre-wrap line-clamp-5">{gizmo.instructions || "暂无prompt"}</div>
+            </Tooltip>
           </div>
         ),
       }
@@ -243,8 +245,8 @@ export default () => {
 
   const handleEditGPT = (gizmo: Gizmo) => {
     console.log('handleEditGPT')
-    setOpen(true)
     setCurGizmo(gizmo)
+    setOpen(true)
   }
 
   const handlePublish = async (gizmo: Gizmo) => {
@@ -267,6 +269,23 @@ export default () => {
     } catch (error) {
       messageApi.error(error)
     }
+  }
+
+  const handleBatchDelete = async (gizmoIds, onCleanSelected) => {
+    console.log('selectedRowKeys', gizmoIds)
+    try {
+      setSpinning(true)
+      onCleanSelected()
+      for (let gizmoId of gizmoIds) {
+        await handleRemoveGPT(gizmoId)
+      }
+      messageApi.success('Delete Success');
+    } catch (error) {
+      messageApi.error(error)
+    } finally {
+      setSpinning(false)
+    }
+
   }
 
   useEffect(() => {
@@ -623,6 +642,16 @@ export default () => {
           itemLayout="vertical"
           headerTitle="Open GPTS"
           rowSelection={rowSelection}
+          tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
+            return (
+              <Space size={16}>
+                <Button danger onClick={() => handleBatchDelete(selectedRowKeys, onCleanSelected)}>删除</Button>
+                {/* <span>
+                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
+                </span> */}
+              </Space>
+            )
+          }}
           dataSource={dataSource}
 
           pagination={{

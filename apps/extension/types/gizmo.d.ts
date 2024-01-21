@@ -50,4 +50,8 @@ interface Gizmo {
     appeal_info: null | object;
     vanity_metrics: VanityMetrics;
     workspace_approved: null | boolean;
+    record?: {
+        action: string;
+        log: Object
+    }
 }

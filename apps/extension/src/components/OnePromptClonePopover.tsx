@@ -4,13 +4,14 @@ import TextArea from "antd/es/input/TextArea";
 import Popover from "antd/es/popover";
 import { useState } from "react";
 import _ from "lodash";
-import { Select, Space } from "antd";
+import { Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
 
-const PromptTextArea = ({ onChange }) => {
+const PromptTextArea = ({ value, onChange }) => {
     return (
         <div className="w-full">
             <TextArea
+                value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 5 }}
@@ -46,8 +47,17 @@ const OnePromptClonePopover: React.FC<{
             }
         })
         console.log('handleGenerateName', result)
+
+        if (!result.ok) {
+            throw new Error(`Create GPTs Name Error:${result.error}`)
+        }
+
         // 提取名称
-        const name = result.data.split('name:')[1]?.trim()
+        const output = result.data.replace(/[\n\r:'":：]/g, '').toLowerCase();
+        const name = output.split('name')[1]?.trim();
+
+        console.log('name', name)
+
         return name
     }
 
@@ -59,11 +69,19 @@ const OnePromptClonePopover: React.FC<{
             body: {
                 action: 'chatWithWeb',
                 session: {
-                    question: `As a GPTs builder, create a one-sentence description for the given user request, Inside, there is a title for GPTs and a colloquial description provided by the user. Ensuring that the description are succinct, fitting, and align with the user's input language. For example: - User Request: '{Title: ChatPaper, Input: Create a GPT for automatic research paper summarization}' Expected Output: 'Description: An AI-driven tool for concise and accurate summarization of research papers.' - User Request: '{Title:Virtual Friend, Input:Create a GPT for emotional chatting}' Expected Output: 'Description: A chatbot designed to understand and respond to emotional conversations.' - User Request: '{Title: Logo创建机器人. Input:帮我创建一个logo创建gpts}' Expected Output: 'Description: 一个智能AI工具，用于创造和定制公司标志。' Your task: Based on the user request '{}', formulate a suitable title and description in the format 'Description: xxx.'" Current User Request:{Input:${prompt}`,
+                    question: `As a GPTs builder, create a one-sentence description for the given user' request, Inside, there is a title for GPTs and a colloquial description provided by the user. Ensuring that the description are succinct, fitting, and align with the user's input language. For example: - User Request: '{Title: ChatPaper, Input: Create a GPT for automatic research paper summarization}' Expected Output: 'Description: An AI-driven tool for concise and accurate summarization of research papers.' - User Request: '{Title:Virtual Friend, Input:Create a GPT for emotional chatting}' Expected Output: 'Description: A chatbot designed to understand and respond to emotional conversations.' - User Request: '{Title: Logo创建机器人. Input:帮我创建一个logo创建gpts}' Expected Output: 'Description: 一个智能AI工具，用于创造和定制公司标志。' Your task: Based on the user request '{}', formulate a suitable title and description in the format 'Description: xxx.'" Current User Request:{Input:${prompt}`,
                 },
             }
         })
-        const desc = result.data.split('Description:')[1]?.trim()
+        if (!result.ok) {
+            throw new Error(`Create GPTs Desc Error:${result.error}`)
+        }
+
+        const output = result.data.replace(/[\n\r:'":：]/g, '').toLowerCase();
+        const desc = output?.split('description')[1]?.trim()
+
+        console.log('desc', desc, output)
+
         return desc
     }
 
@@ -80,12 +98,16 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
-        console.log('handleGenerateStarters', result)
-        const starter1 = result.data.split('1:')[1]?.split('2.')[0]?.trim()
-        const starter2 = result.data.split('2.')[1]?.split('3.')[0]?.trim()
-        const starter3 = result.data.split('3.')[1]?.split('4.')[0]?.trim()
-        const starter4 = result.data.split('4.')[1]?.trim()
-        return _.filter([starter1, starter2, starter3, starter4], (item) => item)
+
+        if (!result.ok) {
+            throw new Error(`Create GPTs Starters Error:${result.error}`)
+        }
+        const starters = result.data.match(/(?<=\d:\s).+?(?=\s*\d:|$)/g) || [];
+
+        console.log('starters', starters)
+
+        return _.filter(starters, (item) => item.trim());
+
     }
 
     const handleGeneratePrompt = async (name, desc) => {
@@ -101,6 +123,10 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
+        if (!result.ok) {
+            throw new Error(`Create GPTs Prompt Error:${result.error}`)
+        }
+
         console.log('handleGeneratePrompt', result)
         // 提取名称
         // const answer = result.data.split('prompt:')[1]?.trim()
@@ -158,9 +184,10 @@ const OnePromptClonePopover: React.FC<{
             console.log('prompt', prompt)
             console.log('starters', starters)
 
-
-            // 创建新的gizmo
-            const newGizmo = await sendToBackground({
+            const GPTsResult: {
+                data: Gizmo,
+                error: string
+            } = await sendToBackground({
                 name: 'openai',
                 body: {
                     action: 'create',
@@ -176,6 +203,7 @@ const OnePromptClonePopover: React.FC<{
                     tools: tools
                 }
             })
+            const newGizmo = GPTsResult.data
             notificationApi.success({
                 message: 'Create GPTs Success',
                 description: <div>You can See At <a href={newGizmo.short_url} target="_blank"> {newGizmo.short_url}</a></div>
@@ -183,7 +211,7 @@ const OnePromptClonePopover: React.FC<{
             console.log('newGizmo', newGizmo)
 
         } catch (error) {
-
+            message.error(error.message)
         } finally {
             setLoading(false)
             setOpen(false)
@@ -202,7 +230,7 @@ const OnePromptClonePopover: React.FC<{
     const content = (
         <div>
             <h3 className="pb-3 text-sm font-normal text-gray-500 ">One prompt  quickly create new GPTs</h3>
-            <PromptTextArea onChange={setPrompt} ></PromptTextArea>
+            <PromptTextArea value={prompt} onChange={setPrompt} ></PromptTextArea>
             <div className="block py-2 font-medium text-token-text-primary">Capabilities</div>
             <div className="pb-2">
                 <Select

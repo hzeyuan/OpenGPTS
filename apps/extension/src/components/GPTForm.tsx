@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Row, Col, message, Spin } from 'antd';
 import { sendToBackground } from '@plasmohq/messaging';
 import _ from 'lodash';
@@ -13,8 +13,6 @@ const GPTForm: React.FC<{
     const [loading, setLoading] = useState(false)
     const [messageApi, contextHolder] = message.useMessage();
     const handleFinish = async (values) => {
-
-
         setLoading(true)
         console.log('Received values of form: ', values);
         if (!gizmo) return;
@@ -43,37 +41,49 @@ const GPTForm: React.FC<{
         onFinish && onFinish(gizmo, values)
     };
 
+    useEffect(() => {
+        if (!gizmo) return;
+        form.setFieldsValue({
+            title: gizmo?.display.name,
+            description: gizmo?.display.description,
+            prompt_starters: gizmo?.display.prompt_starters,
+            instructions: gizmo?.instructions,
+        });
+    }, [gizmo]);
+
     return (
         <Spin spinning={loading}>
             <Form
                 layout='vertical'
                 initialValues={{
-                    title: gizmo?.display.name,
+                    name: gizmo?.display.name,
                     description: gizmo?.display.description,
                     prompt_starters: gizmo?.display.prompt_starters,
                     instructions: gizmo?.instructions,
                 }}
                 form={form} name="custom_form" onFinish={handleFinish}>
                 <Form.Item
-                    name="title"
-                    label="Title"
-                    rules={[{ required: true, message: '请输入标题!' }]}
+                    name="name"
+                    label="Name"
+                    rules={[{ required: true, message: 'Name your GPT!' }]}
                 >
-                    <Input placeholder="请输入标题" />
+                    <Input placeholder="Name your GPT" />
                 </Form.Item>
 
                 <Form.Item
                     name="description"
                     label="Description"
-                    rules={[{ required: true, message: '请输入描述!' }]}
+                    rules={[{ required: true, message: 'Add a short description about what this GPT does!' }]}
                 >
-                    <Input.TextArea placeholder="请输入描述" />
+                    <Input.TextArea placeholder="Add a short description about what this GPT does" />
                 </Form.Item>
 
                 <Form.Item label="Prompt Starters" >
-                    {/* {JSON.stringify(gizmo?.display?.prompt_starters)} */}
                     <Row gutter={8}>
-                        {(gizmo?.display?.prompt_starters || ['', '', '', '']).map((starters, index) => (
+                        {(gizmo?.display?.prompt_starters
+                            ? [...gizmo.display.prompt_starters, ...Array(12 - gizmo.display.prompt_starters.length).fill('')]
+                            : Array(12).fill('')
+                        ).map((starters, index) => (
                             <Col span={12} key={index}>
                                 <Form.Item
                                     name={['prompt_starters', index]}
@@ -89,17 +99,17 @@ const GPTForm: React.FC<{
                 <Form.Item
                     name="instructions"
                     label="instructions"
-                    rules={[{ required: true, message: 'Please Input instructions!' }]}
+                    rules={[{ required: false }]}
                 >
                     <Input.TextArea
                         minLength={64}
-                        placeholder="请输入 instructions" />
+                        placeholder="What does this GPT do? How does it behave? What should it avoid doing?" />
                 </Form.Item>
 
                 <Form.Item>
                     <div className='flex justify-end'>
                         <Button type="primary" htmlType="submit">
-                            Submit
+                            Confirm
                         </Button>
                     </div>
                 </Form.Item>
