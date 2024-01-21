@@ -68,8 +68,6 @@ export async function getModels() {
 }
 
 
-
-
 const createGPT = async (gizmo: Gizmo, tools: []) => {
 
     const authorization = await storage.getItem('Authorization')
@@ -275,6 +273,23 @@ const publishGPT = async (gizmoId: string) => {
 
 }
 
+const getImageByImagePointer: (imagePointer: string) => Promise<string> = async (imagePointer) => {
+    const authorization = await storage.getItem('Authorization')
+    const result = await ofetch(`https://chat.openai.com/backend-api/files/${imagePointer}/download`, {
+        headers: {
+            "authorization": `${authorization}`,
+        },
+        retry: 3,
+        retryDelay: 500, // ms
+        timeout: 10000,
+        ignoreResponseError: true,
+        parseResponse: JSON.parse,
+        method: 'GET',
+    })
+    return _.get(result, 'download_url')
+}
+
+
 export async function generateAnswersWithChatgptWebApi(session: {
     question: string;
     autoClean?: boolean;
@@ -286,7 +301,10 @@ export async function generateAnswersWithChatgptWebApi(session: {
     gizmoId?: string;
 }, authorization: string): Promise<{
     ok: boolean;
-    data?: string;
+    data?: {
+        text: string;
+        imagePointers: string[];
+    };
     error?: string
 }> {
     session.messageId = uuidv4()
@@ -302,7 +320,6 @@ export async function generateAnswersWithChatgptWebApi(session: {
     //     if (session.autoClean) deleteConversation(accessToken, session.conversationId)
     // })
 
-    // const config = await getUserConfig()
     const config = await storage.getItem<Config>('config')
 
     console.log('config', config)
@@ -310,14 +327,8 @@ export async function generateAnswersWithChatgptWebApi(session: {
         return { ok: false, error: 'config is empty' }
     }
 
-    const models = await getModels()
+    let usedModel = Models[(session?.modelName || 'chatgptFree35')].value
 
-    const selectedModel = Models[(session?.modelName || 'chatgptFree35')].value
-
-    console.log('models', models, 'selectedModel', selectedModel)
-
-    let usedModel =
-        models.includes(selectedModel) ? selectedModel : Models[chatgptWebModelKeys[0]].value
 
     if (session?.gizmoId) {
         usedModel = 'gpt-4-gizmo'
@@ -337,12 +348,9 @@ export async function generateAnswersWithChatgptWebApi(session: {
     if (needArkoseToken) {
         if (!config?.chatgptArkoseReqUrl) {
             throw new Error(
-                // t('Please login at https://chat.openai.com first') +
-                //   '\n\n' +
-                //   t(
-                //     "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
-                //   ),
-                '请先登录 https://chat.openai.com'
+                'Please login at https://chat.openai.com first' +
+                '\n\n' +
+                "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
             )
         }
         arkoseToken = config?.chatgptArkoseReqUrl
@@ -360,16 +368,13 @@ export async function generateAnswersWithChatgptWebApi(session: {
         // console.debug('arkoseToken', arkoseToken)
         if (needArkoseToken && !arkoseToken)
             throw new Error(
-                // t('Failed to get arkose token.') +
-                // '\n\n' +
-                // t(
-                //     "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
-                // ),
-                '获取arkose token失败'
+                'Failed to get arkose token.' +
+                '\n\n' +
+                "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
             )
     }
 
-    let answer = ''
+    let text = '', imagePointers: string[] = [];
     return new Promise((resolve, reject) => {
         return fetchSSE(`${config.customChatGptWebApiUrl}${config.customChatGptWebApiPath}`, {
             method: 'POST',
@@ -416,8 +421,8 @@ export async function generateAnswersWithChatgptWebApi(session: {
                     // pushRecord(session, question, answer)
                     // console.debug('conversation history', { content: session.conversationRecords })
                     // port.postMessage({ answer: null, done: true, session: session })
-                    resolve({ ok: true, data: answer })
-                    return answer
+                    resolve({ ok: true, data: { text, imagePointers } })
+                    return text
                 }
                 let data
                 try {
@@ -436,13 +441,19 @@ export async function generateAnswersWithChatgptWebApi(session: {
 
                 if (data.conversation_id) session.conversationId = data.conversation_id
                 if (data.message?.id) session.parentMessageId = data.message.id
-
+                // console.log('data.message', data.message)
+                const imageAssetPointers = _.filter(_.get(data.message, 'content.parts', []), { 'content_type': 'image_asset_pointer' });
+                // 从这些元素中提取asset_pointer值
+                console.log('imageAssetPointers', imageAssetPointers)
+                const newImagePointers: string[] = _.map(imageAssetPointers, 'asset_pointer');
+                imagePointers = [...imagePointers, ...newImagePointers]
+                console.log('imagePointers', imagePointers)
                 const respAns = data.message?.content?.parts?.[0]
-                if (respAns) answer = respAns
-                if (answer) {
-                    // console.log("中间 answer", answer)
-                    // port.postMessage({ answer: answer, done: false, session: null })
-                }
+                if (respAns) text = respAns
+                // if (answer) {
+                //     console.log("中间 answer", answer)
+                //     // port.postMessage({ answer: answer, done: false, session: null })
+                // }
             },
             async onStart() {
                 // sendModerations(accessToken, question, session.conversationId, session.messageId)
@@ -450,7 +461,12 @@ export async function generateAnswersWithChatgptWebApi(session: {
             async onEnd() {
                 // port.onMessage.removeListener(messageListener)
                 // port.onDisconnect.removeListener(disconnectListener)
-                resolve({ ok: true, data: answer })
+                resolve({
+                    ok: true, data: {
+                        text,
+                        imagePointers
+                    }
+                })
             },
             async onError(resp) {
                 // port.onMessage.removeListener(messageListener)
@@ -622,8 +638,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             const result = await checkChatGPTsAuth()
             res.send(result)
         } else if (action === 'share') {
-            // https://open-gpts.vercel.app/update-gpt
-            const result = await ofetch(`http://localhost:3000/api/gpts/publish`, {
+            const result = await ofetch(`https://open-gpts.vercel.app/api/gpts/publish`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -639,6 +654,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             res.send({
                 ok: true,
                 error: '',
+            })
+        } else if (action === 'getImageByImagePointer') {
+            const result = await getImageByImagePointer(req.body.imagePointer)
+            res.send({
+                ok: true,
+                error: '',
+                data: result
             })
         }
     } catch (error) {

@@ -67,7 +67,7 @@ Browser.webRequest.onBeforeRequest.addListener(
             }
             const config = await storage.getItem<any>('config')
             console.log('chatgptArkoseReqUrl', config, 'bodyData', bodyData)
-            console.log('details', details)
+            // console.log('details', details)
             await storage.setItem('config', {
                 ...defaultConfig,
                 // ...config,
@@ -85,10 +85,13 @@ Browser.webRequest.onBeforeRequest.addListener(
 )
 
 
-
-storage.setItem('config', {
-    ...defaultConfig,
+storage.getItem<Config>('config').then((config) => {
+    storage.setItem('config', {
+        ...defaultConfig,
+        ...config,
+    })
 })
+
 
 chrome.sidePanel
     .setPanelBehavior({ openPanelOnActionClick: true })

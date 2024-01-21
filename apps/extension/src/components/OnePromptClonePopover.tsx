@@ -55,7 +55,7 @@ const OnePromptClonePopover: React.FC<{
         }
 
         // 提取名称
-        const output = result.data.replace(/[\n\r:'":：]/g, '').toLowerCase();
+        const output = _.get(result, 'data.text', '').replace(/[\n\r:'":：]/g, '').toLowerCase();
         const name = output.split('name')[1]?.trim();
 
         console.log('name', name)
@@ -79,7 +79,7 @@ const OnePromptClonePopover: React.FC<{
             throw new Error(`Create GPTs Desc Error:${result.error}`)
         }
 
-        const output = result.data.replace(/[\n\r:'":：]/g, '').toLowerCase();
+        const output = _.get(result, 'data.text', '').replace(/[\n\r:'":：]/g, '').toLowerCase();
         const desc = output?.split('description')[1]?.trim()
 
         console.log('desc', desc, output)
@@ -104,7 +104,7 @@ const OnePromptClonePopover: React.FC<{
         if (!result.ok) {
             throw new Error(`Create GPTs Starters Error:${result.error}`)
         }
-        const starters = result.data.match(/(?<=\d:\s).+?(?=\s*\d:|$)/g) || [];
+        const starters = _.get(result, 'data.text', '').match(/(?<=\d:\s).+?(?=\s*\d:|$)/g) || [];
 
         console.log('starters', starters)
 
@@ -112,7 +112,7 @@ const OnePromptClonePopover: React.FC<{
 
     }
 
-    const handleGeneratePrompt = async (name, desc) => {
+    const handleGenerateInstructions = async (name, desc) => {
         const prefix = gizmo ? `参考信息name:${gizmo.display.name}
         |desc:${gizmo.display.description}\n` : ''
         const result = await sendToBackground({
@@ -132,7 +132,41 @@ const OnePromptClonePopover: React.FC<{
         console.log('handleGeneratePrompt', result)
         // 提取名称
         // const answer = result.data.split('prompt:')[1]?.trim()
-        return result.data
+        return _.get(result, 'data.text', '')
+    }
+
+    const handleGenerateAvatar = async (name, desc, instructions) => {
+        const result = await sendToBackground({
+            name: 'openai',
+            body: {
+                action: 'chatWithWeb',
+                session: {
+                    modelName: 'chatgptPlus4',
+                    question: `Design a logo for a app called "${name}" that is used for ${desc}. and you can refer to the following instructions to design the logo: ${instructions}`,
+                    gizmoId: 'g-OsukSfZhG'
+                }
+            }
+        })
+        if (!result.ok) {
+            throw new Error(`Create GPTs Prompt Error:${result.error}`)
+        }
+        const imagePointers = _.get(result, 'data.imagePointers', []).map(item => item.replace('file-service://', ''))
+        const imagePointer = _.get(imagePointers, '[0]', '')
+        if (!imagePointer) {
+            return ''
+        }
+        console.debug(`handleGenerateAvatar`, imagePointers)
+        const imageResult = await sendToBackground({
+            name: 'openai',
+            body: {
+                action: 'getImageByImagePointer',
+                imagePointer
+            }
+        })
+        if (!imageResult.ok) {
+            return ''
+        }
+        return imageResult.data;
     }
 
     const handleConfirm = async () => {
@@ -180,11 +214,13 @@ const OnePromptClonePopover: React.FC<{
             const name = await handleGenerateName()
             const desc = await handleGenerateDesc()
             const starters = await handleGenerateStarters()
-            const instructions = await handleGeneratePrompt(name, desc)
-            console.log('name', name)
-            console.log('desc', desc)
-            console.log('prompt', prompt)
-            console.log('starters', starters)
+            const instructions = await handleGenerateInstructions(name, desc)
+            const avatar = await handleGenerateAvatar('', '', '')
+            // console.log('name', name)
+            // console.log('desc', desc)
+            // console.log('prompt', instructions)
+            // console.log('starters', starters)
+            console.log('avatar', avatar)
 
             const GPTsResult: {
                 data: Gizmo,
