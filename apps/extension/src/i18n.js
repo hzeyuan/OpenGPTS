@@ -127,12 +127,6 @@ const resources = {
             'publishGPTTitle': '发布 GPT',
             'publishGPTDescription': '您准备好将这个 GPT 公开并向其他人提供了吗？',
 
-
-
-
-
-
-
         }
     }
 };

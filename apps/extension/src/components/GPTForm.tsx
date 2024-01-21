@@ -36,7 +36,7 @@ const GPTForm: React.FC<{
 
             }
         })
-        messageApi.success('更新成功');
+        messageApi.success('Update Success!');
         setLoading(false)
         onFinish && onFinish(gizmo, values)
     };
