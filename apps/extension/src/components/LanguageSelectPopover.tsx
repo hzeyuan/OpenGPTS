@@ -157,7 +157,8 @@ const LanguageSelectPopover: React.FC<{
             setOpen(false)
             return
         }
-        const output = (result?.data || '')
+        const text = _.get(result, 'data.text', '')
+        const output = text
             .replace(/[\n\r]+/g, ' ')
             .replace(/['"]+/g, '')
             .replace(/\s{2,}/g, ' ')
@@ -181,8 +182,8 @@ const LanguageSelectPopover: React.FC<{
         const startersStr = extractWithRegex(output, starterPattern, promptPattern);
         const instructions = extractWithRegex(output, promptPattern, '$'); // Assuming prompt is the last section
         const starters = startersStr ? startersStr.split(',').map(item => item.trim()) : [];
-        console.log('result?.data', output)
-        console.log('name', name, 'desc', desc, 'starters', starters, 'instructions', instructions)
+        // console.log('result?.data', output)
+        // console.log('name', name, 'desc', desc, 'starters', starters, 'instructions', instructions)
 
         // Sending a request to create the modified GPTs
         const GPTsResult: {
@@ -193,12 +194,18 @@ const LanguageSelectPopover: React.FC<{
             body: {
                 action: 'create',
                 gizmo: {
-                    display: {
+                    display: gizmo.display.profile_pic_id ? {
                         name,
                         description: desc || "",
                         prompt_starters: starters,
                         welcome_message: "",
+                        profile_pic_id: gizmo.display.profile_pic_id,
                         profile_picture_url: gizmo.display.profile_picture_url
+                    } : {
+                        name,
+                        description: desc || "",
+                        prompt_starters: starters,
+                        welcome_message: "",
                     },
                     instructions: instructions
                 },
@@ -218,8 +225,8 @@ const LanguageSelectPopover: React.FC<{
             });
         } else {
             notificationApi.success({
-                message: `Update GPTs: ${GPTsResult.data?.display.name} Success`,
-                description: <div>You can See At <a href={GPTsResult.data?.short_url} target="_blank"> {GPTsResult.data?.short_url}</a></div>
+                message: 'Create GPTs Success',
+                description: `Modify GPTs ${gizmo.display.name} to language ${language} success`
             });
         }
         setLoading(false)

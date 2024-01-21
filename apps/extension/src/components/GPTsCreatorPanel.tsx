@@ -1,4 +1,4 @@
-import { CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined, CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
 import { sendToBackground } from '@plasmohq/messaging';
 import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message } from 'antd';
@@ -7,7 +7,6 @@ import { Storage } from "@plasmohq/storage";
 import type { Key } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
-import { message } from 'antd';
 import Search from 'antd/es/input/Search';
 import logo from "data-base64:~assets/icon.png"
 import LanguageSelectPopover from './LanguageSelectPopover';
@@ -31,14 +30,13 @@ export default () => {
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [spinning, setSpinning] = useState(false)
   const [syncing, setSyncing] = useState(false)
-
+  const { t, i18n } = useTranslation();
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: Key[]) => setSelectedRowKeys(keys),
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
-  const { t, i18n } = useTranslation();
   const [notificationApi, notificationContextHolder] = notification.useNotification();
   const [modal, modalContextHolder] = Modal.useModal();
 
@@ -235,7 +233,11 @@ export default () => {
 
   const handleCopyGPTInfo = (gizmo: Gizmo) => {
     messageApi.success(t('copySuccess', { name: gizmo.display.name }));
-    navigator.clipboard.writeText(JSON.stringify(gizmo))
+    navigator.clipboard.writeText(`
+    name: ${gizmo.display.name}
+    description: ${gizmo.display.description}
+    url: https://chat.openai.com/g/${gizmo.id}
+    `)
   }
 
   const hideModal = () => { setOpen(false); };
@@ -396,7 +398,7 @@ export default () => {
                       onClick={() => handleCopyGPTInfo(record.gizmo)}
                       className=" text-[var(--opengpts-sidebar-model-btn-color)] hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer   h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px]"
                       role="button">
-                      <CopyOutlined size={16} />
+                      <ShareAltOutlined size={16} />
                     </div>
                     {/* Delete GPT */}
                     <Popconfirm
@@ -417,38 +419,38 @@ export default () => {
                     <Popconfirm
                       title={t('shareGPTTitle')}
                       description={t('shareGPTDescription')}
-                      onConfirm={() => handleShareGPT(record.gizmo)}
                       okText={t('Confirm')}
                       cancelText={t('Cancel')}
-                      icon={<ShareAltOutlined style={{ color: '' }} />}
+                      onConfirm={() => handleShareGPT(record.gizmo)}
+                      icon={<SendOutlined style={{ color: '' }} />}
                     >
                       <div
                         className="  hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer  h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px] "
                         role="button">
-                        <ShareAltOutlined size={16} />
+                        <SendOutlined size={16} />
                       </div>
                     </Popconfirm>
                     {/* change language */}
                     <LanguageSelectPopover gizmo={record.gizmo} notificationApi={notificationApi} ></LanguageSelectPopover>
-                    <OnePromptClonePopover notificationApi={notificationApi} gizmo={record.gizmo}>
+                    {/* <OnePromptClonePopover notificationApi={notificationApi} gizmo={record.gizmo}>
                       <div
                         className="  hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer  h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px] "
                         role="button">
                         <SwapOutlined />
                       </div>
-                    </OnePromptClonePopover>
+                    </OnePromptClonePopover> */}
                     <Popconfirm
                       title={t('publishGPTTitle')}
                       description={t('publishGPTDescription')}
                       okText={t('Confirm')}
                       cancelText={t('Cancel')}
                       onConfirm={() => handlePublish(record.gizmo)}
-                      icon={<SendOutlined style={{ color: 'blueviolet' }} />}
+                      icon={<CloudUploadOutlined style={{ color: 'blueviolet' }} />}
                     >
                       <div
                         className="hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer  h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px] "
                         role="button">
-                        <SendOutlined size={16} />
+                        <CloudUploadOutlined size={16} />
                       </div>
                     </Popconfirm>
 
@@ -466,7 +468,28 @@ export default () => {
               <Tag color='#5BD8A6'>{t('Public')}: {PublicCount}</Tag>
               <Tag color='#FFA500'>{t('Private')}: {PrivateCount}</Tag>
             </div>,
-
+            // menu: {
+            //   activeKey,
+            //   items: [
+            //     {
+            //       key: 'tab1',
+            //       label: (
+            //         <span>全部实验室{renderBadge(99, activeKey === 'tab1')}</span>
+            //       ),
+            //     },
+            //     {
+            //       key: 'tab2',
+            //       label: (
+            //         <span>
+            //           我创建的实验室{renderBadge(32, activeKey === 'tab2')}
+            //         </span>
+            //       ),
+            //     },
+            //   ],
+            //   onChange(key) {
+            //     setActiveKey(key);
+            //   },
+            // },
             search: false,
             actions: [
               <Dropdown
@@ -496,16 +519,16 @@ export default () => {
                   items: [
                     {
                       key: 'time',
-                      label: t('sort.byTime'), // Translated label
+                      label: t('sort.byTime'),
                     }, {
                       key: 'chat',
-                      label: t('sort.byChats'), // Translated label
+                      label: t('sort.byChats'),
                     }, {
                       key: 'user',
-                      label: t('sort.byUsers'), // Translated label
+                      label: t('sort.byUsers'),
                     }, {
                       key: 'pin',
-                      label: t('sort.byPins'), // Translated label
+                      label: t('sort.byPins'),
                     }],
                   selectable: true,
                   defaultSelectedKeys: ['time'],
@@ -515,7 +538,7 @@ export default () => {
                 }}
               >
                 <div className='flex items-center justify-center w-full'>
-                  <span className=' min-w-[48px]'>
+                  <span className=' min-w-[85px]'>
                     {
                       sortType === 'time' ? t('sort.byTime') :
                         sortType === 'chat' ? t('sort.byChats') :
@@ -619,7 +642,7 @@ export default () => {
       {contextHolder}
       {notificationContextHolder}
       <Modal
-        title={t('modal.editGPT')}
+        title={t('modal.editGPTS')}
         open={open}
         onOk={hideModal}
         onCancel={hideModal}

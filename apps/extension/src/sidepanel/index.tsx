@@ -4,13 +4,11 @@ import '../base.css'
 import logo from "data-base64:~assets/icon.png"
 import chatTabIcon from '~assets/chat-tab.svg'
 import { motion } from 'framer-motion';
-import Browser from 'webextension-polyfill';
 import { useState, useEffect } from "react"
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 
 import { StyleProvider } from "@ant-design/cssinjs"
 import { ConfigProvider, theme as themeStyle } from "antd"
-import { sendToBackground } from "@plasmohq/messaging";
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
@@ -20,6 +18,7 @@ import GPTsCreatorPanel from '~src/components/GPTsCreatorPanel';
 import settingIcon from '~assets/settings.svg';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
+
 
 const shakeAnimation = {
     scale: 0.85,
@@ -122,7 +121,6 @@ function IndexSidePanel() {
                 }
             }}
             locale={language === 'en' ? enUS : zhCN}
-
         >
             <StyleProvider >
                 <div

@@ -1,11 +1,11 @@
 import { BsChatDots } from "react-icons/bs";
+// import { Gpts } from "@/app/types/gpts";
 import Preview from "./Preview";
 import { getGptsTools } from "../../services/gpts";
-import moment from "moment";
-import { Gpts } from "../../types/gpts";
+// import moment from "moment";
 
 interface Props {
-  gpts: Gpts;
+  gpts: any;
 }
 
 export default ({ gpts }: Props) => {
@@ -19,7 +19,8 @@ export default ({ gpts }: Props) => {
             <div className="flex items-center rounded-md bg-[#c4c4c4] px-3 py-1">
               <div className="w-2 h-2 mr-1 bg-black rounded-full"></div>
               <p className="text-sm">
-                {moment(gpts.updated_at).fromNow()}
+                Created at 
+                {/* {moment(gpts.updated_at).fromNow()} */}
               </p>
             </div>
             <p className="text-sm text-[#808080] sm:text-xl">
@@ -59,11 +60,12 @@ export default ({ gpts }: Props) => {
                 Code Interpreter
               </p>
             </div>
+
             <div className="flex flex-col gap-4 font-semibold sm:flex-row">
               <a
                 href={gpts.visit_url}
                 target="_blank"
-                className="flex items-center gap-2 px-6 py-3 text-purple-500 truncate border border-black border-solid rounded-md bg-primary"
+                className="flex items-center gap-2 px-6 py-3 text-white truncate border border-black border-solid rounded-md bg-primary"
               >
                 <BsChatDots />
                 <p>Use this GPTs on ChatGPT 👉</p>

@@ -27,7 +27,7 @@ const GPTForm: React.FC<{
                 draft: gizmo.tags[0] === 'private',
                 gizmo: {
                     display: {
-                        name: values.title,
+                        name: values.name,
                         description: values.description,
                         prompt_starters: promptStarters
                     },
@@ -36,7 +36,7 @@ const GPTForm: React.FC<{
 
             }
         })
-        messageApi.success('Update Success!');
+        messageApi.success('更新成功');
         setLoading(false)
         onFinish && onFinish(gizmo, values)
     };
@@ -87,7 +87,7 @@ const GPTForm: React.FC<{
                             <Col span={12} key={index}>
                                 <Form.Item
                                     name={['prompt_starters', index]}
-                                    rules={[{ required: true, message: `请输入starter ${index + 1}!` }]}
+                                    rules={[{ required: false, }]}
                                 >
                                     <Input placeholder={`请输入starter`} />
                                 </Form.Item>

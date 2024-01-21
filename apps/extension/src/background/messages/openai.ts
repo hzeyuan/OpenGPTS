@@ -314,7 +314,7 @@ export async function generateAnswersWithChatgptWebApi(session: {
     const question = session.question
     if (!question) return {
         ok: false,
-        error: 'question is empty',
+        error: `question is empty`
     }
     // const { controller, messageListener, disconnectListener } = setAbortController(port, null, () => {
     //     if (session.autoClean) deleteConversation(accessToken, session.conversationId)
@@ -322,9 +322,11 @@ export async function generateAnswersWithChatgptWebApi(session: {
 
     const config = await storage.getItem<Config>('config')
 
-    console.log('config', config)
     if (!config) {
-        return { ok: false, error: 'config is empty' }
+        return {
+            ok: false,
+            error: `config is empty`
+        }
     }
 
     let usedModel = Models[(session?.modelName || 'chatgptFree35')].value
@@ -419,6 +421,7 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 // console.debug('sse message', message)
                 if (message.trim() === '[DONE]') {
                     // pushRecord(session, question, answer)
+                    // console.log("answer", answer)
                     // console.debug('conversation history', { content: session.conversationRecords })
                     // port.postMessage({ answer: null, done: true, session: session })
                     resolve({ ok: true, data: { text, imagePointers } })
@@ -444,10 +447,8 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 // console.log('data.message', data.message)
                 const imageAssetPointers = _.filter(_.get(data.message, 'content.parts', []), { 'content_type': 'image_asset_pointer' });
                 // 从这些元素中提取asset_pointer值
-                console.log('imageAssetPointers', imageAssetPointers)
                 const newImagePointers: string[] = _.map(imageAssetPointers, 'asset_pointer');
                 imagePointers = [...imagePointers, ...newImagePointers]
-                console.log('imagePointers', imagePointers)
                 const respAns = data.message?.content?.parts?.[0]
                 if (respAns) text = respAns
                 // if (answer) {
@@ -459,25 +460,33 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 // sendModerations(accessToken, question, session.conversationId, session.messageId)
             },
             async onEnd() {
+                // port.postMessage({ done: true })
                 // port.onMessage.removeListener(messageListener)
                 // port.onDisconnect.removeListener(disconnectListener)
                 resolve({
-                    ok: true, data: {
+                    ok: true,
+                    data: {
                         text,
                         imagePointers
                     }
                 })
             },
             async onError(resp) {
+                console.debug('resp.status', resp.status)
                 // port.onMessage.removeListener(messageListener)
                 // port.onDisconnect.removeListener(disconnectListener)
                 if (resp instanceof Error) throw resp
+
                 if (resp.status === 403) {
-                    throw new Error('CLOUDFLARE')
+                    reject(new Error('Authorization failed, please open or login https://chat.openai.com/  try again'))
+                    return;
+                }
+                if (resp.status === 429) {
+                    reject(new Error('Maybe You\'ve reached the current usage cap for GPT-4,'))
+                    return;
                 }
                 const error = await resp.json().catch(() => ({}))
-                // reject(!_.isEmpty(error) ? JSON.stringify(error) : `${resp.status} ${resp.statusText}`)
-                throw new Error(!_.isEmpty(error) ? JSON.stringify(error) : `${resp.status} ${resp.statusText}`)
+                reject(new Error(!_.isEmpty(error) ? JSON.stringify(error) : `${resp.status} ${resp.statusText}`))
             },
         })
     })
@@ -520,7 +529,7 @@ const checkGPTWebAuth = async () => {
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     let error = '';
-    const { action, discovery, gizmoId, gizmo, record } = req.body;
+    const { action, discovery, gizmoId, gizmo } = req.body;
 
     const authorization = await storage.getItem('Authorization')
     try {
@@ -594,8 +603,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             })
         } else if (action === 'chatWithWeb') {
             const result = await generateAnswersWithChatgptWebApi(req.body.session, authorization)
-            console.debug('result', result)
-            res.send(result)
+            // console.log('result', result)
+            res.send({
+                ok: result.ok,
+                error: '',
+                data: result.data
+            })
+
         } else if (action == 'getModels') {
             const models = await getModels()
             res.send({
@@ -622,10 +636,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             const tools = req.body.tools || []
             const newGizmo = await createGPT(gizmo, tools)
             console.log('createGPT', newGizmo)
-            await createItem({
-                ...newGizmo,
-                record
-            })
+            await createItem(newGizmo)
             res.send({
                 ok: true,
                 error: '',

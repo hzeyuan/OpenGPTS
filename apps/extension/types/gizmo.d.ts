@@ -16,7 +16,8 @@ interface Display {
     description: string;
     welcome_message: string;
     prompt_starters: string[];
-    profile_picture_url: null | string;
+    profile_picture_url?: string;
+    profile_pic_id?: string;
     categories: string[];
 }
 
@@ -50,8 +51,4 @@ interface Gizmo {
     appeal_info: null | object;
     vanity_metrics: VanityMetrics;
     workspace_approved: null | boolean;
-    record?: {
-        action: string;
-        log: Object
-    }
 }

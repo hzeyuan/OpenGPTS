@@ -173,7 +173,7 @@ function formatGpts(row: QueryResultRow): Gpts | undefined {
     author_name: row.author_name,
     created_at: row.created_at,
     updated_at: row.updated_at,
-    visit_url: "https://chat.openai.com/g/" + row.uuid,
+    visit_url: "https://chat.openai.com/g/" + row.short_url,
     rating: row.rating,
   };
 
