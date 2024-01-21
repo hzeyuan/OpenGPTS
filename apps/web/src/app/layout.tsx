@@ -9,11 +9,11 @@ import Gradient from './components/Gradient'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "GPTs Works - Third-party GPTs store",
+  title: "OpenGPTs  - The Best GPTs Copilot",
   description:
-    "GPTs Works is a Third-party GPTs store. Support seach GPTs by chatting.",
+    "OpenGPTs GPTs Copilot, Chatgpt GPTs Manager",
   keywords:
-    "GPTs, GPTs store, GPTs Works, ChatGPT, OpenAI GPTs, vector search GPTs",
+    "GPTs, GPTs store, GPTs Works, ChatGPT, OpenAI GPTs, vector search GPTs, GPTs Manager",
 };
 
 export default function RootLayout({
