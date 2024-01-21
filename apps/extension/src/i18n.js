@@ -22,7 +22,7 @@ const resources = {
             "Account": "Account",
             'Meeting Agenda': 'Meeting Agenda',
             'AsyncGPTsFromChatGPT': 'Async GPTs From ChatGPT',
-            'CloneGPT': 'Clone GPT',
+            'CloneGPT': 'GPTs Builder',
             'MyGPTs': 'My GPTs',
             'Count': 'Count',
             'Pinned': 'Pinned',
@@ -50,7 +50,7 @@ const resources = {
             'Confirm': 'Confirm',
             'Cancel': 'Cancel',
             'selectLanguageTitle': 'Select Language',
-            'onePromptBuilderTitle': 'One Prompt GPTS Builder',
+            'onePromptBuilderTitle': 'One-Click GPTS Builder',
 
             'changeLanguageText': 'You can Change GPT language',
             'onePromptCreationText': 'One prompt quickly create new GPTs',
@@ -63,10 +63,10 @@ const resources = {
             'confirmDeleteTitle': 'Are you sure you want to delete this GPT?',
             'confirmDeleteDescription': 'This action cannot be undone.',
 
-            'shareGPTTitle': 'Share GPT to Store',
-            'shareGPTDescription': 'Do you want to share this GPT with the community in Our GPT Store?',
+            'shareGPTTitle': 'Share GPTs to OpenGPTS Store',
+            'shareGPTDescription': 'Do you want to share this GPT with the community in Our OpenGPTs Store?',
 
-            'publishGPTTitle': 'Publish GPT',
+            'publishGPTTitle': 'Publish GPT to OpenAI GPTs Store',
             'publishGPTDescription': 'Are you ready to make this GPT public and available to others?',
         }
     },
@@ -80,7 +80,7 @@ const resources = {
             "Language": "语言",
             "Account": "账号",
             'AsyncGPTsFromChatGPT': '从chatGPT中同步数据',
-            'CloneGPT': '克隆GPT',
+            'CloneGPT': '一键创建GPTs',
             'MyGPTs': '我的GPTS',
             'Count': '数量',
             'Pinned': '置顶',
@@ -108,7 +108,7 @@ const resources = {
             'Confirm': '确认',
             'Cancel': '取消',
             'selectLanguageTitle': '选择语言',
-            'onePromptBuilderTitle': '一键 GPTS 构建器',
+            'onePromptBuilderTitle': '一键复刻到其他语言',
 
             'changeLanguageText': '你可以更改 GPT 语言',
             'onePromptCreationText': '一键快速创建新 GPTs',
@@ -121,10 +121,10 @@ const resources = {
             'confirmDeleteTitle': '你确定要删除这个 GPT 吗？',
             'confirmDeleteDescription': '此操作无法撤销。',
 
-            'shareGPTTitle': '共享 GPT 到商店',
-            'shareGPTDescription': '您是否想将这个 GPT 分享到我们的 GPT 商店社区？',
+            'shareGPTTitle': '共享 GPTs OpenGPTS商店',
+            'shareGPTDescription': '您是否想将这个 GPT 分享到我们的 GPTs 商店社区？',
 
-            'publishGPTTitle': '发布 GPT',
+            'publishGPTTitle': '发布 GPT到OpenAI GPTs Store',
             'publishGPTDescription': '您准备好将这个 GPT 公开并向其他人提供了吗？',
 
 

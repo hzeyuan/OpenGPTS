@@ -234,10 +234,10 @@ export default () => {
   const handleCopyGPTInfo = (gizmo: Gizmo) => {
     messageApi.success(t('copySuccess', { name: gizmo.display.name }));
     navigator.clipboard.writeText(`
-    name: ${gizmo.display.name}
-    description: ${gizmo.display.description}
-    url: https://chat.openai.com/g/${gizmo.id}
-    `)
+给大家分享一个我的GPTs: ${gizmo.display.name}
+功能: ${gizmo.display.description}
+链接: https://chat.openai.com/g/${gizmo.id} 欢迎大家使用。
+`)
   }
 
   const hideModal = () => { setOpen(false); };
