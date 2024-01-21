@@ -6,7 +6,7 @@ export default () => {
     <section className="relatve">
       <div className="w-full px-5 py-2 mx-auto max-w-7xl">
         <h2 className="mt-8 mb-4 text-3xl font-bold text-center md:text-7xl md:mt-24">
-          Open GPTs  shows on browser sidepanel
+          OpenGPTs  shows on browser sidepanel
           <br />
           {/* <div className="my-4 text-3xl font-semibold text-gray-500 ">The Best GPTs Manager</div> */}
           <p className="mt-8">
