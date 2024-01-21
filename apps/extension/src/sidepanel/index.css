@@ -1,11 +1,8 @@
-
-
 html,
 body {
   height: 100%;
   width: 100%;
 }
-
 
 @tailwind base;
 @tailwind components;
@@ -41,7 +38,6 @@ body {
   margin: 0;
 }
 
-
 #opengpts-sidebar input {
   outline: none;
 }
@@ -54,8 +50,6 @@ body {
   background-color: var(--opengpts-sidebar-bg-color);
   color: var(--opengpts-primary-text-color);
 }
-
-
 
 #plasmo-shadow-container {
   /* z-index:999999 !important; */
@@ -82,6 +76,7 @@ body {
   box-sizing: border-box;
   cursor: pointer;
   transition: all 0.5s ease;
+  background: var(--opengpts-sidebar-bg-color);
 }
 
 #opengpts-sidebar {

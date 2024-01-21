@@ -1,11 +1,11 @@
 import { CloudUploadOutlined, CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
 import { sendToBackground } from '@plasmohq/messaging';
-import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message } from 'antd';
+import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message, type TourProps } from 'antd';
 import Browser from "webextension-polyfill";
 import { Storage } from "@plasmohq/storage";
 import type { Key } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import _ from 'lodash';
 import Search from 'antd/es/input/Search';
 import logo from "data-base64:~assets/icon.png"
@@ -31,6 +31,7 @@ export default () => {
   const [spinning, setSpinning] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const { t, i18n } = useTranslation();
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: Key[]) => setSelectedRowKeys(keys),
@@ -310,7 +311,9 @@ export default () => {
       <div className='mx-4'>
         <div className='mb-2 text-2xl font-semibold '><Typography.Title level={2}>Open GPTS</Typography.Title></div>
         <div className='flex gap-x-2'>
-          <Tooltip>
+          <Tooltip title={t('AsyncGPTsFromChatGPT.tooltip')
+          }
+          >
             <Button
               key="async"
               loading={syncing}
@@ -650,6 +653,6 @@ export default () => {
       >
         <GPTForm gizmo={curGizmo} onFinish={handleUpdatedGPT}></GPTForm>
       </Modal>
-    </div>
+    </div >
   );
 };

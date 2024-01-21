@@ -4,7 +4,7 @@ import TextArea from "antd/es/input/TextArea";
 import Popover from "antd/es/popover";
 import { useState } from "react";
 import _ from "lodash";
-import { Select, Space, message } from "antd";
+import { Alert, Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { useTranslation } from "react-i18next";
 
@@ -316,7 +316,7 @@ const OnePromptClonePopover: React.FC<{
         setOpen(false)
     }
     const content = (
-        <div>
+        <div >
             <h3 className="pb-3 text-sm font-normal text-gray-500 ">One prompt  quickly create new GPTs</h3>
             <PromptTextArea onChange={setPrompt} ></PromptTextArea>
             <div className="block py-2 font-medium text-token-text-primary">Capabilities</div>
@@ -342,6 +342,10 @@ const OnePromptClonePopover: React.FC<{
                     ]}
                 />
             </div>
+
+            <Alert message="Building GPTs with the one-click builder may take a moment. Please bear with us."
+                type="success" />
+
             {/* 确定，关闭 */}
             <footer className="flex items-center justify-end mt-2 gap-x-2 ">
                 <Button onClick={handleClose} type="link" size="small">{t('Cancel')}</Button>

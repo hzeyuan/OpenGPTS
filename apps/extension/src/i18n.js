@@ -22,7 +22,7 @@ const resources = {
             "Account": "Account",
             'Meeting Agenda': 'Meeting Agenda',
             'AsyncGPTsFromChatGPT': 'Async GPTs From ChatGPT',
-            'CloneGPT': 'GPTs Builder',
+            'CloneGPT': 'One-Click GPTS Builder',
             'MyGPTs': 'My GPTs',
             'Count': 'Count',
             'Pinned': 'Pinned',
@@ -68,6 +68,7 @@ const resources = {
 
             'publishGPTTitle': 'Publish GPT to OpenAI GPTs Store',
             'publishGPTDescription': 'Are you ready to make this GPT public and available to others?',
+            'AsyncGPTsFromChatGPT.tooltip': 'One-Click Async GPTs From ChatGPT',
         }
     },
     zh: {
@@ -126,6 +127,7 @@ const resources = {
 
             'publishGPTTitle': '发布 GPT到OpenAI GPTs Store',
             'publishGPTDescription': '您准备好将这个 GPT 公开并向其他人提供了吗？',
+            'AsyncGPTsFromChatGPT.tooltip': '一键从ChatGPT同步GPTs',
 
 
 

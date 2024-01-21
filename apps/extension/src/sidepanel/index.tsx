@@ -8,7 +8,7 @@ import { useState, useEffect } from "react"
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 
 import { StyleProvider } from "@ant-design/cssinjs"
-import { ConfigProvider, theme as themeStyle } from "antd"
+import { ConfigProvider, Popover, message, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
@@ -16,6 +16,9 @@ import type { ThemeMode } from "~index";
 import { useTranslation } from 'react-i18next';
 import GPTsCreatorPanel from '~src/components/GPTsCreatorPanel';
 import settingIcon from '~assets/settings.svg';
+import QQIcon from '~assets/qq.png';
+import githubIcon from '~assets/github.svg';
+import EmailIcon from '~assets/email.svg';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 
@@ -154,21 +157,59 @@ function IndexSidePanel() {
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="opengpts-sidebarr-footer ">
+                                        <div className="opengpts-sidebarr-footer">
+                                            <Popover title='My Email:yixotieq@gmail.com'
+                                                content="if you have an idea or any question, you can contact me by email"
+                                            >
+                                                <div className="opengpts-sidebarr-widgets-list-wrapper">
+                                                    <div onClick={() => {
+                                                        window.open('mailto:yixotieq@gmail.com')
+                                                    }} className='opengpts-sidebarr-tab'>
+                                                        <motion.img whileTap={shakeAnimation}
+
+                                                            style={{ cursor: 'pointer' }} src={EmailIcon} />
+                                                    </div>
+                                                </div>
+                                            </Popover>
                                             <div className="opengpts-sidebarr-widgets-list-wrapper">
-                                                <div className='opengpts-sidebarr-tab'>
+                                                <div onClick={() => {
+                                                    window.open('https://github.com/hzeyuan/OpenGPTS')
+                                                }} className='opengpts-sidebarr-tab'>
                                                     <motion.img whileTap={shakeAnimation}
-                                                        onClick={handleSetting}
+
+                                                        style={{ cursor: 'pointer' }} src={githubIcon} />
+                                                </div>
+
+                                            </div>
+                                            <div className="opengpts-sidebarr-widgets-list-wrapper">
+                                                <Popover title='QQ:860859251'
+                                                >
+                                                    <div onClick={() => {
+                                                        window.open('https://github.com/hzeyuan/OpenGPTS')
+                                                    }} className='opengpts-sidebarr-tab'>
+                                                        <motion.img whileTap={shakeAnimation}
+
+                                                            style={{ cursor: 'pointer' }} src={QQIcon} />
+                                                    </div>
+                                                </Popover>
+
+
+
+                                            </div>
+                                            <div className="opengpts-sidebarr-widgets-list-wrapper">
+                                                <div onClick={handleSetting} className='opengpts-sidebarr-tab'>
+                                                    <motion.img whileTap={shakeAnimation}
+
                                                         style={{ cursor: 'pointer' }} src={settingIcon} />
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
                             </TabList>
-                            {/* <div className='bg-[var(--opengpts-option-card-bg-color)]'> */}
                             {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>{item.panel}</TabPanel>)}
-                            {/* </div> */}
+
                         </div>
                     </Tabs>
 
