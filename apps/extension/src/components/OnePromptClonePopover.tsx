@@ -6,6 +6,7 @@ import { useState } from "react";
 import _ from "lodash";
 import { Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
+import { useTranslation } from "react-i18next";
 
 const PromptTextArea = ({ value, onChange }) => {
     return (
@@ -32,6 +33,7 @@ const OnePromptClonePopover: React.FC<{
     const [tools, setTools] = useState(['browser', 'dalle'])
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
+    const { t, i18n } = useTranslation();
 
 
     const handleGenerateName = async () => {
@@ -229,9 +231,9 @@ const OnePromptClonePopover: React.FC<{
     }
     const content = (
         <div>
-            <h3 className="pb-3 text-sm font-normal text-gray-500 ">One prompt  quickly create new GPTs</h3>
+            <h3 className="pb-3 text-sm font-normal text-gray-500 ">{t('onePromptCreationText')}</h3>
             <PromptTextArea value={prompt} onChange={setPrompt} ></PromptTextArea>
-            <div className="block py-2 font-medium text-token-text-primary">Capabilities</div>
+            <div className="block py-2 font-medium text-token-text-primary">{t('capabilitiesLabel')}</div>
             <div className="pb-2">
                 <Select
                     mode="multiple"
@@ -242,13 +244,13 @@ const OnePromptClonePopover: React.FC<{
                     onChange={(value) => setTools(value)}
                     options={[
                         {
-                            label: 'Web Browsing',
+                            label: t('webBrowsing'),
                             value: 'browser',
                         }, {
-                            label: 'DALL·E Image Generation',
+                            label: t('imageGeneration'),
                             value: 'dalle'
                         }, {
-                            label: 'Code Interpreter',
+                            label: t('codeInterpreter'),
                             value: 'python'
                         }
                     ]}
@@ -256,16 +258,16 @@ const OnePromptClonePopover: React.FC<{
             </div>
             {/* 确定，关闭 */}
             <footer className="flex items-center justify-end mt-2 gap-x-2 ">
-                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">Confirm</Button>
-                <Button onClick={handleClose} type="link" size="small">Cancel</Button>
+                <Button onClick={handleClose} type="link" size="small">{t('Cancel')}</Button>
+                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">{t('Confirm')}</Button>
+
             </footer>
         </div>
     )
 
     return (
         <Popover
-
-            title='One Prompt GPTS builder'
+            title={t('selectLanguageTitle')}
             trigger="click"
             open={open}
             content={content}>

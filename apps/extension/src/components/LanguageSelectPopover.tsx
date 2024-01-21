@@ -3,6 +3,7 @@ import { Button, Popover, Select, Space, Switch } from "antd"
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { useState } from "react";
 import _ from 'lodash'
+import { useTranslation } from "react-i18next";
 
 const LanguageSelect = ({ onChange }) => {
     const languages = [
@@ -70,6 +71,8 @@ const LanguageSelectPopover: React.FC<{
     const [language, setLanguage] = useState('zh')
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
+
+    const { t, i18n } = useTranslation();
     const handleConfirm = async () => {
         console.debug('language', language)
 
@@ -228,11 +231,11 @@ const LanguageSelectPopover: React.FC<{
     }
     const content = (
         <div>
-            <h3 className="pb-3 text-sm font-normal text-gray-500 ">You can Change GPT language </h3>
+            <h3 className="pb-3 text-sm font-normal text-gray-500 ">{t('changeLanguageText')} </h3>
             <LanguageSelect onChange={setLanguage} ></LanguageSelect>
             <footer className="flex items-center justify-end mt-2 gap-x-2 ">
-                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">Confirm</Button>
-                <Button onClick={handleClose} type="link" size="small">Cancel</Button>
+                <Button onClick={handleClose} type="link" size="small">{t('Cancel')}</Button>
+                <Button loading={loading} onClick={handleConfirm} type="primary" size="small">{t('Confirm')}</Button>
             </footer>
         </div>
     )
@@ -240,7 +243,7 @@ const LanguageSelectPopover: React.FC<{
     return (
         <Popover
             destroyTooltipOnHide
-            title='Select Language'
+            title={t('onePromptBuilderTitle')}
             trigger="click"
             open={open}
             key={'LanguageSelectPopover'}

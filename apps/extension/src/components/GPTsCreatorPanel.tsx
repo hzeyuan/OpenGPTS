@@ -14,6 +14,7 @@ import LanguageSelectPopover from './LanguageSelectPopover';
 import OnePromptClonePopover from './OnePromptClonePopover';
 import GPTForm from './GPTForm';
 import openaiSvg from "data-base64:~assets/openai.svg"
+import { useTranslation } from 'react-i18next';
 
 const storage = new Storage({
   area: "local",
@@ -30,12 +31,14 @@ export default () => {
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [spinning, setSpinning] = useState(false)
   const [syncing, setSyncing] = useState(false)
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (keys: Key[]) => setSelectedRowKeys(keys),
   };
   const [dataSource, setDataSource] = useState<any[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
+  const { t, i18n } = useTranslation();
   const [notificationApi, notificationContextHolder] = notification.useNotification();
   const [modal, modalContextHolder] = Modal.useModal();
 
@@ -147,7 +150,7 @@ export default () => {
     }
 
     let cursor = ''
-    messageApi.info('开始同步ChatGPT中的GPTs');
+    messageApi.info(t('syncStart'));
     setSyncing(true)
     const refreshInterval = setInterval(handleGetGptsList, 1000);
     while (true) {
@@ -178,7 +181,7 @@ export default () => {
         break
       }
     }
-    messageApi.success('同步完成');
+    messageApi.success(t('syncComplete'));
     setSyncing(false)
     clearInterval(refreshInterval)
   }
@@ -211,19 +214,19 @@ export default () => {
       messageApi.error(result?.error)
       return
     }
-    messageApi.success(`Share ${gizmo.display.name} success`);
+    messageApi.success(t('shareSuccess', { name: gizmo.display.name }));
   }
 
   const handleUpdatedGPT = (gizmo, values) => {
     hideModal()
-    messageApi.success(`update ${gizmo.name} success`);
+    messageApi.success(t('updateSuccess', { name: gizmo.name }));
   }
 
   const handleGoGPTs = (gizmo: Gizmo) => {
     console.log('gizmo.tags', gizmo.tags)
     if (gizmo.tags?.includes('private')) {
       window.open(`https://chat.openai.com/gpts/editor/${gizmo.short_url}`)
-      messageApi.warning('Private GPT can not chat,So we open the editor for you')
+      messageApi.warning(t('privateGPTWarning'));
       return
     } else {
       window.open(`https://chat.openai.com/g/${gizmo.short_url}`)
@@ -231,7 +234,7 @@ export default () => {
   }
 
   const handleCopyGPTInfo = (gizmo: Gizmo) => {
-    messageApi.success(`copy ${gizmo.display.name} at clipboard success`);
+    messageApi.success(t('copySuccess', { name: gizmo.display.name }));
     navigator.clipboard.writeText(JSON.stringify(gizmo))
   }
 
@@ -253,7 +256,7 @@ export default () => {
     const gizmoId = gizmo.id
     const isPublic = gizmo?.tags?.includes('public')
     if (isPublic) {
-      messageApi.error('Public GPT can not publish Again')
+      messageApi.error(t('publishError'));
       return
     }
     try {
@@ -265,7 +268,7 @@ export default () => {
         },
         extensionId: Browser.runtime.id,
       })
-      messageApi.success('Publish Success');
+      messageApi.success(t('publishSuccess'));
     } catch (error) {
       messageApi.error(error)
     }
@@ -279,7 +282,7 @@ export default () => {
       for (let gizmoId of gizmoIds) {
         await handleRemoveGPT(gizmoId)
       }
-      messageApi.success('Delete Success');
+      messageApi.success(t('deleteSuccess'));
     } catch (error) {
       messageApi.error(error)
     } finally {
@@ -300,7 +303,7 @@ export default () => {
   })
 
   return (
-    <div className='py-2 bg-[var(--opengpts-option-card-bg-color)]'>
+    <div className='py-2 bg-[var(--opengpts-option-card-bg-color)] h-full'>
 
       <div className='mx-4'>
         <div className='mb-2 text-2xl font-semibold '><Typography.Title level={2}>Open GPTS</Typography.Title></div>
@@ -314,7 +317,7 @@ export default () => {
                 handleAsyncGptsList()
               }}
             >
-              同步GPTS数据
+              {t('AsyncGPTsFromChatGPT')}
             </Button>
           </Tooltip>
           <OnePromptClonePopover
@@ -322,48 +325,9 @@ export default () => {
           >
             <Button
             >
-              一键生成GPTs
+              {t('CloneGPT')}
             </Button>
           </OnePromptClonePopover>
-
-          {/* <Button
-            size="small"
-            key="testChat"
-            loading={syncing}
-            type="primary"
-            onClick={() => {
-              sendToBackground({
-                name: "openai",
-                body: {
-                  action: 'chatWithWeb',
-                  question: '你好',
-                  session: {
-                    gizmoId: 'g-9D86OXon4',
-                  },
-                },
-                extensionId: Browser.runtime.id,
-              })
-            }}
-          >
-            测试对话
-          </Button> */}
-          {/* <Button
-            key="getModels"
-            size="small"
-            loading={syncing}
-            type="primary"
-            onClick={() => {
-              sendToBackground({
-                name: "openai",
-                body: {
-                  action: 'getModels',
-                },
-                extensionId: Browser.runtime.id,
-              })
-            }}
-          >
-            获取模型列表
-          </Button> */}
 
         </div>
       </div>
@@ -436,9 +400,11 @@ export default () => {
                     </div>
                     {/* Delete GPT */}
                     <Popconfirm
-                      title="Delete the GPT"
-                      description="Are you sure to delete this GPT?"
+                      title={t('confirmDeleteTitle')}
+                      description={t('confirmDeleteDescription')}
                       onConfirm={() => handleRemoveGPT(record.id)}
+                      okText={t('Confirm')}
+                      cancelText={t('Cancel')}
                       icon={<DeleteOutlined style={{ color: 'red' }} />}
                     >
                       <div
@@ -449,9 +415,11 @@ export default () => {
                     </Popconfirm>
                     {/* share to Store */}
                     <Popconfirm
-                      title="Share My GPT Store"
-                      description="Are you sure to Share this GPT to Our GPT Store?"
+                      title={t('shareGPTTitle')}
+                      description={t('shareGPTDescription')}
                       onConfirm={() => handleShareGPT(record.gizmo)}
+                      okText={t('Confirm')}
+                      cancelText={t('Cancel')}
                       icon={<ShareAltOutlined style={{ color: '' }} />}
                     >
                       <div
@@ -470,8 +438,10 @@ export default () => {
                       </div>
                     </OnePromptClonePopover>
                     <Popconfirm
-                      title="Publish the GPT"
-                      description="Are you sure to Publish this GPT?"
+                      title={t('publishGPTTitle')}
+                      description={t('publishGPTDescription')}
+                      okText={t('Confirm')}
+                      cancelText={t('Cancel')}
                       onConfirm={() => handlePublish(record.gizmo)}
                       icon={<SendOutlined style={{ color: 'blueviolet' }} />}
                     >
@@ -490,44 +460,23 @@ export default () => {
           }}
           toolbar={{
             title: <div className='flex items-center gap-x-2'>
-              <span className=' whitespace-nowrap'>My GPTS</span>
-              <Tag color='#2196F3'>Count: {GPTSCount}</Tag>
-              <Tag color='#4CAF50'>Pinned: {PinnedCount}</Tag>
-              <Tag color='#5BD8A6'>Public: {PublicCount}</Tag>
-              <Tag color='#FFA500'>Private: {PrivateCount}</Tag>
+              <span className=' whitespace-nowrap'>{t('MyGPTs')}</span>
+              <Tag color='#2196F3'>{t('Count')}: {GPTSCount}</Tag>
+              <Tag color='#4CAF50'>{t('Pinned')}: {PinnedCount}</Tag>
+              <Tag color='#5BD8A6'>{t('Public')}: {PublicCount}</Tag>
+              <Tag color='#FFA500'>{t('Private')}: {PrivateCount}</Tag>
             </div>,
-            // menu: {
-            //   activeKey,
-            //   items: [
-            //     {
-            //       key: 'tab1',
-            //       label: (
-            //         <span>全部实验室{renderBadge(99, activeKey === 'tab1')}</span>
-            //       ),
-            //     },
-            //     {
-            //       key: 'tab2',
-            //       label: (
-            //         <span>
-            //           我创建的实验室{renderBadge(32, activeKey === 'tab2')}
-            //         </span>
-            //       ),
-            //     },
-            //   ],
-            //   onChange(key) {
-            //     setActiveKey(key);
-            //   },
-            // },
+
             search: false,
             actions: [
               <Dropdown
                 menu={{
                   items: [{
                     key: 'desc',
-                    label: '从高到低',
+                    label: t('HighToLow'),
                   }, {
                     key: 'asc',
-                    label: '从低到高',
+                    label: t('LowToHigh'),
                   }],
                   selectable: true,
                   defaultSelectedKeys: ['desc'],
@@ -537,7 +486,7 @@ export default () => {
                 }}
               >
                 <div className='flex items-center justify-center w-full'>
-                  <span className=' min-w-[56px]'>{sortOrder === 'desc' ? '从高到低' : '从低到高'}</span>
+                  <span className=' min-w-[64px]'>{sortOrder === 'desc' ? t('HighToLow') : t('LowToHigh')}</span>
                   <DownOutlined />
                 </div>
 
@@ -547,16 +496,16 @@ export default () => {
                   items: [
                     {
                       key: 'time',
-                      label: '按时间排序',
+                      label: t('sort.byTime'), // Translated label
                     }, {
                       key: 'chat',
-                      label: '按聊天数排序',
+                      label: t('sort.byChats'), // Translated label
                     }, {
                       key: 'user',
-                      label: '按用户数排序',
+                      label: t('sort.byUsers'), // Translated label
                     }, {
                       key: 'pin',
-                      label: '按收藏数排序',
+                      label: t('sort.byPins'), // Translated label
                     }],
                   selectable: true,
                   defaultSelectedKeys: ['time'],
@@ -566,12 +515,12 @@ export default () => {
                 }}
               >
                 <div className='flex items-center justify-center w-full'>
-                  <span className=' min-w-[85px]'>
+                  <span className=' min-w-[48px]'>
                     {
-                      sortType === 'time' ? '按时间排序' :
-                        sortType === 'chat' ? '按聊天数排序' :
-                          sortType === 'user' ? '按用户数排序' :
-                            sortType === 'pin' ? '按收藏数排序' : ''
+                      sortType === 'time' ? t('sort.byTime') :
+                        sortType === 'chat' ? t('sort.byChats') :
+                          sortType === 'user' ? t('sort.byUsers') :
+                            sortType === 'pin' ? t('sort.byPins') : ''
                     }
                   </span>
                   <DownOutlined />
@@ -579,7 +528,7 @@ export default () => {
               </Dropdown>,
               <Search onSearch={(value) => { handleGetGptsList(value) }} placeholder="input search text" allowClear />,
               <Button onClick={handleReset} type="primary" key="primary">
-                重置
+                {t('Reset')}
               </Button>,
             ],
 
@@ -640,7 +589,7 @@ export default () => {
           }}
           rowKey={(record) => record.id}
           itemLayout="vertical"
-          headerTitle="Open GPTS"
+          headerTitle={t('modal.openGPTS')}
           rowSelection={rowSelection}
           tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
             return (
@@ -670,7 +619,7 @@ export default () => {
       {contextHolder}
       {notificationContextHolder}
       <Modal
-        title="Edit GPT"
+        title={t('modal.editGPT')}
         open={open}
         onOk={hideModal}
         onCancel={hideModal}
