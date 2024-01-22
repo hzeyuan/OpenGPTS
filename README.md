@@ -1,7 +1,7 @@
 # OpenGPTs-非常好用的开源GPTs管理器.
 
 <div align="center">
-<img src="images/logo.png" width="500" >
+<img src="images/logo.png"  >
 </div>
 
 
