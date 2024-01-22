@@ -22,7 +22,8 @@ OpenGPTs：一款外挂般的GPTs管理器，由ChatPaper团队开源！
 亮点功能：一键同步，自定义排序搜索，一键创建，一键复刻到其他语言，一键分享，等等功能。还有多GPTs对话等功能正在开发ing。
 Chrome插件下载链接：
 Github仓库：https://github.com/hzeyuan/OpenGPTS
-欢迎大家star🌟和转发！🔁
+QQ群：860859251
+欢迎大家star，和转发！
 ```
 
 如果有任何问题，欢迎提issue💬，如果有新的功能，欢迎大家提PR。也欢迎加入我们的开发者群：860859251。👩‍💻
