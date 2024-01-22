@@ -175,6 +175,7 @@ function formatGpts(row: QueryResultRow): Gpts | undefined {
     updated_at: row.updated_at,
     visit_url: "https://chat.openai.com/g/" + row.uuid,
     rating: row.rating,
+    is_recommended: row.is_recommended,
   };
 
   try {

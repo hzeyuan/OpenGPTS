@@ -36,5 +36,4 @@ yarn-error.log*
 
 .next
 node_modules/
-/apps/web/.next/
-apps/web/.next/*
+
