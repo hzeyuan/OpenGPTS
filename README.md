@@ -1,5 +1,12 @@
 # OpenGPTs-非常好用的开源GPTs管理器.
 
+<div style="font-size: 1.5rem;">
+  <a href="./README.md">中文</a> |
+  <a href="./README_EN.md">English</a>
+</div>
+</br>
+
+
 <div align="center">
 <img src="images/logo.png" width="500" >
 </div>
