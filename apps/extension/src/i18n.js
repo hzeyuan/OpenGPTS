@@ -35,7 +35,7 @@ const resources = {
             "sort.byUsers": "Sort by Users",
             "sort.byPins": "Sort by byPins",
             'Reset': 'Reset',
-            'modal.openGPTS': 'Open GPTS',
+            'modal.openGPTS': 'OpenGPTS',
             'modal.editGPTS': 'Edit GPTS',
             // message
             'syncStart': 'Starting to sync GPTs from ChatGPT',

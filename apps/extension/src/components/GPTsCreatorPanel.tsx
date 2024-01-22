@@ -309,7 +309,7 @@ export default () => {
     <div className='py-2 bg-[var(--opengpts-option-card-bg-color)] h-full'>
 
       <div className='mx-4'>
-        <div className='mb-2 text-2xl font-semibold '><Typography.Title level={2}>Open GPTS</Typography.Title></div>
+        <div className='mb-2 text-2xl font-semibold '><Typography.Title level={2}>OpenGPTs</Typography.Title></div>
         <div className='flex gap-x-2'>
           <Tooltip title={t('AsyncGPTsFromChatGPT.tooltip')
           }

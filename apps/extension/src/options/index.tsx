@@ -144,7 +144,7 @@ function IndexOptions() {
                             <img className="w-8 h-8 logo" src={logo.toString()} alt="" />
                             <div className="text-2xl font-semibold ms-2"><Text style={{
                                 fontSize: '20px',
-                            }}>Open GPTS</Text></div>
+                            }}>OpenGPTS</Text></div>
                         </div>
                         <Menu items={menus}
                             selectedKeys={[activeKey]}

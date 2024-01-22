@@ -17,7 +17,7 @@ export default () => {
               backgroundImage: "url('/brand.svg')",
             }}
           >
-            OPEN GPTS
+            OPENGPTS
           </a>
         </h1>
 

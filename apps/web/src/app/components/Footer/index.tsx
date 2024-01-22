@@ -35,7 +35,7 @@ export default () => {
               className="inline-block mx-2 py-1.5 pr-6 font-normal text-[#276EF1] transition hover:text-[#276EF1] sm:py-2 sm:pr-6 lg:pr-12"
               target="_blank"
             >
-               OPEN GPTS
+               OPENGPTS
             </a>
           </div>
           <div className="max-[991px]:flex-none">
