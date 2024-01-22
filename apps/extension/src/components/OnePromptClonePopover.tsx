@@ -171,7 +171,7 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
-        
+
         console.log('handleGeneratePrompt', result)
         let textResult = _.get(result, 'data.text', '')
         textResult = textResult.replace('Current GPTs Prompt:', '')
@@ -327,7 +327,7 @@ const OnePromptClonePopover: React.FC<{
     }
     const content = (
         <div >
-            <h3 className="pb-3 text-sm font-normal text-gray-500 ">One prompt  quickly create new GPTs</h3>
+            <h3 className="pb-3 text-sm font-normal text-gray-500 ">If there is an error, please <a className="text-blue-500 " href='https://chat.openai.com/g/g-LJcAplYdM-opengpts'>OpenGPTs</a> on any chat to automatically generate the logo</h3>
             <PromptTextArea onChange={setPrompt} ></PromptTextArea>
             <div className="block py-2 font-medium text-token-text-primary">Capabilities</div>
             <div className="pb-2">
@@ -366,8 +366,7 @@ const OnePromptClonePopover: React.FC<{
 
     return (
         <Popover
-
-            title='One Prompt GPTS builder'
+            title={t('CloneGPT')}
             trigger="click"
             open={open}
             content={content}>

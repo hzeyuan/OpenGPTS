@@ -129,6 +129,7 @@ export default () => {
       const key = `asyncGptsList`;
       const btn = (
         <Space>
+          <h3 className="py-1 text-sm font-normal text-gray-500 ">If there is an error, please <a className="text-blue-500 " href='https://chat.openai.com/g/g-LJcAplYdM-opengpts'>OpenGPTs</a> on any chat to automatically generate the logo</h3>
           <Button type="primary" size="small" onClick={openOpenAI}>
             open OpenAI
           </Button>
@@ -310,14 +311,14 @@ export default () => {
       <div className='mx-4'>
         <div className='flex items-center justify-between h-12 pb-2'>
           <Typography.Title style={{ margin: 0 }} level={3}>Open GPTS</Typography.Title>
-          <button 
-            onClick={()=>{window.open('https://open-gpts.vercel.app')}}
-          className="relative w-32 h-10 p-2 overflow-hidden font-extrabold text-gray-50  duration-300  bg-neutral-800 border rounded-md cursor-pointer group hover:bg-[#60D7E2]">
+          <button
+            onClick={() => { window.open('https://open-gpts.vercel.app') }}
+            className="relative w-32 h-10 p-2 overflow-hidden font-extrabold text-gray-50  duration-300  bg-neutral-800 border rounded-md cursor-pointer group hover:bg-[#60D7E2]">
             <div className="absolute z-10 w-6 h-10 duration-700 bg-yellow-500 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-12 top-12"></div>
             <div className="absolute z-10 w-4 h-5 duration-700 bg-orange-500 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-20 -top-6"></div>
             <div className="absolute z-10 w-3 h-3 duration-700 bg-pink-500 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-32 top-6"></div>
             <div className="absolute z-10 w-2 h-2 duration-700 bg-red-600 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-2 top-12"></div>
-            <p className="absolute bottom-0 z-10 left-2">OpenGPTs Store</p>
+            <div className="flex items-center justify-center">OpenGPTs Store</div>
           </button>
         </div>
         <div className='flex gap-x-2'>

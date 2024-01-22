@@ -387,10 +387,12 @@ export async function generateAnswersWithChatgptWebApi(session: Session, authori
     if (needArkoseToken) {
         if (!config?.chatgptArkoseReqUrl) {
             throw new Error(
-                'Please login at https://chat.openai.com first' +
-                '\n\n' +
-                "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
-            )
+                'Please ensure you are logged in at https://chat.openai.com. ' +
+                '\n' +
+                'After logging in, engage in any conversation at https://chat.openai.com/g/g-LJcAplYdM-opengptsz and then retry. ' +
+                '\n' +
+                'If you encounter any further issues or have questions, feel free to seek assistance at https://chat.openai.com/g/g-LJcAplYdM-opengptsz or contact us for more help.'
+            );
         }
         arkoseToken = config?.chatgptArkoseReqUrl
             ? await fetch(config?.chatgptArkoseReqUrl + '?' + config.chatgptArkoseReqParams, {
@@ -407,10 +409,12 @@ export async function generateAnswersWithChatgptWebApi(session: Session, authori
         // console.debug('arkoseToken', arkoseToken)
         if (needArkoseToken && !arkoseToken)
             throw new Error(
-                'Failed to get arkose token.' +
-                '\n\n' +
-                "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
-            )
+                'Please ensure you are logged in at https://chat.openai.com. ' +
+                '\n' +
+                'After logging in, engage in any conversation at https://chat.openai.com/g/g-LJcAplYdM-opengptsz and then retry. ' +
+                '\n' +
+                'If you encounter any further issues or have questions, feel free to seek assistance at https://chat.openai.com/g/g-LJcAplYdM-opengptsz or contact us for more help.'
+            );
     }
 
     let text = '', imagePointers: string[] = [];

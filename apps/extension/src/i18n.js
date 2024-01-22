@@ -69,6 +69,7 @@ const resources = {
             'publishGPTTitle': 'Publish GPT to OpenAI GPTs Store',
             'publishGPTDescription': 'Are you ready to make this GPT public and available to others?',
             'AsyncGPTsFromChatGPT.tooltip': 'One-Click Async GPTs From ChatGPT',
+            'promptBuilder.tooltip': 'If there is an error, please {{gpts}} on any chat to automatically generate the logo',
         }
     },
     zh: {
@@ -128,13 +129,7 @@ const resources = {
             'publishGPTTitle': '发布 GPT到OpenAI GPTs Store',
             'publishGPTDescription': '您准备好将这个 GPT 公开并向其他人提供了吗？',
             'AsyncGPTsFromChatGPT.tooltip': '一键从ChatGPT同步GPTs',
-
-
-
-
-
-
-
+            'promptBuilder.tooltip': '如果出现错误，请{{gpts}} 上任意对话，才能自动生成Logo',
         }
     }
 };
