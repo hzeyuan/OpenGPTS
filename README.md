@@ -52,13 +52,13 @@
 2. 等待数据同步完成
 3. 如果想临时中断同步，可以关闭侧边栏，再打开。
 
-![演示效果图](https://github.com/hzeyuan/OpenGPTS/blob/master/images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
+![演示效果图](images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
 
 
 ### 批量管理所有GPTs：
 好了，这个功能就是为了解决我们之前提到的那些痛点，如何批量管理比较多的GPTs。
 
-自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接
+下面依次详细介绍 自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）这几个功能。
 
 #### 自定义排序：
 现在官网和一些排行榜对GPTs的评价主要看对话数，对于GPTs的创作者来说，对话数肯定是自己最看重的一个指标，但如果自己最火的一个GPTs在很久之前创建的，那么去维护它的时候，就很难找到了。这时候，速速使用自定义排序：
@@ -67,23 +67,52 @@
 
 这样就可以开心的看到自己的GPTs有多少人用过，哪些是比较受大家欢迎的。
 
-![排序效果图](https://github.com/hzeyuan/OpenGPTS/blob/master/images/sort.png)
+![排序效果图](images/sort.png)
+
+#### 批量删除：慎用！
+如果大家创建了一堆没啥用的GPTs，尤其是测试的时候，需要快速删除掉，我们也提供了批量删除的功能，不过这个功能暂时没有回收站的选项，**千万别误删除了重要的GPTs！**
+
+1. 选择合适的排序，比如说`按聊天排序`，然后`从低到高`，或者`按创建排序`，然后`从高到低`。
+2. 选择要删除的GPTs；
+3. 划到上面，选择`删除`，一定要确保是能删除的，无法撤回！OpenAI那边也不会保留记录！
 
 
+![批量删除演示图](images/批量删除.gif)
+
+#### 查询搜索：
+这个没啥介绍的，就是简单的关键词搜索，但应该还是很方便的。
+下面是搜索的效果图：
+![搜索效果图](images/search.png)
+
+#### 一键发布到商店；
+我们默认GPTs的创建是用户本人使用的，即`only me`这种，但如果你需要发布到OpenAI的商店，或者为了扩大宣传，发布到我们OpenGPTs的排行榜，那么就可以一键发布了。
+1. 选择一个`privite`的GPTs
+2. 点击最右边的小云朵，发布到OpenAI GPTs store中
+3. 点击中间的小飞机，发布到我们的OpenGPTs store中
+
+![发布演示图](/images/pub.png)
+
+#### 一键分享给神奇的群友
+暂时还不知道国外的朋友们一般会分享给谁，推特？discord？国内的朋友们应该都是直接选择将自己精心调教的GPTs，分享给神奇的群友。相比OpenAI自带的、孤零零的URL复制，我们提供的一键分享功能，则免去的多次复制粘贴，一次性粘贴出`标题+简介+链接`，简单省心。
+![一键分享演示图](/images/一键分享.gif)
 
 
 
 ### 一键生成GPTs：
-这个功能现在看起来还有点简单粗陋，但我们已经把自动批量创建GPTs的链条打通，想象力丰富的朋友应该知道，这个功能在后面openai给GPTs返利的时候意味着什么。
+这是一个隐藏的、开挂般的功能，现在看起来还有点简单粗陋，但我们已经把自动批量创建GPTs的链条打通，想象力丰富的朋友应该知道，这个功能在后面openai给GPTs创作者返利的时候意味着什么。
 
 哈哈，先不画饼了，先简单描述一下现有的功能：
+0. 需要先打开任意一个GPTs，进行对话，否则本功能无法自动提供Logo绘制！
 1. 点击`一键创建GPTs`
 2. 输入你想要的GPTs有的特性，比如：`猫娘GPTs`
 3. 选择GPTs需要的附加能力，是否需要联网、画图、代码解释器，默认前两个
 4. 点击`确认`，等待生成，由于需要等待画图，那么需要大约2分钟左右，生成一个GPTs.
 5. 生成完毕后，点击左边的openai图标，查看生成结果网页。
-6. 如果差距不大，可以直接发布；如果有一些细节问题，可以手动修改。
+6. 如果差距不大，可以直接发布；如果有一些细节问题，可以手动修改（目前的start有点小问题）。
 7. 修改完毕后，默认是仅自己可见。可以选择最右边的上传图标，在OpenAI商店公开。
+8. 暂时不支持对文件和action的自动创建。
+
+![一键创建演示图](/images/一键创建GPTs.gif)
 
 
 
@@ -110,7 +139,27 @@ Special thanks to the following projects and contributors:
 
 ## Thanks to all contributors for their efforts
 - [hzeyuan](https://github.com/hzeyuan)，负责9成9的开发工作，主要的项目发起者。
-- [kaixindelele](https://github.com/kaixindelele) 负责部分产品设计，测试，项目PR，极少数开发，项目联合发起者。
+- [kaixindelele](https://github.com/kaixindelele)， 负责部分产品设计，测试，项目PR，极少数开发，项目联合发起者。
+
+## Starchart
+
+[![Star History Chart](https://api.star-history.com/svg?repos=hzeyuan/OpenGPTS&type=Date)](https://star-history.com/#hzeyuan/OpenGPTS&Date)
+
+
+## 项目引用：
+Please cite the repo if you use the data or code in this repo.
+
+```
+@misc{OpenGPTs,
+  author={Zeyuan Huang, Yongle Luo},
+  title = {OpenGPTs: A Powerful GPTs manager, Multi-GPTs Intelligent Agent Platform.},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/hzeyuan/OpenGPTs}},
+}
+```
+
 
 ## License
 GPL-3.0 License
