@@ -185,7 +185,7 @@ function IndexSidePanel() {
                                                 <Popover title='QQ:860859251'
                                                 >
                                                     <div onClick={() => {
-                                                        window.open('https://github.com/hzeyuan/OpenGPTS')
+                                                        window.open('http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=bS8gPGax2ObMgdipbTacRX-1gzKwqF60&authKey=o51MRTMX%2FyDJRdBHqT5BPMsP0N3Nqytmta7nwzG9dh6iXMWtu1IVkFQJjnNYyNPS&noverify=0&group_code=860859251')
                                                     }} className='opengpts-sidebarr-tab'>
                                                         <motion.img whileTap={shakeAnimation}
 

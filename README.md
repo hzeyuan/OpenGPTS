@@ -1,7 +1,7 @@
 # OpenGPTs-非常好用的开源GPTs管理器.
 
-## 1. 一句话介绍
-非常好用的GPTs管理器，[ChatPaper](https://github.com/kaixindelele/chatpaper)团队开源一款功能强大的浏览器插件。
+## 一句话介绍
+非常好用的GPTs管理器，[ChatPaper](https://github.com/kaixindelele/chatpaper)团队开源一款功能强大的浏览器插件，适合所有拥有Plus权限的朋友。
 
 ## 为什么要做OpenGPTs？ 🤔💡
 众所周知，OpenAI官网的GPTs几乎没有管理功能。如果你创建了几个GPTs，你应该会想着今天有多少人使用过你的GPTs，你想要能够一键分享给群友，你希望能够产生不同的微调版本。🔁
@@ -12,7 +12,7 @@
 
 为此，我们团队花了一周时间，特意为大家开发了一款强大的浏览器插件--OpenGPTs，它可以帮助大家更好的管理自己的GPTs。💻🚀 我们不仅将完整的插件免费发布，并且将所有插件代码开源出来，希望以此为平台为基础，和广大的开发者们一起，做出更好的、更强大的插件管理器。🌍❤️️
 
-野望：我们的最终设想是希望能够以这个插件为平台📈，可以把**每个GPTs当成一个Agent**🤖，实现各种业务流程的自动化，最大程度解放大家的生产力🚀，帮助大家更好的摸鱼🐟！哈哈！😄
+**野望**：我们的最终设想是希望能够以这个插件为平台📈，把**每个GPTs当成一个Agent**🤖，实现各种业务流程的自动化，最大程度解放大家的生产力🚀，帮助大家更好的摸鱼🐟！哈哈！😄
 
 如果本项目对大家有帮助，欢迎点一下上面的Star🌟，欢迎转发，这是对我们最大的支持！🙌
 
@@ -24,7 +24,7 @@
 |:-:|:-:|
 |一键同步|自动同步官网GPTs所有数据：对话数，收藏数，用户数|
 |批量管理|批量管理自己的所有GPTs：自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）|
-|一键生成|输入标题，一键生成GPTs，复刻官网功能，但可以自定义提示词！|
+|一键生成|输入标题，一键生成GPTs，复刻官网功能，但可以自定义提示词！（后续封装出接口）|
 |一键复刻|对自己已有GPTs，一键复刻成其他语言，或者通过语言调整其他微调版本|
 |一键调用GPTs对话|目前版本已经实现调用3.5/4.0和任意GPTs对话的功能，后续将封装成模块，供大家定制化开发！|
 |排行榜|我们的排行榜的数据更加全面和准确|
@@ -47,11 +47,17 @@
 作为管理器，我们为大家提供的第一个功能就是GPTs的同步，以便后面的批量管理。
 
 具体操作如下：
-1. 登录你尊贵的OpenAI Plus账号，然后点开我们的插件，点击`从ChatGPT中同步数据`
+1. 登录您尊贵的OpenAI Plus账号，然后点开我们的插件，点击`从ChatGPT中同步数据`
 2. 等待数据同步完成
 3. 如果想临时中断同步，可以关闭侧边栏，再打开。
 
 ![演示效果图](https://github.com/hzeyuan/OpenGPTS/blob/master/images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
+
+
+### 一键生成GPTs：
+这个功能现在看起来还有点简单粗陋，但我们已经把自动批量创建GPTs的链条打通，想象力丰富的朋友应该知道，这个功能在后面openai给GPTs返利的时候意味着什么。哈哈，先不画饼了，先简单描述一下现有的功能：
+1. 点击`一键创建GPTs`
+2. 
 
 
 
@@ -60,7 +66,7 @@
 所有数据保存在用户本地，除非用户手动提交GPTs链接到排行榜，否则不会上传任何数据。
 
 ## 技术介绍：
-typescipt; react;
+javascipt; react;
 
 ## 开发指导：
 
@@ -72,12 +78,13 @@ typescipt; react;
 Special thanks to the following projects and contributors:
 
 - [gpts-works](https://github.com/all-in-aigc/gpts-works)
+- [chatbox](https://github.com/Bin-Huang/chatbox)
 
 
 
 ## Thanks to all contributors for their efforts
-- [hzeyuan](https://github.com/hzeyuan)
-- [kaixindelele](https://github.com/kaixindelele)
+- [hzeyuan](https://github.com/hzeyuan)，负责9成9的开发工作，主要的项目发起者。
+- [kaixindelele](https://github.com/kaixindelele) 负责部分产品设计，测试，项目PR，极少数开发，项目联合发起者。
 
 ## License
 GPL-3.0 License
