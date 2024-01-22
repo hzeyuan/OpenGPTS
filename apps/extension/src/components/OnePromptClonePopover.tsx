@@ -63,6 +63,7 @@ const OnePromptClonePopover: React.FC<{
                     Your output format: 'name: xxx'
                     You just need return one neme.
                     `,
+                    autoLean: true
                 },
             }
         })
@@ -95,6 +96,7 @@ const OnePromptClonePopover: React.FC<{
                     Current User Request:{Title:${name}, Input:${prompt}.
                     Your output format: 'Description: xxx'
                     `,
+                    autoLean: true
                 },
             }
         })
@@ -132,6 +134,7 @@ const OnePromptClonePopover: React.FC<{
 
                     Curretn Input:Title:${title},Description:${desc},User Request:${prompt}.
                     Your output format:1. xxx 2. xxx 3. xxx 4. xxx`,
+                    autoClean: true
                 },
             }
         })
@@ -164,6 +167,7 @@ const OnePromptClonePopover: React.FC<{
                     Output: 'Current GPTs Prompt: This GPTs, named ChatPaper, is designed to assist users by providing concise and accurate summaries of research papers. This involves parsing complex academic language and extracting key information such as the paper's purpose, methodology, results, and conclusions. The GPT should prioritize clarity and brevity in its summaries, ensuring they are accessible to a wide audience. It should avoid giving opinions or interpretations beyond what is presented in the paper. The tone should be formal and academic, mirroring the language typically found in research publications. Personalization will be minimal, focusing more on delivering factual, neutral summaries rather than engaging in conversational dialogue. The output language depends on the user's input language.'
                     The input:Title:${name},Desc:${desc},User Request:${prompt}.
                     Your output format: 'Current GPTs Prompt: xxx'`,
+                    autoLean: true
                 },
             }
         })
@@ -187,7 +191,8 @@ const OnePromptClonePopover: React.FC<{
                 session: {
                     modelName: 'chatgptPlus4',
                     question: `Design a logo for a app called "${name}" that is used for ${desc}. and you can refer to the following instructions to design the logo: ${instructions}`,
-                    gizmoId: 'g-OsukSfZhG'
+                    gizmoId: 'g-OsukSfZhG',
+                    autoLean: true
                 }
             }
         })

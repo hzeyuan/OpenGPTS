@@ -6,7 +6,19 @@ import { v4 as uuidv4 } from 'uuid'
 import { fetchSSE } from '~src/utils/fetch-sse.mjs'
 import { ofetch } from 'ofetch'
 import { Models, chatgptWebModelKeys } from "~src/constant";
-import { message } from 'antd';
+
+
+interface Session {
+    question: string;
+    autoClean?: boolean;
+    conversationId?: string;
+    // conversationRecords: any[];
+    messageId?: string;
+    parentMessageId?: string;
+    modelName?: string;
+    gizmoId?: string;
+}
+
 const storage = new Storage({
     area: "local",
     allCopied: true,
@@ -136,8 +148,6 @@ const getGPT = async (gizmoId: string, draft) => {
         "sec-fetch-mode": "cors",
         "sec-fetch-site": "same-origin"
     };
-
-    // 请求体
 
     return ofetch(apiUrl, {
         method: "GET",
@@ -290,20 +300,48 @@ const getImageByImagePointer: (imagePointer: string) => Promise<string> = async 
 }
 
 
-export async function generateAnswersWithChatgptWebApi(session: {
-    question: string;
-    autoClean?: boolean;
-    conversationId?: string;
-    // conversationRecords: any[];
-    messageId?: string;
-    parentMessageId?: string;
-    modelName?: string;
-    gizmoId?: string;
-}, authorization: string): Promise<{
+export async function deleteConversation(authorization, conversationId) {
+    if (conversationId) {
+        const response = await ofetch(`https://chat.openai.com/backend-api/conversation/${conversationId}`, {
+            method: 'PATCH',
+            headers: {
+                "Authorization": authorization,
+            },
+            body: JSON.stringify({ is_visible: false }),
+            retry: 3,
+            retryDelay: 500,
+            timeout: 10000,
+            ignoreResponseError: true,
+            parseResponse: JSON.parse,
+        }).then(res => {
+            if (!response.success) {
+                return {
+                    ok: false,
+                    error: response.message
+                }
+            }
+            return {
+                ok: true,
+                error: ''
+            }
+        }).catch(error => {
+            return {
+                ok: false,
+                error: error.message
+            }
+        })
+
+    }
+}
+
+
+
+export async function generateAnswersWithChatgptWebApi(session: Session, authorization: string): Promise<{
     ok: boolean;
     data?: {
         text: string;
         imagePointers: string[];
+        session: Session
     };
     error?: string
 }> {
@@ -331,11 +369,10 @@ export async function generateAnswersWithChatgptWebApi(session: {
 
     let usedModel = Models[(session?.modelName || 'chatgptFree35')].value
 
-
+    // if find gizmoId, use gpt-4-gizmo
     if (session?.gizmoId) {
         usedModel = 'gpt-4-gizmo'
     }
-
     console.debug('usedModel', usedModel)
 
     let cookie, arkoseToken
@@ -377,7 +414,7 @@ export async function generateAnswersWithChatgptWebApi(session: {
     }
 
     let text = '', imagePointers: string[] = [];
-    return new Promise((resolve, reject) => {
+    const response = await new Promise((resolve, reject) => {
         return fetchSSE(`${config.customChatGptWebApiUrl}${config.customChatGptWebApiPath}`, {
             method: 'POST',
             // signal: controller.signal,
@@ -424,7 +461,7 @@ export async function generateAnswersWithChatgptWebApi(session: {
                     // console.log("answer", answer)
                     // console.debug('conversation history', { content: session.conversationRecords })
                     // port.postMessage({ answer: null, done: true, session: session })
-                    resolve({ ok: true, data: { text, imagePointers } })
+                    resolve({ ok: true, data: { text, imagePointers, session } })
                     return text
                 }
                 let data
@@ -467,7 +504,8 @@ export async function generateAnswersWithChatgptWebApi(session: {
                     ok: true,
                     data: {
                         text,
-                        imagePointers
+                        imagePointers,
+                        session
                     }
                 })
             },
@@ -489,7 +527,9 @@ export async function generateAnswersWithChatgptWebApi(session: {
                 reject(new Error(!_.isEmpty(error) ? JSON.stringify(error) : `${resp.status} ${resp.statusText}`))
             },
         })
-    })
+    });
+    if (session.autoClean) deleteConversation(authorization, session.conversationId)
+    return response as any
 
 }
 
@@ -578,7 +618,22 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
             // 这里提取gpts中resource.gizmo
             const gizmos: Gizmo[] = gpts.map((item: any) => {
-                return _.get(item, 'resource.gizmo', {})
+                // return _.get(item, 'resource.gizmo', {})
+                // 这里提取resource.gizmo并添加属性profile_picture_id
+                const gizmo = _.get(item, 'resource.gizmo', {})
+                const profilePictureUrl = _.get(gizmo, 'display.profile_picture_url', '')
+                if (profilePictureUrl) {
+                    const profilePicId = profilePictureUrl.replace('https://files.oaiusercontent.com/', '').split('?')[0]
+                    console.log('profilePicId', profilePicId)
+                    return {
+                        ...gizmo,
+                        display: {
+                            ...gizmo.display,
+                            profile_pic_id: profilePicId,
+                        }
+                    }
+                }
+                return { ...gizmo }
             })
             const oldGizmos = await storage.getItem<Gizmo[]>('gizmos')
 
@@ -603,7 +658,6 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             })
         } else if (action === 'chatWithWeb') {
             const result = await generateAnswersWithChatgptWebApi(req.body.session, authorization)
-            // console.log('result', result)
             res.send({
                 ok: result.ok,
                 error: '',
@@ -668,6 +722,13 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             })
         } else if (action === 'getImageByImagePointer') {
             const result = await getImageByImagePointer(req.body.imagePointer)
+            res.send({
+                ok: true,
+                error: '',
+                data: result
+            })
+        } else if (action === 'deleteConversation') {
+            const result = await deleteConversation(authorization, req.body.conversationId)
             res.send({
                 ok: true,
                 error: '',

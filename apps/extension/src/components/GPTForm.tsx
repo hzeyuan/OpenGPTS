@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Row, Col, message, Spin } from 'antd';
 import { sendToBackground } from '@plasmohq/messaging';
 import _ from 'lodash';
+import { useTranslation } from 'react-i18next';
 const GPTForm: React.FC<{
     gizmo?: Gizmo
     onFinish?: (gizmo, values) => void
@@ -12,12 +13,12 @@ const GPTForm: React.FC<{
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false)
     const [messageApi, contextHolder] = message.useMessage();
+    const { t } = useTranslation();
     const handleFinish = async (values) => {
         setLoading(true)
         console.log('Received values of form: ', values);
         if (!gizmo) return;
         const promptStarters = _.compact(values.prompt_starters)
-
 
         await sendToBackground({
             name: 'openai',
@@ -36,15 +37,16 @@ const GPTForm: React.FC<{
 
             }
         })
-        messageApi.success('更新成功');
+        messageApi.success(t('updateSuccess', { name: values.name }));
         setLoading(false)
         onFinish && onFinish(gizmo, values)
     };
 
     useEffect(() => {
+        console.log('gizmo',gizmo)
         if (!gizmo) return;
         form.setFieldsValue({
-            title: gizmo?.display.name,
+            name: gizmo?.display.name,
             description: gizmo?.display.description,
             prompt_starters: gizmo?.display.prompt_starters,
             instructions: gizmo?.instructions,

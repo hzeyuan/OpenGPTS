@@ -146,6 +146,7 @@ const LanguageSelectPopover: React.FC<{
                     prompt: ${gizmo.instructions}
                     }
                     `,
+                    autoClean: true
                 },
             }
         })
@@ -182,9 +183,8 @@ const LanguageSelectPopover: React.FC<{
         const startersStr = extractWithRegex(output, starterPattern, promptPattern);
         const instructions = extractWithRegex(output, promptPattern, '$'); // Assuming prompt is the last section
         const starters = startersStr ? startersStr.split(',').map(item => item.trim()) : [];
-        // console.log('result?.data', output)
-        // console.log('name', name, 'desc', desc, 'starters', starters, 'instructions', instructions)
 
+        console.log('gizmo', gizmo)
         // Sending a request to create the modified GPTs
         const GPTsResult: {
             data: Gizmo,

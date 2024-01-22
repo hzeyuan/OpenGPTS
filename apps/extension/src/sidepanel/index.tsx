@@ -21,7 +21,7 @@ import githubIcon from '~assets/github.svg';
 import EmailIcon from '~assets/email.svg';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
-
+import twitterIcon from '~assets/twitter.svg';
 
 const shakeAnimation = {
     scale: 0.85,
@@ -192,14 +192,19 @@ function IndexSidePanel() {
                                                             style={{ cursor: 'pointer' }} src={QQIcon} />
                                                     </div>
                                                 </Popover>
+                                            </div>
+                                            <div className="opengpts-sidebarr-widgets-list-wrapper">
+                                                <div onClick={()=>{
+                                                    window.open('https://twitter.com/FeigelC35583')
+                                                }} className='opengpts-sidebarr-tab'>
+                                                    <motion.img whileTap={shakeAnimation}
 
-
-
+                                                        style={{ cursor: 'pointer' }} src={twitterIcon} />
+                                                </div>
                                             </div>
                                             <div className="opengpts-sidebarr-widgets-list-wrapper">
                                                 <div onClick={handleSetting} className='opengpts-sidebarr-tab'>
                                                     <motion.img whileTap={shakeAnimation}
-
                                                         style={{ cursor: 'pointer' }} src={settingIcon} />
                                                 </div>
                                             </div>

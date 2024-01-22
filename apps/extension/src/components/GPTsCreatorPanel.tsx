@@ -143,7 +143,7 @@ export default () => {
           '请先登录OpenAI',
         btn,
         key,
-        onClose: close,
+        onClose: onClose,
       });
       return
     }
@@ -197,6 +197,7 @@ export default () => {
     if (result?.error) {
       messageApi.error(result.error)
     }
+    messageApi.success(t('deleteSuccess'));
   }
 
   const handleShareGPT = async (gizmo: Gizmo) => {
@@ -307,7 +308,18 @@ export default () => {
     <div className='py-2 bg-[var(--opengpts-option-card-bg-color)] h-full'>
 
       <div className='mx-4'>
-        <div className='mb-2 text-2xl font-semibold '><Typography.Title level={2}>OpenGPTs</Typography.Title></div>
+        <div className='flex items-center justify-between h-12 pb-2'>
+          <Typography.Title style={{ margin: 0 }} level={3}>Open GPTS</Typography.Title>
+          <button 
+            onClick={()=>{window.open('https://open-gpts.vercel.app')}}
+          className="relative w-32 h-10 p-2 overflow-hidden font-extrabold text-gray-50  duration-300  bg-neutral-800 border rounded-md cursor-pointer group hover:bg-[#60D7E2]">
+            <div className="absolute z-10 w-6 h-10 duration-700 bg-yellow-500 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-12 top-12"></div>
+            <div className="absolute z-10 w-4 h-5 duration-700 bg-orange-500 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-20 -top-6"></div>
+            <div className="absolute z-10 w-3 h-3 duration-700 bg-pink-500 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-32 top-6"></div>
+            <div className="absolute z-10 w-2 h-2 duration-700 bg-red-600 rounded-full group-hover:-top-1 group-hover:-right-2 group-hover:scale-150 right-2 top-12"></div>
+            <p className="absolute bottom-0 z-10 left-2">OpenGPTs Store</p>
+          </button>
+        </div>
         <div className='flex gap-x-2'>
           <Tooltip title={t('AsyncGPTsFromChatGPT.tooltip')
           }
@@ -619,9 +631,6 @@ export default () => {
             return (
               <Space size={16}>
                 <Button danger onClick={() => handleBatchDelete(selectedRowKeys, onCleanSelected)}>删除</Button>
-                {/* <span>
-                  已选择 <a style={{ fontWeight: 600 }}>{selectedRowKeys.length}</a> 项
-                </span> */}
               </Space>
             )
           }}
