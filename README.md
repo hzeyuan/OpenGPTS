@@ -1,5 +1,10 @@
 # OpenGPTs-非常好用的开源GPTs管理器.
 
+<div align="center">
+<img src="images/logo.png" width="100" >
+</div>
+
+
 ## 一句话介绍
 非常好用的GPTs管理器，[ChatPaper](https://github.com/kaixindelele/chatpaper)团队开源一款功能强大的浏览器插件，适合所有拥有Plus权限的朋友。
 
@@ -20,7 +25,7 @@
 ```css
 OpenGPTs：一款外挂般的GPTs管理器，由ChatPaper团队开源！
 亮点功能：一键同步，自定义排序搜索，一键创建，一键复刻到其他语言，一键分享，等等功能。还有多GPTs对话等功能正在开发ing。
-Chrome插件下载链接：
+Chrome插件下载链接：https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip
 Github仓库：https://github.com/hzeyuan/OpenGPTS
 QQ群：860859251
 欢迎大家star，和转发！
