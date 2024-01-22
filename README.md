@@ -75,8 +75,10 @@ Github仓库：https://github.com/hzeyuan/OpenGPTS
 2. 选择排序规则，比如说`从高到低`
 
 这样就可以开心的看到自己的GPTs有多少人用过，哪些是比较受大家欢迎的。
-
-![排序效果图](images/sort.png)
+<div align="center">
+<img src="images/sort.png" width="400" >
+</div>
+<!-- ![排序效果图](images/sort.png) -->
 
 #### 批量删除：慎用！
 如果大家创建了一堆没啥用的GPTs，尤其是测试的时候，需要快速删除掉，我们也提供了批量删除的功能，不过这个功能暂时没有回收站的选项，**千万别误删除了重要的GPTs！**
@@ -85,13 +87,18 @@ Github仓库：https://github.com/hzeyuan/OpenGPTS
 2. 选择要删除的GPTs；
 3. 划到上面，选择`删除`，一定要确保是能删除的，无法撤回！OpenAI那边也不会保留记录！
 
-
-![批量删除演示图](images/批量删除.gif)
+<div align="center">
+<img src="images/批量删除.gif" width="400" >
+</div>
+<!-- ![批量删除演示图](images/批量删除.gif) -->
 
 #### 查询搜索：
 这个没啥介绍的，就是简单的关键词搜索，但应该还是很方便的。
 下面是搜索的效果图：
-![搜索效果图](images/search.png)
+<div align="center">
+<img src="images/search.png" width="400" >
+</div>
+<!-- ![搜索效果图](images/search.png) -->
 
 #### 一键发布到商店；
 我们默认GPTs的创建是用户本人使用的，即`only me`这种，但如果你需要发布到OpenAI的商店，或者为了扩大宣传，发布到我们OpenGPTs的排行榜，那么就可以一键发布了。
@@ -99,12 +106,17 @@ Github仓库：https://github.com/hzeyuan/OpenGPTS
 2. 点击最右边的小云朵，发布到OpenAI GPTs store中
 3. 点击中间的小飞机，发布到我们的OpenGPTs store中
 
-![发布演示图](/images/pub.png)
+<div align="center">
+<img src="images/pub.png" width="400" >
+</div>
+<!-- ![发布演示图](/images/pub.png) -->
 
 #### 一键分享给神奇的群友
 暂时还不知道国外的朋友们一般会分享给谁，推特？discord？国内的朋友们应该都是直接选择将自己精心调教的GPTs，分享给神奇的群友。相比OpenAI自带的、孤零零的URL复制，我们提供的一键分享功能，则免去的多次复制粘贴，一次性粘贴出`标题+简介+链接`，简单省心。
-![一键分享演示图](/images/一键分享.gif)
-
+<!-- ![一键分享演示图](/images/一键分享.gif) -->
+<div align="center">
+<img src="images/一键分享.gif" width="400" >
+</div>
 
 
 ### 一键生成GPTs：
@@ -121,8 +133,10 @@ Github仓库：https://github.com/hzeyuan/OpenGPTS
 7. 修改完毕后，默认是仅自己可见。可以选择最右边的上传图标，在OpenAI商店公开。
 8. 暂时不支持对文件和action的自动创建。
 
-![一键创建演示图](/images/一键创建GPTs.gif)
-
+<!-- ![一键创建演示图](/images/一键创建GPTs.gif) -->
+<div align="center">
+<img src="images/一键创建GPTs.gif" width="400" >
+</div>
 
 ## 一键复刻到其他语言
 总所周知，全世界有很多种语言，如果你创建了一个很火的GPTs，那么你肯定希望能够让其他母语的使用者也能使用这个GPTs，因此，我们提供了`一键复刻到其他语言`的功能：
