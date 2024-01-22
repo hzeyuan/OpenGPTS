@@ -162,12 +162,13 @@ QQ群：860859251
 javascipt; react;
 
 ## 开发指导：
-
+有空就加！
 
 ## Todo List
 - [ ] 自动优化提示词
 - [ ] 一键调用GPTs对话
 - [ ] 多GPTs对话
+- [ ] 开发教程
 
 
 ## Credits:
