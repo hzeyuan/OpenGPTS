@@ -167,8 +167,13 @@ const OnePromptClonePopover: React.FC<{
                 },
             }
         })
+        
         console.log('handleGeneratePrompt', result)
-        return _.get(result, 'data.text', '')
+        let textResult = _.get(result, 'data.text', '')
+        textResult = textResult.replace('Current GPTs Prompt:', '')
+        console.log('textResult', textResult)
+        return textResult
+        // return _.get(result, 'data.text', '')
     }
 
     const handleGenerateAvatar: (name: string, desc: string, instructions: string) => Promise<{
