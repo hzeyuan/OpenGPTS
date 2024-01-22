@@ -28,7 +28,7 @@ OpenGPTs：一款外挂般的GPTs管理器，由ChatPaper团队开源！
 Chrome插件下载链接：https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip
 Github仓库：https://github.com/hzeyuan/OpenGPTS
 QQ群：860859251
-欢迎大家star，和转发！
+肝了一周，求star，和转发！这是对我们最大的支持！
 ```
 
 如果有任何问题，欢迎提issue💬，如果有新的功能，欢迎大家提PR。也欢迎加入我们的开发者群：860859251。👩‍💻
@@ -49,11 +49,17 @@ QQ群：860859251
 
 ## 极简安装步骤：
 - 打开[OpenAI官网](https://chat.openai.com/)，登录你的OpenAI账号，进行一次GPTs的对话，注意，这里需要有Plus的权限。
-- 下载浏览器压缩包
+- 下载[浏览器压缩包](https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip)
 - 解压到本地
 - 打开浏览器的插件管理页面
 - 导入解压后的文件夹
 - 打开插件，选择对应的功能
+
+安装视频：
+<div align="center">
+<img src="images/安装视频.gif" width="600" >
+</div>
+
 
 ## 具体功能介绍：
 
