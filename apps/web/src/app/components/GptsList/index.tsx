@@ -36,9 +36,8 @@ export default ({ gpts, loading }: Props) => {
                     <p className="mb-4 text-sm text-[#636262]">
                       {item.description}
                     </p>
-
                     <div className="flex items-center">
-                      {item.rating &&
+                      {item.is_recommended? 
                         Array.from({ length: 5 }).map((_, idx: number) => (
                           <img
                             key={idx}
@@ -46,7 +45,8 @@ export default ({ gpts, loading }: Props) => {
                             alt=""
                             className="mr-1.5 inline-block w-4 flex-none"
                           />
-                        ))}
+                        ))
+                      : null}
                       <div className="flex-1"></div>
 
                       <p className="text-sm text-slate-500">

@@ -2,7 +2,7 @@
   "name": "OpenGPTS",
   "displayName": "OpenGPTs",
   "version": "0.0.1",
-  "description": "OpenGPTs",
+  "description": "OpenGPTs- Powerful GPTs Colipot | 强大的gpts管理器",
   "author": " hzeyuan.github.com <yixotieq@gmail.com>",
   "scripts": {
     "start": "next start",
