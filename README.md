@@ -67,7 +67,7 @@
 
 这样就可以开心的看到自己的GPTs有多少人用过，哪些是比较受大家欢迎的。
 
-![排序效果图](https://github.com/hzeyuan/OpenGPTS/blob/master/images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
+![排序效果图](https://github.com/hzeyuan/OpenGPTS/blob/master/images/sort.png)
 
 
 
