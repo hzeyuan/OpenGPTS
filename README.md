@@ -115,7 +115,7 @@ Github仓库：https://github.com/hzeyuan/OpenGPTS
 暂时还不知道国外的朋友们一般会分享给谁，推特？discord？国内的朋友们应该都是直接选择将自己精心调教的GPTs，分享给神奇的群友。相比OpenAI自带的、孤零零的URL复制，我们提供的一键分享功能，则免去的多次复制粘贴，一次性粘贴出`标题+简介+链接`，简单省心。
 <!-- ![一键分享演示图](/images/一键分享.gif) -->
 <div align="center">
-<img src="images/一键分享.gif" width="400" >
+<img src="images/一键分享.gif" width="600" >
 </div>
 
 
@@ -135,7 +135,7 @@ Github仓库：https://github.com/hzeyuan/OpenGPTS
 
 <!-- ![一键创建演示图](/images/一键创建GPTs.gif) -->
 <div align="center">
-<img src="images/一键创建GPTs.gif" width="400" >
+<img src="images/一键创建GPTs.gif" width="600" >
 </div>
 
 ## 一键复刻到其他语言
