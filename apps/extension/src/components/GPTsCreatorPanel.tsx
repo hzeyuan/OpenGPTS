@@ -5,7 +5,7 @@ import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tool
 import Browser from "webextension-polyfill";
 import { Storage } from "@plasmohq/storage";
 import type { Key } from 'react';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import Search from 'antd/es/input/Search';
 import logo from "data-base64:~assets/icon.png"
@@ -14,6 +14,7 @@ import OnePromptClonePopover from './OnePromptClonePopover';
 import GPTForm from './GPTForm';
 import openaiSvg from "data-base64:~assets/openai.svg"
 import { useTranslation } from 'react-i18next';
+import type { Gizmo } from '@repo/types';
 
 const storage = new Storage({
   area: "local",
@@ -118,7 +119,7 @@ export default () => {
       },
     })
     const openOpenAI = () => {
-      window.open('https://chat.openai.com/', '_blank')
+      const tab = Browser.tabs.create({ url: 'https://chat.openai.com/', active: false, pinned: true })
       notificationApi.destroy()
     }
     const onClose = () => {
@@ -139,9 +140,9 @@ export default () => {
         </Space>
       );
       notificationApi.open({
-        message: '请先登录OpenAI',
+        message: t('open and pin  chatgpt page'),
         description:
-          '请先登录OpenAI',
+          t('ChatGPTnotificationDesc'), // 
         btn,
         key,
         onClose: onClose,

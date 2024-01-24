@@ -1,3 +1,23 @@
+
+interface Gpts {
+	uuid: string;
+	org_id: string;
+	name: string;
+	description: string;
+	avatar_url: string;
+	short_url: string;
+	author_id: string;
+	author_name: string;
+	created_at: string;
+	updated_at: string;
+	detail?: any;
+	visit_url?: string;
+	rating?: number;
+	is_recommended?: boolean;
+}
+
+
+
 interface Log {
 	time: string;
 	action: string;
@@ -24,12 +44,6 @@ interface GPTInfo {
 	// 可以添加更多字段，如创建时间等
 }
 
-interface GPTsStats {
-	count: number;
-	gpts: {
-		[key: string]: GPTInfo;
-	};
-}
 
 
 interface UploadGPTInfo {
@@ -67,4 +81,16 @@ interface Config {
 	chatgptArkoseReqParams: string;
 	chatgptArkoseReqUrl?: string;
 	chatgptArkoseReqForm?: string;
-} 
+}
+
+export * from './gizmo';
+
+export {
+	Log,
+	GPTInfo,
+	UploadGPTInfo,
+	Window,
+	Config,
+	Gpts
+
+}

@@ -37,9 +37,17 @@ module.exports = {
       },
     },
   },
-  ignorePatterns: ["node_modules/", "dist/",'**/*'],
+  ignorePatterns: ["node_modules/", "dist/","**/*"],
   // add rules configurations here
   rules: {
-    "import/no-default-export": "off",
+    camelcase: "off",
+    'no-console': 'warn', // Warn on console.log statements
+    'no-unused-vars': 'warn', // Warn on variables that aren't used
+    'no-constant-condition': 'warn', // Warn if there's a constant condition
+    'no-debugger': 'warn', // Warn on debugger statements
+    'no-empty': 'warn', // Warn on empty blocks
+    'eqeqeq': 'warn', // Warn on == or != (recommend === and !==)
+    'no-redeclare': 'warn', // Warn on redeclaring a variable
+    'no-unreachable': 'warn', // Warn on unreachable code
   },
 };

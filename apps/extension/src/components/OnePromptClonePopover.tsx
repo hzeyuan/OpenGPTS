@@ -7,6 +7,7 @@ import _ from "lodash";
 import { Alert, Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { useTranslation } from "react-i18next";
+import type { Gizmo } from "@repo/types";
 
 const PromptTextArea = ({ onChange }) => {
     return (
@@ -63,7 +64,7 @@ const OnePromptClonePopover: React.FC<{
                     Your output format: 'name: xxx'
                     You just need return one neme.
                     `,
-                    autoLean: true
+                    autoClean: true
                 },
             }
         })
@@ -96,7 +97,7 @@ const OnePromptClonePopover: React.FC<{
                     Current User Request:{Title:${name}, Input:${prompt}.
                     Your output format: 'Description: xxx'
                     `,
-                    autoLean: true
+                    autoClean: true
                 },
             }
         })
@@ -167,7 +168,7 @@ const OnePromptClonePopover: React.FC<{
                     Output: 'Current GPTs Prompt: This GPTs, named ChatPaper, is designed to assist users by providing concise and accurate summaries of research papers. This involves parsing complex academic language and extracting key information such as the paper's purpose, methodology, results, and conclusions. The GPT should prioritize clarity and brevity in its summaries, ensuring they are accessible to a wide audience. It should avoid giving opinions or interpretations beyond what is presented in the paper. The tone should be formal and academic, mirroring the language typically found in research publications. Personalization will be minimal, focusing more on delivering factual, neutral summaries rather than engaging in conversational dialogue. The output language depends on the user's input language.'
                     The input:Title:${name},Desc:${desc},User Request:${prompt}.
                     Your output format: 'Current GPTs Prompt: xxx'`,
-                    autoLean: true
+                    autoClean: true
                 },
             }
         })
@@ -192,7 +193,7 @@ const OnePromptClonePopover: React.FC<{
                     modelName: 'chatgptPlus4',
                     question: `Design a logo for a app called "${name}" that is used for ${desc}. and you can refer to the following instructions to design the logo: ${instructions}`,
                     gizmoId: 'g-OsukSfZhG',
-                    autoLean: true
+                    autoClean: true
                 }
             }
         })

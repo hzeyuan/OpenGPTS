@@ -2,6 +2,7 @@
 
 
 import { Storage } from "@plasmohq/storage";
+import type { Config } from "@repo/types";
 import Browser from "webextension-polyfill";
 import { defaultConfig } from "~src/constant";
 
@@ -32,8 +33,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         // console.log('headers', headers)
         let authHeader = headers.find(header => header.name.toLowerCase() === 'authorization');
         if (authHeader) {
-            // console.log('Authorization:', authHeader.value);
-            // 可以在这里根据需要处理或发送Authorization信息
             storage.setItem('Authorization', authHeader.value)
         }
         return { requestHeaders: headers };
@@ -66,8 +65,7 @@ Browser.webRequest.onBeforeRequest.addListener(
                 // 进一步处理，例如转换为JSON或其他格式
             }
             const config = await storage.getItem<any>('config')
-            console.log('chatgptArkoseReqUrl', config, 'bodyData', bodyData)
-            // console.log('details', details)
+            console.debug('chatgptArkoseReqUrl', config, 'bodyData', bodyData)
             await storage.setItem('config', {
                 ...defaultConfig,
                 // ...config,

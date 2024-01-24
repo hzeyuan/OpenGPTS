@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { fetchSSE } from '~src/utils/fetch-sse.mjs'
 import { ofetch } from 'ofetch'
 import { Models, chatgptWebModelKeys } from "~src/constant";
+import type { Config, Gizmo } from '@repo/types'
 
 
 interface Session {
@@ -23,6 +24,29 @@ const storage = new Storage({
     area: "local",
     allCopied: true,
 });
+
+
+const apiFetch = ofetch.create({
+    baseURL: "`https://chat.openai.com",
+    retry: 3,
+    retryDelay: 500, // ms
+    timeout: 100000,
+    onResponseError: ({ request, response, options }) => {
+        console.log(
+            "[fetch response error]",
+            request,
+            response.status,
+            response.body
+        );
+        if (response.status === 403) {
+            storage.removeItem('Authorization')
+            throw new Error(`Please open or login https://chat.openai.com/  try again`)
+        }
+    },
+});
+
+
+
 
 
 const createItem = async (newItem) => {
@@ -79,6 +103,65 @@ export async function getModels() {
     }
 }
 
+
+const getGPTs = async (cursor) => {
+    const authorization = await storage.getItem('Authorization')
+    let error = '';
+    const reqUrl = cursor ? `https://chat.openai.com/public-api/gizmos/discovery/mine?cursor=${cursor}&limit=10` : `https://chat.openai.com/backend-api/gizmos/discovery`
+    const data = await apiFetch(reqUrl, {
+        headers: {
+            "authorization": `${authorization}`,
+            "accept": "*/*",
+            "accept-language": "en-US",
+            "content-type": "application/json",
+            "sec-ch-ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"macOS\"",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            referrerPolicy: "strict-origin-when-cross-origin",
+            "referrer": "https://chat.openai.com/gpts/mine",
+            "method": "GET",
+            "mode": "cors",
+            "credentials": "include"
+        },
+    }).catch(err => {
+        error = '[fetch GPTs]:' + err
+    })
+    if (data?.detail ===
+        "Could not parse your authentication token. Please try signing in again."
+    ) {
+        error = `Please open or login https://chat.openai.com/  try again`
+    }
+    const gpts = !cursor ? _.get(data, 'cuts[0].list.items', []) : _.get(data, 'list.items', [])
+    const newCursor = !cursor ? _.get(data, 'cuts[0].list.cursor', '') : _.get(data, 'list.cursor', '')
+
+    const gizmos: Gizmo[] = gpts.map((item: any) => {
+        const gizmo = _.get(item, 'resource.gizmo', {})
+        const profilePictureUrl = _.get(gizmo, 'display.profile_picture_url', '')
+        if (profilePictureUrl) {
+            const profilePicId = profilePictureUrl.replace('https://files.oaiusercontent.com/', '').split('?')[0]
+            return {
+                ...gizmo,
+                display: {
+                    ...gizmo.display,
+                    profile_pic_id: profilePicId,
+                }
+            }
+        }
+        return { ...gizmo }
+    })
+    const oldGizmos = await storage.getItem<Gizmo[]>('gizmos')
+
+    const mergedGizmos = _.unionBy(oldGizmos, gizmos, 'id');
+    await storage.setItem('gizmos', mergedGizmos);
+    return {
+        error,
+        cursor: newCursor,
+        gizmos,
+    }
+}
 
 const createGPT = async (gizmo: Gizmo, tools: []) => {
 
@@ -461,7 +544,6 @@ export async function generateAnswersWithChatgptWebApi(session: Session, authori
             onMessage(message) {
                 // console.debug('sse message', message)
                 if (message.trim() === '[DONE]') {
-                    // pushRecord(session, question, answer)
                     // console.log("answer", answer)
                     // console.debug('conversation history', { content: session.conversationRecords })
                     // port.postMessage({ answer: null, done: true, session: session })
@@ -485,7 +567,7 @@ export async function generateAnswersWithChatgptWebApi(session: Session, authori
 
                 if (data.conversation_id) session.conversationId = data.conversation_id
                 if (data.message?.id) session.parentMessageId = data.message.id
-                // console.log('data.message', data.message)
+
                 const imageAssetPointers = _.filter(_.get(data.message, 'content.parts', []), { 'content_type': 'image_asset_pointer' });
                 // 从这些元素中提取asset_pointer值
                 const newImagePointers: string[] = _.map(imageAssetPointers, 'asset_pointer');
@@ -537,7 +619,6 @@ export async function generateAnswersWithChatgptWebApi(session: Session, authori
 
 }
 
-
 const checkChatGPTsAuth: () => Promise<{
     ok: boolean;
     error?: string;
@@ -572,85 +653,19 @@ const checkGPTWebAuth = async () => {
 }
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-    let error = '';
+
     const { action, discovery, gizmoId, gizmo } = req.body;
 
     const authorization = await storage.getItem('Authorization')
     try {
         if (action === 'discovery') {
-            const cursor = discovery.cursor
-            console.log('cursor', cursor)
-            const reqUrl = cursor ? `https://chat.openai.com/public-api/gizmos/discovery/mine?cursor=${cursor}&limit=10` : `https://chat.openai.com/backend-api/gizmos/discovery`
-            const data = await ofetch(reqUrl, {
-                headers: {
-                    "authorization": `${authorization}`,
-                    "accept": "*/*",
-                    "accept-language": "en-US",
-                    "content-type": "application/json",
-                    "sec-ch-ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
-                    "sec-ch-ua-mobile": "?0",
-                    "sec-ch-ua-platform": "\"macOS\"",
-                    "sec-fetch-dest": "empty",
-                    "sec-fetch-mode": "cors",
-                    "sec-fetch-site": "same-origin",
-                    // 'referer': window.location.href,
-                    referrerPolicy: "strict-origin-when-cross-origin",
-                    "referrer": "https://chat.openai.com/gpts/mine",
-                    "method": "GET",
-                    "mode": "cors",
-                    "credentials": "include"
-                },
-                retry: 3,
-                retryDelay: 500, // ms
-                timeout: 30000,
-                ignoreResponseError: true,
-                parseResponse: JSON.parse,
-                async onRequestError({ request, options, error }) {
-                    console.log("[fetch request error]", request, error);
-
-                }
-            }).catch(err => {
-                error = '请求错误' + err
-            })
-            if (data?.detail ===
-                "Could not parse your authentication token. Please try signing in again."
-            ) {
-                error = '请重新打开openai页面'
-            }
-            const gpts = !cursor ? _.get(data, 'cuts[0].list.items', []) : _.get(data, 'list.items', [])
-            const newCursor = !cursor ? _.get(data, 'cuts[0].list.cursor', '') : _.get(data, 'list.cursor', '')
-
-            // 这里提取gpts中resource.gizmo
-            const gizmos: Gizmo[] = gpts.map((item: any) => {
-                // return _.get(item, 'resource.gizmo', {})
-                // 这里提取resource.gizmo并添加属性profile_picture_id
-                const gizmo = _.get(item, 'resource.gizmo', {})
-                const profilePictureUrl = _.get(gizmo, 'display.profile_picture_url', '')
-                if (profilePictureUrl) {
-                    const profilePicId = profilePictureUrl.replace('https://files.oaiusercontent.com/', '').split('?')[0]
-                    console.log('profilePicId', profilePicId)
-                    return {
-                        ...gizmo,
-                        display: {
-                            ...gizmo.display,
-                            profile_pic_id: profilePicId,
-                        }
-                    }
-                }
-                return { ...gizmo }
-            })
-            const oldGizmos = await storage.getItem<Gizmo[]>('gizmos')
-
-            const mergedGizmos = _.unionBy(oldGizmos, gizmos, 'id');
-            await storage.setItem('gizmos', mergedGizmos);
-
-            console.log('data', data, 'newCursor', newCursor)
+            const { error, gizmos, cursor } = await getGPTs(discovery.cursor)
             res.send({
                 ok: true,
                 error,
                 data: {
                     gizmos,
-                    cursor: newCursor,
+                    cursor,
                 },
             })
 

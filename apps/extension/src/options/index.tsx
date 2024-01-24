@@ -16,27 +16,20 @@ function IndexOptions() {
         instance: new Storage({
             area: "local"
         }),
-    })
+    }, 'light')
 
     const [language, setLanguage] = useStorage({
         key: "language",
         instance: new Storage({
             area: "local"
         })
-    })
+    }, 'en')
 
     const [activeKey, setActiveKey] = useState('1')
     const menus = [{
         key: '1',
         label: t('General'),
     },
-        // {
-        //     key: '2',
-        //     label: '搜索页面',
-        // }, {
-        //     key: '3',
-        //     label: '侧边栏',
-        // }
     ]
 
 
@@ -61,16 +54,10 @@ function IndexOptions() {
             case '1':
                 return (
                     <div className="section">
-                        {/* <div className="section-title">
-                            通用配置
-                        </div> */}
+
                         <Title level={2}>{t('General')}</Title>
                         <Divider />
                         <div className="sub-section">
-
-                            {/* <div className='sub-section-title'>
-                                主题
-                            </div> */}
                             <Title level={3}>{t('Theme')}</Title>
                             <div className='content-box'>
                                 <div className="option-box">

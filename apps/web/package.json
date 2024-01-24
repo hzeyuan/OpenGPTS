@@ -10,6 +10,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@repo/types": "workspace:^",
     "@vercel/postgres": "^0.5.1",
     "moment": "^2.30.1",
     "next": "^14.0.4",

@@ -4,6 +4,7 @@ import type { NotificationInstance } from "antd/es/notification/interface";
 import { useState } from "react";
 import _ from 'lodash'
 import { useTranslation } from "react-i18next";
+import type { Gizmo } from "@repo/types";
 
 const LanguageSelect = ({ onChange }) => {
     const languages = [

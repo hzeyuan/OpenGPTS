@@ -16,13 +16,15 @@ interface Display {
     description: string;
     welcome_message: string;
     prompt_starters: string[];
-    profile_picture_url: null | string;
+    profile_picture_url?: string;
+    profile_pic_id?: string;
     categories: string[];
 }
 
 interface VanityMetrics {
     num_conversations_str: string;
     num_pins: number;
+    num_conversations: number;
     num_users_interacted_with: number;
 }
 
@@ -49,4 +51,13 @@ interface Gizmo {
     appeal_info: null | object;
     vanity_metrics: VanityMetrics;
     workspace_approved: null | boolean;
+}
+
+
+export {
+    Gizmo,
+    Display,
+    Author,
+    Voice,
+    VanityMetrics
 }
