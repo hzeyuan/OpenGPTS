@@ -171,11 +171,48 @@ QQ群：860859251
 ## 隐私：
 所有数据保存在用户本地，除非用户手动提交GPTs链接到排行榜，否则不会上传任何数据。
 
-## 技术介绍：
-javascipt; react;
+## 使用技术
+
+- [plasmo-谷歌插件开发框架](https://github.com/PlasmoHQ/plasmo)
+- react 
+- antd & tailwindcss
+_ nextjs
+
 
 ## 开发指导：
-有空就加！
+
+
+### 安装
+
+#### 复制项目到指定目录： 
+```
+git clone  git@github.com:hzeyuan/OpenGPTS.git 
+```
+
+#### 在根目录下安装依赖
+
+```
+ pnpm install 
+```
+
+#### 插件开发
+```
+npm run dev:ext
+```
+
+对于这里疑惑的可以看看 [plasmo docs](https://docs.plasmo.com/framework)
+
+#### 运行成功，会在apps/extension/build文件，发现 chrome-mv3-dev 目录，请将这个目录拖拽到管理扩展程序中。
+
+#### 接下来就可以开始你的开发了~
+
+#### 网站开发
+```
+npm run dev:web
+```
+
+
+
 
 ## Todo List
 - [ ] 自动优化提示词

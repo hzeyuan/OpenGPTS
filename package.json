@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev:ext": "turbo  dev --filter=./apps/extension",
+    "dev:web": "turbo  dev --filter=./apps/web",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "clean": "turbo clean",

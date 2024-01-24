@@ -1,8 +1,0 @@
-
-> web@1.0.0 build /Users/hzy/Code/chatgptThing/opengpts/apps/web
-> next build
-
-   ▲ Next.js 14.0.4
-   - Environments: .env.local
-
-   Creating an optimized production build ...

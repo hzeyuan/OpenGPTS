@@ -30,7 +30,7 @@ If this project is helpful to you, please click the Star🌟 button above and fe
 If you have any questions, please feel free to submit an issue💬. If you have new features, please feel free to submit a PR. You are also welcome to join our developer group: 860859251. 👩‍💻
 
 
-## 2. Highlighted Features:
+## ✨ Features
 |Feature Name|Feature Description|
 |:-:|:-:|
 |One-Click Synchronization|Automatically syncs all data of GPTs from the official website: conversation count, bookmark count, user count|
@@ -160,7 +160,35 @@ All data is saved locally on the user's device. Unless the user manually submits
 JavaScript; React;
 
 ## Development Guidelines:
-Add whenever you have spare time!
+
+### Installation
+#### Clone the project to a specified directory:
+
+```
+git clone git@github.com:hzeyuan/OpenGPTS.git
+```
+
+#### Install dependencies in the root directory
+```
+pnpm install
+```
+#### Plugin Development
+
+```
+npm run dev:ext
+```
+
+For any confusion here, you can refer to the [plasmo docs](https://docs.plasmo.com/framework).
+
+Upon successful execution, you will find a directory named chrome-mv3-dev in the apps/extension/build folder. Please drag and drop this directory into the Manage Extensions page.
+
+#### Now, you are all set to start your development!
+
+#### Website Development
+
+```
+npm run dev:web
+```
 
 ## Todo List
 - [ ] Automatically optimize prompts
