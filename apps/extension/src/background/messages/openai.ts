@@ -2,7 +2,6 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage";
 import _ from 'lodash'
 import { ofetch } from 'ofetch'
-import { Models, chatgptWebModelKeys } from "~src/constant";
 import type { Config, Gizmo } from '@repo/types'
 import { OpenAI } from '@opengpts/core'
 
@@ -107,7 +106,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             }
         } else if (action === 'delete') {
             try {
-                await chatOai.gpt.del(gizmoId);
+                await openai.gpt.del(gizmoId);
                 await deleteItem(gizmoId)
                 res.send({
                     ok: true
@@ -133,10 +132,9 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     error: error.message
                 })
             })
-            // const result = await generateAnswersWithChatgptWebApi(req.body.session, authorization)
 
         } else if (action == 'getModels') {
-            const models = chatOai.getModels()
+            const models = openai.getModels()
             res.send({
                 ok: true,
                 error: '',
@@ -145,7 +143,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         } else if (action === 'update') {
             try {
                 const { gizmoId, gizmo, draft } = req.body
-                const newGizmo = await chatOai.gpt.update(gizmoId, gizmo)
+                const newGizmo = await openai.gpt.update(gizmoId, gizmo)
                 await updateItem(gizmoId, newGizmo)
                 res.send({
                     ok: true,
@@ -160,7 +158,11 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
         } else if (action === 'publish') {
             try {
-                await chatOai.gpt.publish(gizmoId)
+                console.log('gizmoId', gizmoId)
+                await openai.gpt.publish(gizmoId)
+                await updateItem(gizmoId, {
+                    tags: ['public']
+                })
                 res.send({ ok: true, data: '' })
             } catch (error) {
                 res.send({
@@ -172,12 +174,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         } else if (action === 'create') {
             try {
                 const tools = req.body.tools || []
-                const newGizmo = await chatOai.gpt.create(gizmo, tools)
+                const newGizmo = await openai.gpt.create(gizmo, tools)
                 console.log('createGPT', newGizmo)
                 await createItem(newGizmo)
                 res.send({
                     ok: true,
-                    data: gizmo
+                    data: newGizmo
                 })
             } catch (error) {
                 res.send({
