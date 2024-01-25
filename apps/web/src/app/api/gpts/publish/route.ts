@@ -1,5 +1,5 @@
+import { Gizmo } from "@repo/types";
 import { insertRow, findByUuid } from "../../../models/gpts";
-import { Gpts } from "../../../types/gpts";
 export async function POST(req: Request) {
     try {
         const { gizmo }: {

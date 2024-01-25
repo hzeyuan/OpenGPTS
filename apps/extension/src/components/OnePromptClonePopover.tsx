@@ -45,7 +45,6 @@ const OnePromptClonePopover: React.FC<{
                 action: 'chatWithWeb',
                 session: {
                     question: `As a GPTs builder, create a one-sentence name for the given user request, Inside, there is a title for GPTs and a colloquial name provided by the user. Ensuring that the name are succinct, fitting, and align with the user's input language. You need to find the keywords of User Request and, based on the corresponding background knowledge of the keywords, create a GPTs title that meets the requirements. You can refer to the naming conventions used in the following demos.
-
                     For example: 
                     Demo1:
                     - User Request: '{Input: Create a GPT for automatic research paper summarization}' 
@@ -243,12 +242,12 @@ const OnePromptClonePopover: React.FC<{
             const result = await sendToBackground({
                 name: 'openai',
                 body: {
-                    action: 'checkGPTWebAuth',
+                    action: 'isLogin',
                 },
             })
 
             const error = result?.error
-            console.log('checkGPTWebAuth', result)
+            console.log('isLogin', result)
 
             if (error) {
                 const openOpenAI = () => {

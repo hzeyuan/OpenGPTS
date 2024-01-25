@@ -1,4 +1,16 @@
 
+
+interface Session {
+    question: string;
+    autoClean?: boolean;
+    conversationId?: string;
+    conversationRecords: any[];
+    messageId?: string;
+    parentMessageId?: string;
+    modelName: 'gpt3_5' | 'gpt4';
+    gizmoId?: string;
+}
+
 interface Gpts {
 	uuid: string;
 	org_id: string;
@@ -84,6 +96,7 @@ interface Config {
 }
 
 export * from './gizmo';
+export * from './ui';
 
 export {
 	Log,

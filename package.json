@@ -4,6 +4,7 @@
     "build": "turbo build",
     "dev:ext": "turbo  dev --filter=./apps/extension",
     "dev:web": "turbo  dev --filter=./apps/web",
+    "build:ext": "turbo build --filter=./apps/extension",
     "lint": "turbo lint",
     "type-check": "turbo type-check",
     "clean": "turbo clean",

@@ -69,18 +69,18 @@ const LanguageSelectPopover: React.FC<{
     notificationApi: NotificationInstance
 }> = ({ gizmo, notificationApi }) => {
 
-    const [language, setLanguage] = useState('zh')
+    const [language, setLanguage] = useState('en')
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
 
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const handleConfirm = async () => {
         console.debug('language', language)
 
         const checkResult = await sendToBackground({
             name: 'openai',
             body: {
-                action: 'checkGPTWebAuth',
+                action: 'isLogin',
             },
         })
         const error = checkResult?.error
@@ -116,7 +116,7 @@ const LanguageSelectPopover: React.FC<{
         const result = await sendToBackground({
             name: 'openai',
             body: {
-                action: 'chatWithWeb',
+                action: 'chat',
                 session: {
                     question: `You are now a GPTs fine-tuner, and you will modify the content of the current GPTs based on user instructions. 
                     User instruction: {} Current GPTs: {title:xx, description:xxx, starter:xxx, prompt:xxx} 
@@ -185,7 +185,6 @@ const LanguageSelectPopover: React.FC<{
         const instructions = extractWithRegex(output, promptPattern, '$'); // Assuming prompt is the last section
         const starters = startersStr ? startersStr.split(',').map(item => item.trim()) : [];
 
-        console.log('gizmo', gizmo)
         // Sending a request to create the modified GPTs
         const GPTsResult: {
             data: Gizmo,

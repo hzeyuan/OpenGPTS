@@ -115,7 +115,7 @@ export default () => {
     const result = await sendToBackground({
       name: 'openai',
       body: {
-        action: 'checkGPTWebAuth',
+        action: 'isLogin',
       },
     })
     const openOpenAI = () => {
@@ -158,7 +158,7 @@ export default () => {
       const result = await sendToBackground({
         name: "openai",
         body: {
-          action: 'discovery',
+          action: 'getGPTsList',
           discovery: {
             cursor
           }
@@ -172,7 +172,7 @@ export default () => {
         }, 300)
       })
       console.log('handleAsyncGptsList', result.data)
-      cursor = result.data.cursor
+      // cursor = result.data.cursor
 
       if (result.error) {
         messageApi.error(result.error)
@@ -345,7 +345,6 @@ export default () => {
               {t('CloneGPT')}
             </Button>
           </OnePromptClonePopover>
-
         </div>
       </div>
       <Spin spinning={spinning}>

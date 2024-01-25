@@ -1,3 +1,5 @@
+import type { Config } from "@repo/types"
+
 const defaultConfig: Config = {
     customChatGptWebApiUrl: 'https://chat.openai.com',
     customChatGptWebApiPath: '/backend-api/conversation',

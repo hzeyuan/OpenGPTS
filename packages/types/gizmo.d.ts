@@ -18,7 +18,7 @@ interface Display {
     prompt_starters: string[];
     profile_picture_url?: string;
     profile_pic_id?: string;
-    categories: string[];
+    categories?: string[];
 }
 
 interface VanityMetrics {

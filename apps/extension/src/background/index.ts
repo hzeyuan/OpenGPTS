@@ -8,21 +8,8 @@ import { defaultConfig } from "~src/constant";
 
 const storage = new Storage({
     area: "local",
-    allCopied: true,
-});
+    allCopied: false,
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    // console.log('接收到消息', request, sender,)
-    if (request.action === "getTabIdFromContentScript") {
-        if (sender.tab) {
-            // sender.tab 包含发送消息的标签页的信息
-            console.log("接收到的标签页 ID:", sender.tab.id);
-            sendResponse({ tabId: sender.tab.id });
-        } else {
-            console.log("消息不是从标签页发送的");
-            sendResponse({ error: "No tab information available" });
-        }
-    }
 });
 
 
@@ -32,8 +19,19 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         let headers = details.requestHeaders;
         // console.log('headers', headers)
         let authHeader = headers.find(header => header.name.toLowerCase() === 'authorization');
+        const token = authHeader.value?.replace('Bearer ', '').trim()
         if (authHeader) {
-            storage.setItem('Authorization', authHeader.value)
+            storage.setItem('chatgpt-token', token)
+            console.log('authHeader.value', authHeader.value)
+            chrome.tabs.query({}, function (tabs) {
+                tabs.forEach(tab => {
+                    chrome.tabs.sendMessage(tab.id, {
+                        action: "syncLocalStorage",
+                        key: "chatgpt-token",
+                        value: token
+                    });
+                });
+            });
         }
         return { requestHeaders: headers };
     },
@@ -94,3 +92,18 @@ storage.getItem<Config>('config').then((config) => {
 chrome.sidePanel
     .setPanelBehavior({ openPanelOnActionClick: true })
     .catch((error) => console.error(error));
+
+
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//     // console.log('接收到消息', request, sender,)
+//     if (request.action === "getTabIdFromContentScript") {
+//         if (sender.tab) {
+//             // sender.tab 包含发送消息的标签页的信息
+//             console.log("接收到的标签页 ID:", sender.tab.id);
+//             sendResponse({ tabId: sender.tab.id });
+//         } else {
+//             console.log("消息不是从标签页发送的");
+//             sendResponse({ error: "No tab information available" });
+//         }
+//     }
+// });

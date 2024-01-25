@@ -12,9 +12,9 @@ import { ConfigProvider, Popover, message, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
-import type { ThemeMode } from "~index";
+
 import { useTranslation } from 'react-i18next';
-import GPTsCreatorPanel from '~src/components/GPTsCreatorPanel';
+import GPTsPanel from '~src/components/GPTsPanel';
 import settingIcon from '~assets/settings.svg';
 import QQIcon from '~assets/qq.png';
 import githubIcon from '~assets/github.svg';
@@ -22,6 +22,7 @@ import EmailIcon from '~assets/email.svg';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import twitterIcon from '~assets/twitter.svg';
+import type { ThemeMode } from '@repo/types';
 
 const shakeAnimation = {
     scale: 0.85,
@@ -79,7 +80,7 @@ function IndexSidePanel() {
             title: 'chatBot',
             content: '你可以随时和我聊天',
             icon: chatTabIcon,
-            panel: <GPTsCreatorPanel />
+            panel: <GPTsPanel />
         },
     ])
 
@@ -194,7 +195,7 @@ function IndexSidePanel() {
                                                 </Popover>
                                             </div>
                                             <div className="opengpts-sidebarr-widgets-list-wrapper">
-                                                <div onClick={()=>{
+                                                <div onClick={() => {
                                                     window.open('https://twitter.com/FeigelC35583')
                                                 }} className='opengpts-sidebarr-tab'>
                                                     <motion.img whileTap={shakeAnimation}
