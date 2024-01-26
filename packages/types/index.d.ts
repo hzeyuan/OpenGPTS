@@ -95,6 +95,8 @@ interface Config {
 	chatgptArkoseReqForm?: string;
 }
 
+
+
 export * from './gizmo';
 export * from './ui';
 
@@ -104,6 +106,7 @@ export {
 	UploadGPTInfo,
 	Window,
 	Config,
-	Gpts
+	Gpts,
+	Session
 
 }

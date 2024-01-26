@@ -239,7 +239,20 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                 })
 
             }
-
+        } else if (action === 'uploadImg') {
+            try {
+                const downloadUrl = await openai.uploadImg(req.body.imageUrl)
+                res.send({
+                    ok: true,
+                    error: '',
+                    data: downloadUrl
+                })
+            } catch (error) {
+                res.send({
+                    ok: false,
+                    error: error.message
+                })
+            }
         }
     } catch (error) {
         console.error('error', error)

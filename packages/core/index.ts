@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid'
 // @ts-ignore
 import { fetchSSE } from './fetch-sse.mjs'
 import { $Fetch, ofetch } from 'ofetch'
-import type { Config, Gizmo } from '@repo/types'
+import type { Config, Gizmo, Session } from '@repo/types'
 
 class OpenAI {
     public gpt: GPT
@@ -28,7 +28,7 @@ class OpenAI {
             retryDelay: 500, // ms
             timeout: 100000,
             headers: {
-                "authorization": `Bearer ${this.token}`,
+                "Authorization": `Bearer ${this.token}`,
                 "accept": "*/*",
                 "accept-language": "en-US",
                 "content-type": "application/json",
@@ -88,6 +88,74 @@ class OpenAI {
         return { response };
     }
 
+
+    /**
+     * Uploads an image to the server.
+     * @param imageUrl The URL of the image to upload.
+     * @returns The download URL of the uploaded image.
+     * @throws If there is an error during the upload process.
+     */
+    public async uploadImg(imageUrl: string): Promise<string> {
+
+        //0. check image url format
+        if (!imageUrl.startsWith('http')) {
+            throw new Error(`Image url format error:${imageUrl}`)
+        }
+        const response = await fetch(imageUrl, {
+            headers: { mode: 'no-cors' }
+        }).catch(error => {
+            throw new Error(error.message)
+        })
+        // 1.get image blob 
+        const blob = await response.blob();
+        // 2. build pre-upload request
+        const { file_id, upload_url, status } = await this.apiFetch(`https://chat.openai.com/backend-api/files`, {
+            method: "POST",
+            body: JSON.stringify({
+                "file_name": imageUrl.split('/').pop(),
+                "file_size": blob?.size,
+                "use_case": "profile_picture"
+            })
+        }).catch(err => {
+            throw new Error(`build pre-upload request error:${err.message}`)
+        })
+        if (status !== 'success') {
+            throw new Error(`build pre-upload request error:${status}`)
+        }
+        // 3. upload image
+        await ofetch(upload_url, {
+            method: 'PUT',
+            body: blob,
+            "headers": {
+                "accept": "application/json, text/plain, */*",
+                "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
+                "content-type": "image/png",
+                "sec-ch-ua": "\"Not_A Brand\";v=\"8\", \"Chromium\";v=\"120\", \"Google Chrome\";v=\"120\"",
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": "\"macOS\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "cross-site",
+                "x-ms-blob-type": "BlockBlob",
+                "x-ms-version": "2020-04-08"
+            },
+            // "referrer":`https://chat.openai.com/gpts/editor/${}`,
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "mode": "cors",
+            "credentials": "omit"
+        }).catch(err => {
+            throw new Error(`Upload image error:${err.message}`)
+        })
+
+        // 4. confirm upload，get download_url
+        const imgRes = await this.apiFetch(`https://chat.openai.com/backend-api/files/${file_id}/uploaded`, {
+            method: "POST",
+        }).catch(err => {
+            throw new Error(`Confirm upload error:${err.message}`)
+        })
+        return imgRes.download_url
+    }
+
     get isLogin() {
         return !!this.token
     }
@@ -103,13 +171,14 @@ class OpenAI {
 const Models = {
     gpt3_5: { value: 'text-davinci-002-render-sha', desc: 'ChatGPT (Web)' },
     gpt4: { value: 'gpt-4', desc: 'ChatGPT (Web, GPT-4, browsing, analysis, DALL·E)' },
-    chatgptPlus4: { value: 'gpt-4-gizmo', desc: 'ChatGPT (Web, GPT-4, ChatGPT Classic)' },
+    gpt4Gizmo: { value: 'gpt-4-gizmo', desc: 'ChatGPT (Web, GPT-4, ChatGPT Classic)' },
 
 }
 
 export const chatgptWebModelKeys = [
     'gpt3_5',
     'gpt4',
+    'gpt4Gizmo'
     // 'chatgptFree35Mobile',
     // 'chatgptPlus4Mobile',
 ]
@@ -319,7 +388,7 @@ class GPT {
             })
             .catch(error => {
                 console.error('发布出错:', error);
-                return false
+                throw new Error(error.message)
             });
     }
 
