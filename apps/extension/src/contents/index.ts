@@ -1,6 +1,6 @@
 import type { PlasmoCSConfig } from "plasmo"
 import _ from "lodash";
-import { OpenAI } from '@opengpts/core'
+import { OpenAI } from "@opengpts/core";
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
@@ -9,4 +9,4 @@ export const config: PlasmoCSConfig = {
   world: "MAIN"
 }
 
-window['OpenAI'] = OpenAI
+window['OpenAI'] = OpenAI;

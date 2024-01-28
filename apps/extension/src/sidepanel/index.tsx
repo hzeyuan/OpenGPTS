@@ -8,21 +8,23 @@ import { useState, useEffect } from "react"
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 
 import { StyleProvider } from "@ant-design/cssinjs"
-import { ConfigProvider, Popover, message, theme as themeStyle } from "antd"
+import { ConfigProvider, Popover, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
 
 import { useTranslation } from 'react-i18next';
-import GPTsPanel from '~src/components/GPTsPanel';
+import GPTsPanel from '~src/components/Panel/GPTsPanel';
 import settingIcon from '~assets/settings.svg';
-import QQIcon from '~assets/qq.png';
+import QQIcon from '~assets/qq.svg';
+import GPTsTabIcon from '~assets/gpts.svg';
 import githubIcon from '~assets/github.svg';
 import EmailIcon from '~assets/email.svg';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import twitterIcon from '~assets/twitter.svg';
-import type { ThemeMode } from '@repo/types';
+import type { ThemeMode } from '@opengpts/types';
+import DynamicSplitChatPanel from '~src/components/Panel/DynamicSplitChatPanel';
 
 const shakeAnimation = {
     scale: 0.85,
@@ -32,11 +34,10 @@ const shakeAnimation = {
     }
 };
 
-
 function IndexSidePanel() {
 
     const [tabIndex, setTabIndex] = useState(0);
-    const { t, i18n } = useTranslation();
+    const { i18n } = useTranslation();
 
 
     const [theme] = useStorage<ThemeMode>({
@@ -79,9 +80,15 @@ function IndexSidePanel() {
             index: 0,
             title: 'chatBot',
             content: '你可以随时和我聊天',
-            icon: chatTabIcon,
+            icon: GPTsTabIcon,
             panel: <GPTsPanel />
-        },
+        },{
+            index: 2,
+            title: 'chat',
+            content: '你可以随时和我聊天',
+            icon: chatTabIcon,
+            panel: <DynamicSplitChatPanel />
+        }
     ])
 
 
@@ -214,15 +221,16 @@ function IndexSidePanel() {
                                     </div>
                                 </div>
                             </TabList>
-                            {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>{item.panel}</TabPanel>)}
+                            {tabs.map(item => <TabPanel key={item.title} selectedClassName='flex-1  overflow-scroll'>
+                                {/* react 渲染函数 */}
+                                {item.panel}
+                            </TabPanel>)}
 
                         </div>
                     </Tabs>
-
                 </div>
             </StyleProvider >
         </ConfigProvider >
-
     )
 }
 

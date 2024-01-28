@@ -3,7 +3,7 @@ import { Form, Input, Button, Row, Col, message, Spin } from 'antd';
 import { sendToBackground } from '@plasmohq/messaging';
 import _ from 'lodash';
 import { useTranslation } from 'react-i18next';
-import type { Gizmo } from '@repo/types';
+import type { Gizmo } from '@opengpts/types';
 const GPTForm: React.FC<{
     gizmo?: Gizmo
     onFinish?: (gizmo, values) => void

@@ -1,6 +1,6 @@
 import { QueryResult, QueryResultRow, sql } from "@vercel/postgres";
 
-import { Gpts } from "../types/gpts";
+import type { Gpts } from "@opengpts/types";
 import { isGptsSensitive } from "../services/gpts";
 
 export async function createTable() {

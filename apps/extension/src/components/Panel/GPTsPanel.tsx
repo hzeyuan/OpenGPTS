@@ -1,20 +1,21 @@
-import { CloudUploadOutlined, CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import React, { useEffect, useMemo, useState } from 'react';
+import { CloudUploadOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
 import { sendToBackground } from '@plasmohq/messaging';
-import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message, type TourProps } from 'antd';
+import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message } from 'antd';
 import Browser from "webextension-polyfill";
 import { Storage } from "@plasmohq/storage";
 import type { Key } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+
 import _ from 'lodash';
 import Search from 'antd/es/input/Search';
 import logo from "data-base64:~assets/icon.png"
-import LanguageSelectPopover from './LanguageSelectPopover';
-import OnePromptClonePopover from './OnePromptClonePopover';
-import GPTForm from './GPTForm';
+import LanguageSelectPopover from '../Popover/LanguageSelectPopover';
+import OnePromptClonePopover from '../Popover/OnePromptClonePopover';
+import GPTForm from '../GPTForm';
 import openaiSvg from "data-base64:~assets/openai.svg"
 import { useTranslation } from 'react-i18next';
-import type { Gizmo } from '@repo/types';
+import type { Gizmo } from '@opengpts/types';
 
 const storage = new Storage({
   area: "local",
@@ -22,7 +23,7 @@ const storage = new Storage({
 });
 
 
-export default () => {
+const GPTsPanel = () => {
   const [open, setOpen] = useState(false);
   const [curGizmo, setCurGizmo] = useState<Gizmo | undefined>(undefined)
   const [expandedRowKeys, setExpandedRowKeys] = useState<readonly Key[]>([]);
@@ -31,7 +32,7 @@ export default () => {
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [spinning, setSpinning] = useState(false)
   const [syncing, setSyncing] = useState(false)
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const rowSelection = {
     selectedRowKeys,
@@ -65,14 +66,14 @@ export default () => {
     const sortGizmos = (gizmos: Gizmo[], sortType: string, sortOrder: string) => {
       const sortKeyMap = {
         'time': 'updated_at',
-        'chat': 'vanity_metrics.num_conversations',
+        'chat': 'vanity_metrics.num_conversations_str',
         'user': 'vanity_metrics.num_users_interacted_with',
         'pin': 'vanity_metrics.num_pins'
       };
-
+      console.log('sortType',sortType)
       return _.orderBy(
         gizmos,
-        [sortKeyMap[sortType]],
+       [sortKeyMap[sortType]],
         [sortOrder === 'asc' ? 'asc' : 'desc']
       );
     };
@@ -153,7 +154,6 @@ export default () => {
     let cursor = ''
     messageApi.info(t('syncStart'));
     setSyncing(true)
-    const refreshInterval = setInterval(handleGetGptsList, 1000);
     while (true) {
       const result = await sendToBackground({
         name: "openai",
@@ -172,7 +172,7 @@ export default () => {
         }, 300)
       })
       console.log('handleAsyncGptsList', result.data)
-      // cursor = result.data.cursor
+      cursor = result.data.cursor
 
       if (result.error) {
         messageApi.error(result.error)
@@ -184,7 +184,6 @@ export default () => {
     }
     messageApi.success(t('syncComplete'));
     setSyncing(false)
-    clearInterval(refreshInterval)
   }
 
   const handleRemoveGPT = async (gizmoId: string) => {
@@ -470,7 +469,6 @@ export default () => {
 
                   </div>
                 </div>
-
               )
             },
           }}
@@ -526,7 +524,6 @@ export default () => {
                   <span className=' min-w-[64px]'>{sortOrder === 'desc' ? t('HighToLow') : t('LowToHigh')}</span>
                   <DownOutlined />
                 </div>
-
               </Dropdown>,
               <Dropdown
                 menu={{
@@ -568,7 +565,6 @@ export default () => {
                 {t('Reset')}
               </Button>,
             ],
-
           }}
 
           itemHeaderRender={(record) => {
@@ -579,7 +575,6 @@ export default () => {
                   alt=""
                   className="inline-block object-cover w-10 h-10 mr-2 rounded-full"
                 />
-
                 <div className='flex-1'>
                   <div className="flex flex-col gap-2">
                     <div className='flex items-center justify-between'>
@@ -664,3 +659,4 @@ export default () => {
     </div >
   );
 };
+export default GPTsPanel;

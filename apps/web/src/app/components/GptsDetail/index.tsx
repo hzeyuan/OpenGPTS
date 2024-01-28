@@ -2,7 +2,8 @@ import { BsChatDots } from "react-icons/bs";
 import Preview from "./Preview";
 import { getGptsTools } from "../../services/gpts";
 import moment from "moment";
-import { Gpts } from "../../types/gpts";
+import type { Gpts } from "@opengpts/types";
+
 
 interface Props {
   gpts: Gpts;

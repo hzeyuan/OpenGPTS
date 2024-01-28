@@ -2,7 +2,7 @@
 
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import Link from "next/link";
-import { Gpts } from "../../types/gpts";
+import type { Gpts } from "@opengpts/types";
 import moment from "moment";
 
 interface Props {

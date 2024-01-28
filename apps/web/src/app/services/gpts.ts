@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import type { Gpts } from "../types/gpts";
+import type { Gpts } from "@opengpts/types";
 
 export const getGptsFromFile = async (): Promise<Gpts[]> => {
   try {

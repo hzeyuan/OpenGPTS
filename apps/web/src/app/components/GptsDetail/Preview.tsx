@@ -1,10 +1,11 @@
+import type { Gpts } from "@opengpts/types";
 import {
   getGptsTools,
   getGptsWelcomeMessage,
   gptGptsPromptStarters,
 } from "../../services/gpts";
 
-import { Gpts } from "../../types/gpts";
+
 
 interface Props {
   gpts: Gpts;

@@ -1,7 +1,12 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "target": "ES5",
+    "paths": {
+      "~*": [
+        "./*"
+      ]
+    },
+    "target": "ES6",
     "lib": ["es2015", "dom"]
   }
 }

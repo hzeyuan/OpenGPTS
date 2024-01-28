@@ -136,7 +136,7 @@ function hasBom(buffer) {
 
 
 export async function fetchSSE(resource, options) {
-    const { onMessage, onStart, onEnd, onError, ...fetchOptions } = options
+    const { onMessage, onStart, onFinish, onError, ...fetchOptions } = options
     const resp = await fetch(resource, fetchOptions).catch(async (err) => {
         await onError(err)
     })
@@ -174,5 +174,5 @@ export async function fetchSSE(resource, options) {
         }
         parser.feed(chunk)
     }
-    await onEnd()
+    onFinish && await onFinish()
 }

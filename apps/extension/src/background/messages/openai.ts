@@ -2,7 +2,7 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage";
 import _ from 'lodash'
 import { ofetch } from 'ofetch'
-import type { Config, Gizmo } from '@repo/types'
+import type { Config, Gizmo } from '@opengpts/types'
 import { OpenAI } from '@opengpts/core'
 
 const storage = new Storage({
@@ -64,8 +64,8 @@ const checkChatGPTsAuth: () => Promise<{
 }
 
 const isLogin = async () => {
-    const authorization = await storage.getItem('chatgpt-token')
-    if (!authorization) {
+    const chatgptConfig = await storage.getItem<Config>('chatgpt-config')
+    if (!chatgptConfig.token) {
         return {
             ok: false,
             error: 'Please Chat with any GPTS https://chat.openai.com/gpts',
@@ -79,7 +79,8 @@ const isLogin = async () => {
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
-    const token = await storage.getItem('chatgpt-token');
+    const chatgptConfig = await storage.getItem<Config>('chatgpt-config');
+    const token = chatgptConfig?.token;
     const openai = new OpenAI({ token })
 
     const { action, discovery, gizmoId, gizmo } = req.body;

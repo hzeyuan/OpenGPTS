@@ -1,4 +1,4 @@
-import { Gizmo } from "@repo/types";
+import { Gizmo } from "@opengpts/types";
 import { insertRow, findByUuid } from "../../../models/gpts";
 export async function POST(req: Request) {
     try {

@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { create } from "zustand";
 import { devtools, persist } from 'zustand/middleware'
-import type { Chat, OMessage } from "~index";
+import type { Chat, OMessage } from "@opengpts/types";
 interface ChatState {
     curChatId: string;
     chatList: Chat[];
@@ -14,6 +14,7 @@ interface ChatActions {
     updateChatId: (chatId: string) => void;
     getChatMessages: (chatId: string) => OMessage[];
     getChatFileList: () => any[];
+    checkChatExist: (chatId: string) => boolean;
     addChatIfNotExist: (chat: any) => void;
     addChatMessage: (chatId: string, message: OMessage) => void;
     addChatFile: (chatId: string, file: any) => void;
@@ -32,6 +33,13 @@ const useChatStore = create<ChatStore>()(
             curChatId: '',
             chatList: [],
             chatListMessages: {},
+            checkChatExist: (chatId: string) => {
+                const chatList = get().chatList
+                const chatIdExists = chatList.some((item) => {
+                    return item.chatId === chatId
+                })
+                return chatIdExists
+            },
             getChatMessages: (chatId) => get().chatListMessages[chatId],
             getChatFileList: () => {
                 const chatList = get().chatList;
@@ -87,7 +95,7 @@ const useChatStore = create<ChatStore>()(
                     const fileList: Chat['fileList'] = _.get(chatList, `[${chatIndex}].fileList`, []);
 
                     // 创建更新后的 fileList
-                    const updatedFileList = fileList.filter((item) => {
+                    const updatedFileList = fileList?.filter((item) => {
                         return item.uid !== fileId
                     });
 

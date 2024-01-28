@@ -1,5 +1,5 @@
 // import { BsDownload } from "react-icons/bs";
-import { Gpts } from "../../types/gpts";
+import type { Gpts } from "@opengpts/types";
 import GptsDetail from "../../components/GptsDetail";
 // import Image from "next/image";
 // import extensionSrc from "@/public/extension.png";

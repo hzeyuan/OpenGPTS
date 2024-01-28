@@ -1,14 +1,14 @@
 
 
 interface Session {
-    question: string;
-    autoClean?: boolean;
-    conversationId?: string;
-    conversationRecords: any[];
-    messageId?: string;
-    parentMessageId?: string;
-    modelName: 'gpt3_5' | 'gpt4';
-    gizmoId?: string;
+	question: string;
+	autoClean?: boolean;
+	conversationId?: string;
+	conversationRecords?: any[];
+	messageId?: string;
+	parentMessageId?: string;
+	modelName: ModelKey;
+	gizmoId?: string;
 }
 
 interface Gpts {
@@ -53,7 +53,6 @@ interface GPTInfo {
 	link?: string;
 	logs?: Log[];
 	tabId: string;
-	// 可以添加更多字段，如创建时间等
 }
 
 
@@ -87,6 +86,7 @@ interface Window {
 
 
 interface Config {
+	token: string;
 	customChatGptWebApiUrl: string;
 	customChatGptWebApiPath: string;
 	disableWebModeHistory: boolean;
@@ -95,11 +95,22 @@ interface Config {
 	chatgptArkoseReqForm?: string;
 }
 
+type ModelKey = 'chatgpt35API' | 'chatgptFree35' | 'chatgptPlus4' | 'chatgptPlus4Browsing'
+
+interface ModelOptions {
+	key: ModelKey;
+	name: string;
+	description: string;
+	mode: 'api' | 'web';
+}
+
+
+
 
 
 export * from './gizmo';
 export * from './ui';
-
+export * from './chat';
 export {
 	Log,
 	GPTInfo,
@@ -107,6 +118,8 @@ export {
 	Window,
 	Config,
 	Gpts,
-	Session
+	Session,
+	ModelOptions,
+	ModelKey,
 
 }

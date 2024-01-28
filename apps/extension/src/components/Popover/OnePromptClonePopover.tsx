@@ -7,7 +7,7 @@ import _ from "lodash";
 import { Alert, Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { useTranslation } from "react-i18next";
-import type { Gizmo } from "@repo/types";
+import type { Gizmo } from "@opengpts/types";
 
 const PromptTextArea = ({ onChange }) => {
     return (

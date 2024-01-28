@@ -2,13 +2,13 @@
 
 
 import { Storage } from "@plasmohq/storage";
-import type { Config } from "@repo/types";
+import type { Config } from "@opengpts/types";
 import Browser from "webextension-polyfill";
-import { defaultConfig } from "~src/constant";
+import { DEFAULT_CONFIG } from "~src/constant";
 
 const storage = new Storage({
     area: "local",
-    allCopied: false,
+    allCopied: true,
 
 });
 
@@ -18,13 +18,21 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     function (details) {
         let headers = details.requestHeaders;
         // console.log('headers', headers)
+        if (!headers) return
         let authHeader = headers.find(header => header.name.toLowerCase() === 'authorization');
-        const token = authHeader.value?.replace('Bearer ', '').trim()
+        const token = authHeader?.value?.replace('Bearer ', '').trim()
         if (authHeader) {
-            storage.setItem('chatgpt-token', token)
-            console.log('authHeader.value', authHeader.value)
+            storage.getItem<Config>('chatgpt-config').then(preConfig => {
+                console.log('preConfig', preConfig)
+                storage.setItem('chatgpt-config', {
+                    ...DEFAULT_CONFIG,
+                    ...preConfig,
+                    token
+                })
+            })
             chrome.tabs.query({}, function (tabs) {
                 tabs.forEach(tab => {
+                    if (!tab.id) return
                     chrome.tabs.sendMessage(tab.id, {
                         action: "syncLocalStorage",
                         key: "chatgpt-token",
@@ -62,11 +70,12 @@ Browser.webRequest.onBeforeRequest.addListener(
                 bodyData = new TextDecoder().decode(encodedData);
                 // 进一步处理，例如转换为JSON或其他格式
             }
-            const config = await storage.getItem<any>('config')
+            const config = await storage.getItem<any>('chatgpt-config') || {}
             console.debug('chatgptArkoseReqUrl', config, 'bodyData', bodyData)
-            await storage.setItem('config', {
-                ...defaultConfig,
-                // ...config,
+            console.log('config', config)
+            await storage.setItem('chatgpt-config', {
+                ...DEFAULT_CONFIG,
+                ...config,
                 chatgptArkoseReqUrl: details.url,
                 chatgptArkoseReqForm: bodyData,
             })
@@ -83,7 +92,7 @@ Browser.webRequest.onBeforeRequest.addListener(
 
 storage.getItem<Config>('config').then((config) => {
     storage.setItem('config', {
-        ...defaultConfig,
+        ...DEFAULT_CONFIG,
         ...config,
     })
 })

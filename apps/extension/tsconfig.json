@@ -19,7 +19,6 @@
       ]
     },
     "baseUrl": ".",
-    "isolatedModules": true,
     "plugins": [
       {
         "name": "next"
