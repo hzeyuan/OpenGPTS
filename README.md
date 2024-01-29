@@ -1,8 +1,8 @@
-# OpenGPTs - An Incredible Open Source GPTs Manager
+# OpenGPTs-非常好用的开源GPTs管理器.
 
 <div style="font-size: 1.5rem;">
-  <a href="./README_ZH.md">中文</a> |
-  <a href="./README.md">English</a>
+  <a href="./README.md">中文</a> |
+  <a href="./README_EN.md">English</a>
 </div>
 </br>
 
@@ -11,190 +11,215 @@
 <img src="images/logo.png" width="500" >
 </div>
 
-## One-Sentence Introduction
-OpenGPTs is an amazing GPTs manager. It is a powerful browser extension developed by the [ChatPaper](https://github.com/kaixindelele/chatpaper) team and is suitable for all friends with Plus permissions.
 
-## Why OpenGPTs? 🤔💡
-As we all know, the GPTs on the OpenAI website lack management features. If you have created several GPTs, you might want to know how many people have used your GPTs, you might want to share them with your friends in just one click, and you might want to generate different fine-tuned versions. 🔄
+## 一句话介绍
+非常好用的GPTs管理器，[ChatPaper](https://github.com/kaixindelele/chatpaper)团队开源一款功能强大的浏览器插件，适合所有拥有Plus权限的朋友。
 
-However, these features can only be done manually on the official website! 😩🖐️
+## 为什么要做OpenGPTs？ 🤔💡
+众所周知，OpenAI官网的GPTs几乎没有管理功能。如果你创建了几个GPTs，你应该会想着今天有多少人使用过你的GPTs，你想要能够一键分享给群友，你希望能够产生不同的微调版本。🔁
 
-Can we automate these repetitive tasks with the help of the browser? 🤖⚙️
+但是！这些功能在官网上只能手动去做！😩🖐️
 
-To achieve this, our team spent a week developing a powerful browser extension called OpenGPTs. It helps everyone manage their GPTs better. 💻🚀 Not only is the full plugin released for free, but all the plugin codes are also open-source. We hope to use this as a platform and collaborate with developers around the world to create better and more powerful plugin managers. 🌍❤️️
+这种重复性的工作，能不能让浏览器自动帮你完成？🤖⚙️
 
-**Our Ambition**: Our ultimate goal is to treat each GPTs as an agent and use this plugin as a platform📈 to automate various business processes, maximize everyone's productivity🚀, and help everyone enjoy their leisure time to the fullest! Haha! 😄
+为此，我们团队花了一周时间，特意为大家开发了一款强大的浏览器插件--OpenGPTs，它可以帮助大家更好的管理自己的GPTs。💻🚀 我们不仅将完整的插件免费发布，并且将所有插件代码开源出来，希望以此为平台为基础，和广大的开发者们一起，做出更好的、更强大的插件管理器。🌍❤️️
 
-If this project is helpful to you, please click the Star🌟 button above and feel free to share it. This is our greatest support! 🙌
+**野望**：我们的最终设想是希望能够以这个插件为平台📈，把**每个GPTs当成一个Agent**🤖，实现各种业务流程的自动化，最大程度解放大家的生产力🚀，帮助大家更好的摸鱼🐟！哈哈！😄
 
-If you have any questions, please feel free to submit an issue💬. If you have new features, please feel free to submit a PR. You are also welcome to join our developer group: 860859251. 👩‍💻
+如果本项目对大家有帮助，欢迎点一下上面的Star🌟，欢迎转发，这是对我们最大的支持！🙌
+
+转发文案：
+```css
+OpenGPTs：一款外挂般的GPTs管理器，由ChatPaper团队开源！
+亮点功能：一键同步，自定义排序搜索，一键创建，一键复刻到其他语言，一键分享，等等功能。还有多GPTs对话等功能正在开发ing。
+Chrome插件下载链接：https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip
+Github仓库：https://github.com/hzeyuan/OpenGPTS
+QQ群：860859251
+肝了一周，求star，和转发！这是对我们最大的支持！
+```
+
+如果有任何问题，欢迎提issue💬，如果有新的功能，欢迎大家提PR。也欢迎加入我们的开发者群：860859251。👩‍💻
 
 
-## ✨ Features
-|Feature Name|Feature Description|
+## 2. 亮点功能：
+|功能名称|功能描述|
 |:-:|:-:|
-|One-Click Synchronization|Automatically syncs all data of GPTs from the official website: conversation count, bookmark count, user count|
-|Bulk Management|Manages all GPTs in bulk: custom sorting, batch deletion, query search, one-click publish to the store, one-click copy to the clipboard (title + summary + link)|
-|One-Click Generation|Enter the title and generate GPTs in just one click. The functionality is similar to the official website but with the ability to customize prompts! (Will be further packaged into an interface)|
-|One-Click Replication|Replicates existing GPTs into other languages or adjusts fine-tuning versions through language selection|
-|Batch Deletion of GPT Conversations|Reference [chatGPTBox](https://github.com/josStorer/chatGPTBox). We provide a batch deletion function for OpenAI conversations. This feature is really painful!|
-|One-Click Calling of GPT Conversations|The current version has the functionality to call 3.5/4.0 and any GPTs conversations, and it will be packaged into a module for customized development in the future!|
-|Ranking List|Referencing [gpts-works](https://github.com/all-in-aigc/gpts-works), we hope to provide a more comprehensive and accurate leaderboard, allowing everyone to make better choices and promote their own GPTs|
-|Better UI|Provides a more beautiful UI and more convenient interaction mode|
+|一键同步|自动同步官网GPTs所有数据：对话数，收藏数，用户数|
+|批量管理|批量管理自己的所有GPTs：自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）|
+|一键生成|输入标题，一键生成GPTs，复刻官网功能，但可以自定义提示词！（后续封装出接口）|
+|一键复刻|对自己已有GPTs，一键复刻成其他语言，或者通过语言调整其他微调版本|
+|批量删除GPT对话|参考[chatGPTBox](https://github.com/josStorer/chatGPTBox)，我们为大家提供了批量删除OpenAI对话的功能，这个功能实在是太痛点了！|
+|一键调用GPTs对话|目前版本已经实现调用3.5/4.0和任意GPTs对话的功能，后续将封装成模块，供大家定制化开发！|
+|排行榜|参考[gpts-works](https://github.com/all-in-aigc/gpts-works)，我们希望提供一个更加全面和准确的排行榜，让大家更好的选择和推广自己的GPTs|
+|更漂亮UI|提供更漂亮的UI和更便捷的交互模式|
 
 
-## Minimal Installation Steps:
-- Open the [OpenAI official website](https://chat.openai.com/), log in to your OpenAI account, and have a conversation with GPTs, please note that Plus permissions are required here.
-- Download the [browser compression package](https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip)
-- Unzip it locally
-- Open the browser's plugin management page
-- Import the unzipped folder
-- Open the plugin and select the corresponding functionality
+## 极简安装步骤：
+- 打开[OpenAI官网](https://chat.openai.com/)，登录你的OpenAI账号，进行一次GPTs的对话，注意，这里需要有Plus的权限。
+- 下载[浏览器压缩包](https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip)
+- 解压到本地
+- 打开浏览器的插件管理页面
+- 导入解压后的文件夹
+- 打开插件，选择对应的功能
 
-Installation Video:
+安装视频：
 <div align="center">
 <img src="images/安装视频.gif" width="600" >
 </div>
 
-## Detailed Feature Introductions:
+
+## 具体功能介绍：
+
+### 一键同步：
+如果大家的GPTs的数量只有几个可能不会有什么痛感，但如果维护的数量超过十个，就会讨厌官网的交互，打开[mygpts](https://chat.openai.com/gpts/mine)，你只能看到10个，你没有办法搜索，你只能一次一次的点击`Load More`。
+
+作为管理器，我们为大家提供的第一个功能就是GPTs的同步，以便后面的批量管理。
+
+具体操作如下：
+1. 登录您尊贵的OpenAI Plus账号，然后点开我们的插件，点击`从ChatGPT中同步数据`
+2. 等待数据同步完成
+3. 如果想临时中断同步，可以关闭侧边栏，再打开。
+
+![演示效果图](images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
 
 
-### One-click Sync:
-If you only have a few GPTs, you may not feel much pain. But if you have more than ten of them to maintain, it can be annoying on the official website. When you open [mygpts](https://chat.openai.com/gpts/mine), you can only see 10 of them, you can't search, you can only click `Load More` one by one.
+### 批量管理所有GPTs：
+好了，这个功能就是为了解决我们之前提到的那些痛点，如何批量管理比较多的GPTs。
 
-As a manager, the first feature we provide is the synchronization of GPTs for batch management in the future.
+下面依次详细介绍 自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）这几个功能。
 
-The specific steps are as follows:
-1. Log in to your esteemed OpenAI Plus account, then open our plugin and click "Sync data from ChatGPT".
-2. Wait for the data synchronization to complete.
-3. If you want to temporarily interrupt the synchronization, you can close the sidebar and then reopen it.
+#### 自定义排序：
+现在官网和一些排行榜对GPTs的评价主要看对话数，对于GPTs的创作者来说，对话数肯定是自己最看重的一个指标，但如果自己最火的一个GPTs在很久之前创建的，那么去维护它的时候，就很难找到了。这时候，速速使用自定义排序：
+1. 选择排序指标，比如说`按聊天排序`
+2. 选择排序规则，比如说`从高到低`
 
-![Demo](images/%E4%B8%80%E9%94%AE%E5%90%8C%E6%AD%A5.gif)
-
-
-### Batch Management of All GPTs:
-This feature is designed to solve the pain points we mentioned earlier, how to batch manage a large number of GPTs.
-
-The following are the details of several functions: custom sorting, batch deletion, querying and searching, one-click publish to the store, and one-click copy to clipboard (title+description+link).
-
-#### Custom Sorting:
-Currently, the official website and some rankings mainly evaluate GPTs based on the number of conversations. For the creators of GPTs, the number of conversations is definitely the most important indicator. But if your most popular GPT was created a long time ago, it can be difficult to find it when you want to maintain it. At this time, use custom sorting quickly:
-1. Select the sorting indicator, such as "Sort by chat".
-2. Select the sorting rule, such as "From high to low".
-
-This way, you can happily see how many people have used your GPTs and which ones are more popular.
-
+这样就可以开心的看到自己的GPTs有多少人用过，哪些是比较受大家欢迎的。
 <div align="center">
 <img src="images/sort.png" width="400" >
 </div>
-<!-- ![Sorting Effect](images/sort.png) -->
+<!-- ![排序效果图](images/sort.png) -->
 
-#### Batch Deletion: Use with Caution!
-If you have created a bunch of GPTs that are not useful, especially during testing and need to be quickly deleted, we also provide the function of batch deletion. However, this function currently does not have an option for the recycle bin. **Do not accidentally delete important GPTs!**
+#### 批量删除：慎用！
+如果大家创建了一堆没啥用的GPTs，尤其是测试的时候，需要快速删除掉，我们也提供了批量删除的功能，不过这个功能暂时没有回收站的选项，**千万别误删除了重要的GPTs！**
 
-1. Select the appropriate sorting, such as "Sort by chat" and then "From low to high", or "Sort by creation" and then "From high to low".
-2. Select the GPTs to be deleted.
-3. Scroll to the top and select "Delete". Make sure that it can be deleted and cannot be withdrawn! OpenAI does not retain records either!
+1. 选择合适的排序，比如说`按聊天排序`，然后`从低到高`，或者`按创建排序`，然后`从高到低`。
+2. 选择要删除的GPTs；
+3. 划到上面，选择`删除`，一定要确保是能删除的，无法撤回！OpenAI那边也不会保留记录！
 
 <div align="center">
-<img src="images/%E6%89%B9%E9%87%8F%E5%88%A0%E9%99%A4.gif" width="400" >
+<img src="images/批量删除.gif" width="400" >
 </div>
-<!-- ![Batch Deletion Demo](images/批量删除.gif) -->
+<!-- ![批量删除演示图](images/批量删除.gif) -->
 
-#### Query and Search:
-This one doesn't need much introduction. It's just a simple keyword search, but it should still be convenient.
-Below is the search result:
-
+#### 查询搜索：
+这个没啥介绍的，就是简单的关键词搜索，但应该还是很方便的。
+下面是搜索的效果图：
 <div align="center">
 <img src="images/search.png" width="400" >
 </div>
-<!-- ![Search Result](images/search.png) -->
+<!-- ![搜索效果图](images/search.png) -->
 
-#### One-click Publish to Store;
-By default, the creation of GPTs is for personal use, "only me". But if you want to publish it to OpenAI's store or to promote it and publish it to our OpenGPTs ranking list, you can do it with one click.
-1. Select a "private" GPT.
-2. Click the small cloud on the right to publish it to the OpenAI GPTs store.
-3. Click the small airplane in the middle to publish it to our OpenGPTs store.
+#### 一键发布到商店；
+我们默认GPTs的创建是用户本人使用的，即`only me`这种，但如果你需要发布到OpenAI的商店，或者为了扩大宣传，发布到我们OpenGPTs的排行榜，那么就可以一键发布了。
+1. 选择一个`privite`的GPTs
+2. 点击最右边的小云朵，发布到OpenAI GPTs store中
+3. 点击中间的小飞机，发布到我们的OpenGPTs store中
 
 <div align="center">
 <img src="images/pub.png" width="400" >
 </div>
-<!-- ![Publish Demo](/images/pub.png) -->
+<!-- ![发布演示图](/images/pub.png) -->
 
-#### One-click Share with Amazing Friends
-We don't know yet who foreign friends usually share with. Twitter? Discord? In China, friends usually choose to share their carefully trained GPTs directly with their amazing friends. Compared to OpenAI's lonely URL copy, we provide a one-click sharing function, saving multiple copy and paste actions, and pasting the "title+description+link" all at once, making it simple and worry-free.
-<!-- ![Share Demo](/images/一键分享.gif) -->
+#### 一键分享给神奇的群友
+暂时还不知道国外的朋友们一般会分享给谁，推特？discord？国内的朋友们应该都是直接选择将自己精心调教的GPTs，分享给神奇的群友。相比OpenAI自带的、孤零零的URL复制，我们提供的一键分享功能，则免去的多次复制粘贴，一次性粘贴出`标题+简介+链接`，简单省心。
+<!-- ![一键分享演示图](/images/一键分享.gif) -->
 <div align="center">
 <img src="images/一键分享.gif" width="600" >
 </div>
 
 
-### One-click Generate GPTs:
-This is a hidden and super-powered feature. It may still look a bit simple and rough, but we have connected the chain for automatically creating GPTs in batches. Friends with rich imagination should know what this feature means when OpenAI rewards GPT creators in the future.
+### 一键生成GPTs：
+这是一个隐藏的、开挂般的功能，现在看起来还有点简单粗陋，但我们已经把自动批量创建GPTs的链条打通，想象力丰富的朋友应该知道，这个功能在后面openai给GPTs创作者返利的时候意味着什么。
+
+哈哈，先不画饼了，先简单描述一下现有的功能：
+0. 需要先打开任意一个GPTs，进行对话，否则本功能无法自动提供Logo绘制！
+1. 点击`一键创建GPTs`
+2. 输入你想要的GPTs有的特性，比如：`猫娘GPTs`
+3. 选择GPTs需要的附加能力，是否需要联网、画图、代码解释器，默认前两个
+4. 点击`确认`，等待生成，由于需要等待画图，那么需要大约2分钟左右，生成一个GPTs.
+5. 生成完毕后，点击左边的openai图标，查看生成结果网页。
+6. 如果差距不大，可以直接发布；如果有一些细节问题，可以手动修改（目前的start有点小问题）。
+7. 修改完毕后，默认是仅自己可见。可以选择最右边的上传图标，在OpenAI商店公开。
+8. 暂时不支持对文件和action的自动创建。
+
+<!-- ![一键创建演示图](/images/一键创建GPTs.gif) -->
+<div align="center">
+<img src="images/一键创建GPTs.gif" width="600" >
+</div>
+
+## 一键复刻到其他语言
+总所周知，全世界有很多种语言，如果你创建了一个很火的GPTs，那么你肯定希望能够让其他母语的使用者也能使用这个GPTs，因此，我们提供了`一键复刻到其他语言`的功能：
+1. 点击`文/A`图标
+2. 选择目标语言
+3. 点击`确认`，等待十几秒
+
+## 一键调用GPTs对话
+这个功能正在开发中，欢迎大家一起来添砖加瓦！
 
 
-Ha ha, let's not get ahead of ourselves, let's start by briefly describing the existing features:
-0. You need to first open any GPTs for a conversation, otherwise this feature cannot automatically provide logo drawing!
-1. Click on "Create GPTs with one click."
-2. Enter the desired features of your GPTs, such as: "Cat Girl GPTs."
-3. Choose the additional capabilities required by GPTs, such as internet access, drawing, code interpreter, defaulting to the first two.
-4. Click "Confirm" and wait for the generation. Since drawing is required, it takes about 2 minutes to generate a GPTs.
-5. After generation, click on the OpenAI icon on the left to view the generated result webpage.
-6. If the difference is not significant, you can publish directly; if there are some minor issues, you can manually modify them (currently there is a small problem with "start").
-7. After finishing the modifications, it is by default visible only to you. You can choose the upload icon on the right to make it public in the OpenAI Store.
-8. Automatic creation of files and actions is not currently supported.
 
-## Replicating in other languages with one click
-As we all know, there are many languages in the world. If you create a popular GPTs, you will certainly want users who speak other languages to be able to use this GPTs. Therefore, we provide the "Replicate in other languages with one click" feature:
-1. Click on the "文/A" icon.
-2. Select the target language.
-3. Click "Confirm" and wait for about ten seconds.
+## 隐私：
+所有数据保存在用户本地，除非用户手动提交GPTs链接到排行榜，否则不会上传任何数据。
 
-## One-click calling of GPTs conversation
-This feature is currently under development. You are welcome to contribute!
+## 使用技术
 
-## Privacy:
-All data is saved locally on the user's device. Unless the user manually submits the GPTs link to the leaderboard, no data will be uploaded.
+- [plasmo-谷歌插件开发框架](https://github.com/PlasmoHQ/plasmo)
+- react 
+- antd & tailwindcss
+_ nextjs
 
-## Technical Introduction:
-JavaScript; React;
 
-## Development Guidelines:
+## 开发指导：
 
-### Installation
-#### Clone the project to a specified directory:
+
+### 安装
+
+#### 复制项目到指定目录： 
+```
+git clone  git@github.com:hzeyuan/OpenGPTS.git 
+```
+
+#### 在根目录下安装依赖
 
 ```
-git clone git@github.com:hzeyuan/OpenGPTS.git
+ pnpm install 
 ```
 
-#### Install dependencies in the root directory
-```
-pnpm install
-```
-#### Plugin Development
-
+#### 插件开发
 ```
 npm run dev:ext
 ```
 
-For any confusion here, you can refer to the [plasmo docs](https://docs.plasmo.com/framework).
+对于这里疑惑的可以看看 [plasmo docs](https://docs.plasmo.com/framework)
 
-Upon successful execution, you will find a directory named chrome-mv3-dev in the apps/extension/build folder. Please drag and drop this directory into the Manage Extensions page.
+#### 运行成功，会在apps/extension/build文件，发现 chrome-mv3-dev 目录，请将这个目录拖拽到管理扩展程序中。
 
-#### Now, you are all set to start your development!
+#### 接下来就可以开始你的开发了~
 
-#### Website Development
-
+#### 网站开发
 ```
 npm run dev:web
 ```
 
+
+
+
 ## Todo List
-- [ ] Automatically optimize prompts
-- [ ] One-click calling of GPTs conversation
-- [ ] Multiple GPTs conversations
-- [ ] Development tutorial
+- [ ] 自动优化提示词
+- [ ] 一键调用GPTs对话
+- [ ] 多GPTs对话
+- [ ] 开发教程
+
 
 ## Credits:
 Special thanks to the following projects and contributors:
@@ -202,15 +227,18 @@ Special thanks to the following projects and contributors:
 - [gpts-works](https://github.com/all-in-aigc/gpts-works)
 - [chatGPTBox](https://github.com/josStorer/chatGPTBox)
 
+
+
 ## Thanks to all contributors for their efforts
-- [hzeyuan](https://github.com/hzeyuan), responsible for 90% of the development work, the main initiator of the project.
-- [kaixindelele](https://github.com/kaixindelele), responsible for some product design, testing, project PR, a few developments, co-initiator of the project.
+- [hzeyuan](https://github.com/hzeyuan)，负责9成9的开发工作，主要的项目发起者。
+- [kaixindelele](https://github.com/kaixindelele)， 负责部分产品设计，测试，项目PR，极少数开发，项目联合发起者。
 
 ## Starchart
 
 [![Star History Chart](https://api.star-history.com/svg?repos=hzeyuan/OpenGPTS&type=Date)](https://star-history.com/#hzeyuan/OpenGPTS&Date)
 
-## Project Reference:
+
+## 项目引用：
 Please cite the repo if you use the data or code in this repo.
 
 ```
@@ -224,6 +252,6 @@ Please cite the repo if you use the data or code in this repo.
 }
 ```
 
+
 ## License
 GPL-3.0 License
-
