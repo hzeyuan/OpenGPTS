@@ -83,7 +83,7 @@ const getStreamedResponse = async (
   messagesRef: React.MutableRefObject<OMessage[]>,
   abortControllerRef: React.MutableRefObject<AbortController | null>,
   generateId: IdGenerator,
-  onFinish?: (message: OMessage, session?: any) => void,
+  onFinish?: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => void,
   onResponse?: (response: Response) => void | Promise<void>,
   sendExtraMessageFields?: boolean,
   mode: "api" | "web" = "api",
@@ -246,7 +246,7 @@ export function useChat({
   key?: string;
   initMode?: 'api' | 'web';
   initialWebConfig?: any;
-  onFinish?: (message: OMessage, session: any) => void;
+  onFinish?: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => void;
 } = {}): UseChatHelpers & {
   mode: "api" | "web";
   webConfig: any;

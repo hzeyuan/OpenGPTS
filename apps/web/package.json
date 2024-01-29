@@ -21,9 +21,9 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.0.4",
-    "@repo/eslint-config": "workspace:*",
+    "@opengpts/eslint-config": "workspace:*",
     "@opengpts/tailwind-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@opengpts/typescript-config": "workspace:*",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
     "@types/react-dom": "^18.2.18",

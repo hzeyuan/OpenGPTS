@@ -2,7 +2,7 @@
 
 
 import { Storage } from "@plasmohq/storage";
-import type { Config } from "@opengpts/types";
+import type { ChatConfig } from "@opengpts/types";
 import Browser from "webextension-polyfill";
 import { DEFAULT_CONFIG } from "~src/constant";
 
@@ -22,7 +22,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         let authHeader = headers.find(header => header.name.toLowerCase() === 'authorization');
         const token = authHeader?.value?.replace('Bearer ', '').trim()
         if (authHeader) {
-            storage.getItem<Config>('chatgpt-config').then(preConfig => {
+            storage.getItem<ChatConfig>('chatgpt-config').then(preConfig => {
                 console.log('preConfig', preConfig)
                 storage.setItem('chatgpt-config', {
                     ...DEFAULT_CONFIG,
@@ -90,7 +90,7 @@ Browser.webRequest.onBeforeRequest.addListener(
 )
 
 
-storage.getItem<Config>('config').then((config) => {
+storage.getItem<ChatConfig>('config').then((config) => {
     storage.setItem('config', {
         ...DEFAULT_CONFIG,
         ...config,

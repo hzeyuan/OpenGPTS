@@ -24,9 +24,9 @@ export async function callChatApi({
   abortController?: () => AbortController | null;
   restoreMessagesOnFailure: () => void;
   appendMessage: (message: Message) => void;
-  onResponse?: (response: Response) => void | Promise<void>;
+  onResponse?: (response: Response) => Promise<void> ;
   onUpdate: (merged: Message[], data: JSONValue[] | undefined) => void;
-  onFinish?: (message: Message) => void;
+  onFinish?: (message: Message) =>  Promise<void>;
   generateId: IdGenerator;
 }) {
 

@@ -4,12 +4,13 @@ import { ChatInputArea } from "./ChatInputArea"
 import { nanoid } from '@opengpts/core/shared/utils'
 import { motion } from "framer-motion"
 import useUserSelection from "~src/hooks/useUserSelection"
+import _ from "lodash"
 // import InteractivePanel from "../InteractivePanel"
 import { webSearch, type SearchRequest } from "~src/contents/web-search"
 import { PauseCircleOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 import type { ChatRequest, FunctionCallHandler } from 'ai';
-import type { OMessage } from "@opengpts/types"
+import type { OMessage, Session } from "@opengpts/types"
 import { MessagesList } from "../Message/MessageList"
 import type { MessagesListMethods } from "../Message/MessageList"
 import { useChatStore } from "~src/store/useChatStore"
@@ -22,6 +23,7 @@ import { useTranslation } from "react-i18next"
 import { useStorage } from "@plasmohq/storage/hook"
 import { Storage } from "@plasmohq/storage"
 import { MODELS_DICT } from "~src/constant"
+import { OpenAI } from "@opengpts/core"
 export type ChatProps = {
     ref: RefObject<any>
     uiMessages?: any[],
@@ -155,48 +157,46 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
                 // setError(error.message)
                 // alert(error.message)
             },
-            onFinish: async (message: OMessage, session) => {
+            onFinish: async (
+                message: OMessage,
+                session?: Session,
+                conversation?: OpenAI['conversation']
+            ) => {
                 console.log("onFinish", message, session)
+                if (!session) return;
                 const chatMessages = getChatMessages(chatId)
+                const chat = {
+                    chatId: session.conversationId,
+                    title: chatMessages[0].content,
+                    latestReply: message.content,
+                    created_at: new Date().getTime(),
+                    updated_at: new Date().getTime(),
+                    latestRecord: {
+                        message: {
+                            // id: session.messageId,
+                            ...message,
+                        }
+                    },
+                    fileList: []
+                }
                 if (mode === 'web') {
-                    addChatIfNotExist({
-                        chatId: session.conversationId,
-                        title: chatMessages[0].content,
-                        latestReply: message.content,
-                        created_at: new Date().getTime(),
-                        updated_at: new Date().getTime(),
-                        latestRecord: {
-                            message: {
-                                // id: session.messageId,
-                                ...message,
-                            }
-                        },
-                        fileList: []
-                    })
-                    if (chatId !== session.conversationId) {
-                        setChatId(session.conversationId);
-                        addChatMessage(session.conversationId, chatMessages[0])
-                        addChatMessage(session.conversationId, message)
-                    } else {
-                        addChatMessage(session.conversationId, message)
+                    const newChatId = session.conversationId!
+                    if (!checkChatExist(chatId)) {
+                        const initialTitle = chatMessages[0].content.slice(0, 20)
+                        chat['chatId'] = newChatId
+                        setChatId(newChatId);
+                        addChatIfNotExist(chat)
+                        addChatMessage(newChatId, chatMessages[0])
+                        addChatMessage(newChatId, message)
+                        if (conversation) conversation.updateTitle(newChatId, initialTitle)
                     }
-
+                    else {
+                        addChatMessage(newChatId, message)
+                    }
                 } else {
-                    const chat = {
-                        chatId: chatId,
-                        title: chatMessages[0].content,
-                        latestReply: message.content,
-                        created_at: new Date().getTime(),
-                        updated_at: new Date().getTime(),
-                        latestRecord: {
-                            message: message
-                        },
-                        fileList: []
-                    }
                     addChatIfNotExist(chat)
                     addChatMessage(chatId, message)
                 }
-
             },
             body: {
                 modelName: model.key,

@@ -2,7 +2,7 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage";
 import _ from 'lodash'
 import { ofetch } from 'ofetch'
-import type { Config, Gizmo } from '@opengpts/types'
+import type { ChatConfig, Gizmo } from '@opengpts/types'
 import { OpenAI } from '@opengpts/core'
 
 const storage = new Storage({
@@ -49,7 +49,7 @@ const checkChatGPTsAuth: () => Promise<{
     error?: string;
     data?: string;
 }> = async () => {
-    const config = await storage.getItem<Config>('config')
+    const config = await storage.getItem<ChatConfig>('config')
     console.log('chatgptArkoseReqUrl', config)
     if (!config?.chatgptArkoseReqUrl) {
         return {
@@ -64,7 +64,7 @@ const checkChatGPTsAuth: () => Promise<{
 }
 
 const isLogin = async () => {
-    const chatgptConfig = await storage.getItem<Config>('chatgpt-config')
+    const chatgptConfig = await storage.getItem<ChatConfig>('chatgpt-config')
     if (!chatgptConfig.token) {
         return {
             ok: false,
@@ -79,7 +79,7 @@ const isLogin = async () => {
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
-    const chatgptConfig = await storage.getItem<Config>('chatgpt-config');
+    const chatgptConfig = await storage.getItem<ChatConfig>('chatgpt-config');
     const token = chatgptConfig?.token;
     const openai = new OpenAI({ token })
 

@@ -4,7 +4,24 @@ import { v4 as uuidv4 } from 'uuid'
 // @ts-ignore
 import { fetchSSE } from '../lib/fetch-sse.mjs'
 import { type $Fetch, ofetch } from 'ofetch'
-import type { Config, Gizmo, ModelKey, Session } from '@opengpts/types'
+import type { ChatConfig, Gizmo, Session } from '@opengpts/types'
+import { MODELS_DICT, DEFAULT_CONFIG } from '~constant'
+
+
+interface StreamEvent {
+    onStart?: () => void,
+    onMessage?: ({ text, imagePointers }: {
+        done: boolean,
+        session: Session,
+        text: string
+        imagePointers?: string[]
+    }) => void,
+    onFinish?: ({ conversation }: {
+        conversation: Conversation
+    }) => void
+    onError?: (resp: Response | Error) => void
+    onAbort?: () => void
+}
 
 class OpenAI {
     public gpt: GPT
@@ -165,28 +182,55 @@ class OpenAI {
 }
 
 
-const MODELS_DICT: Record<ModelKey, { value: string, desc: string }> = {
-    chatgpt35API: { value: 'gpt-3.5-turbo-16k', desc: 'ChatGPT (API)' },
-    chatgptFree35: { value: 'text-davinci-002-render-sha', desc: 'ChatGPT (Web)' },
-    chatgptPlus4Browsing: { value: 'gpt-4', desc: 'ChatGPT (Web, GPT-4, browsing, analysis, DALL·E)' },
-    chatgptPlus4: { value: 'gpt-4-gizmo', desc: 'ChatGPT (Web, GPT-4, ChatGPT Classic)' },
+
+class Conversation {
+
+    token: string | undefined
+    apiFetch: $Fetch
+
+    constructor(config: {
+        token?: string,
+        apiFetch: $Fetch
+    }) {
+        this.token = config.token
+        this.apiFetch = config.apiFetch
+    }
+
+    public async delete(conversationId: string): Promise<boolean> {
+        if (!conversationId) return false
+        return await this.apiFetch(`https://chat.openai.com/backend-api/conversation/${conversationId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({ is_visible: false }),
+        }).then(res => {
+            if (!res.success) {
+                throw new Error(res.message)
+            }
+            return true
+        }).catch(error => {
+            throw new Error(error.message)
+        })
+    }
+
+    public updateTitle(conversationId: string, title: string) {
+        if (!conversationId) return false
+        this.apiFetch(`https://chat.openai.com/backend-api/conversation/${conversationId}`, {
+            method: 'PATCH',
+            body: JSON.stringify({
+                title,
+            })
+        }).then(res => {
+            if (!res.success) {
+                throw new Error(res.message)
+            }
+            console.log('updateTitle', res)
+        }).catch(err => {
+            console.error('updateTitle', err)
+            throw new Error(err.message)
+        })
+    }
+
 }
 
-export const chatgptWebModelKeys = [
-    'chatgptFree35',
-    'chatgptPlus4Browsing',
-    'chatgptPlus4'
-]
-
-
-const DEFAULT_CONFIG: Config = {
-    token: '',
-    customChatGptWebApiUrl: 'https://chat.openai.com',
-    customChatGptWebApiPath: '/backend-api/conversation',
-    disableWebModeHistory: false,
-    chatgptArkoseReqParams: 'cgb=vhwi',
-    chatgptArkoseReqUrl: '',
-}
 
 class GPT {
     DEFAULT_CONFIG: { customChatGptWebApiUrl: string; customChatGptWebApiPath: string; disableWebModeHistory: boolean; chatgptArkoseReqParams: string; chatgptArkoseReqUrl: string; };
@@ -385,18 +429,7 @@ class GPT {
     }
 
 
-    public async call(session: Session, event?: {
-        onStart?: () => {},
-        onMessage?: ({ text, imagePointers }: {
-            done: boolean,
-            session: Session,
-            text: string
-            imagePointers?: string[]
-        }) => {},
-        onFinish?: () => {}
-        onError?: (resp: Response | Error) => {}
-        onAbort?: () => {}
-    }, config: Config = DEFAULT_CONFIG): Promise<{
+    public async call(session: Session, event?: StreamEvent, config: ChatConfig = DEFAULT_CONFIG): Promise<{
         done: boolean,
         text?: string;
         imagePointers?: string[];
@@ -471,7 +504,7 @@ class GPT {
             if (needArkoseToken && !arkoseToken)
                 throw new Error(errorMsg);
         }
-
+        const conversationInstance = this.conversation
         let text = '', imagePointers: string[] = [];
         const response = await new Promise((resolve, reject) => {
             console.log('this.token', this?.token, this)
@@ -559,11 +592,7 @@ class GPT {
                     // sendModerations(accessToken, question, session.conversationId, session.messageId)
                 },
                 async onFinish() {
-                    event?.onFinish && event?.onFinish();
-
-                    // port.postMessage({ done: true })
-                    // port.onMessage.removeListener(messageListener)
-                    // port.onDisconnect.removeListener(disconnectListener)
+                    event?.onFinish && event?.onFinish({ conversation: conversationInstance });
                     resolve({
                         done: true,
                         text,
@@ -598,41 +627,12 @@ class GPT {
 
 }
 
-class Conversation {
-
-    token: string | undefined
-    apiFetch: $Fetch
-
-    constructor(config: {
-        token?: string,
-        apiFetch: $Fetch
-    }) {
-        this.token = config.token
-        this.apiFetch = config.apiFetch
-    }
-
-    public async delete(conversationId: string): Promise<boolean> {
-        if (!conversationId) return false
-        return await this.apiFetch(`https://chat.openai.com/backend-api/conversation/${conversationId}`, {
-            method: 'PATCH',
-            body: JSON.stringify({ is_visible: false }),
-        }).then(res => {
-            if (!res.success) {
-                throw new Error(res.message)
-            }
-            return true
-        }).catch(error => {
-            throw new Error(error.message)
-        })
-    }
-
-}
-
 
 
 export {
     GPT,
     Conversation,
     OpenAI,
+    type StreamEvent
 }
 

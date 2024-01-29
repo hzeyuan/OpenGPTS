@@ -1,6 +1,6 @@
-import type { Config, ModelOptions } from "@opengpts/types"
+import type { ChatConfig, ModelOptions } from "@opengpts/types"
 
-const DEFAULT_CONFIG: Config = {
+const DEFAULT_CONFIG: ChatConfig = {
     token:'',
     customChatGptWebApiUrl: 'https://chat.openai.com',
     customChatGptWebApiPath: '/backend-api/conversation',

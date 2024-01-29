@@ -85,7 +85,7 @@ interface Window {
 }
 
 
-interface Config {
+interface ChatConfig {
 	token: string;
 	customChatGptWebApiUrl: string;
 	customChatGptWebApiPath: string;
@@ -116,7 +116,7 @@ export {
 	GPTInfo,
 	UploadGPTInfo,
 	Window,
-	Config,
+	ChatConfig,
 	Gpts,
 	Session,
 	ModelOptions,

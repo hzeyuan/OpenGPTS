@@ -7,7 +7,7 @@ importers:
       '@opengpts/types':
         specifier: workspace:*
         version: link:packages/types
-      '@repo/typescript-config':
+      '@opengpts/typescript-config':
         specifier: workspace:*
         version: link:packages/config-typescript
       eslint:
@@ -255,10 +255,10 @@ importers:
       '@opengpts/tailwind-config':
         specifier: workspace:*
         version: link:../../packages/tailwind-config
-      '@repo/eslint-config':
+      '@opengpts/eslint-config':
         specifier: workspace:*
         version: link:../../packages/config-eslint
-      '@repo/typescript-config':
+      '@opengpts/typescript-config':
         specifier: workspace:*
         version: link:../../packages/config-typescript
       '@types/node':
@@ -302,7 +302,7 @@ importers:
       '@plasmohq/storage':
         specifier: ^1.9.0
         version: registry.npmmirror.com/@plasmohq/storage@1.9.0(react@18.2.0)
-      '@repo/typescript-config':
+      '@opengpts/typescript-config':
         specifier: workspace:^
         version: link:../config-typescript
       '@types/lodash':
@@ -342,7 +342,7 @@ importers:
 
   packages/tailwind-config:
     devDependencies:
-      '@repo/typescript-config':
+      '@opengpts/typescript-config':
         specifier: workspace:*
         version: link:../config-typescript
       tailwindcss:
