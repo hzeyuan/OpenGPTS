@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { CloudUploadOutlined, DeleteOutlined, DownOutlined, EditOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, SwapOutlined, UserOutlined } from '@ant-design/icons';
+import { CopyOutlined, DeleteOutlined, DownOutlined, EditOutlined, HeartFilled, HeartOutlined, MessageOutlined, PushpinOutlined, SendOutlined, ShareAltOutlined, UserOutlined } from '@ant-design/icons';
 import { ProList } from '@ant-design/pro-components';
 import { sendToBackground } from '@plasmohq/messaging';
 import { Button, Dropdown, Modal, Popconfirm, Typography, Space, Spin, Tag, Tooltip, notification, message } from 'antd';
@@ -13,9 +13,10 @@ import logo from "data-base64:~assets/icon.png"
 import LanguageSelectPopover from '../Popover/LanguageSelectPopover';
 import OnePromptClonePopover from '../Popover/OnePromptClonePopover';
 import GPTForm from '../GPTForm';
-import openaiSvg from "data-base64:~assets/openai.svg"
+import openaiSvg from "data-base64:~assets/chatgpt3.5.svg"
 import { useTranslation } from 'react-i18next';
 import type { Gizmo } from '@opengpts/types';
+import useGPTStore from '~src/store/useGPTsStore';
 
 const storage = new Storage({
   area: "local",
@@ -38,31 +39,25 @@ const GPTsPanel = () => {
     selectedRowKeys,
     onChange: (keys: Key[]) => setSelectedRowKeys(keys),
   };
-  const [dataSource, setDataSource] = useState<any[]>([]);
+  // const [dataSource, setDataSource] = useState<any[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [notificationApi, notificationContextHolder] = notification.useNotification();
   const [modal, modalContextHolder] = Modal.useModal();
-
-  const GPTSCount = useMemo(() => {
-    return dataSource.length
-  }, [dataSource])
-  const PinnedCount = useMemo(() => {
-    // lodash 设置默认
-    return _.filter(dataSource, (gizmo) => _.defaultTo(gizmo.tags, []).includes('pinned')).length
-  }, [dataSource])
-
-  const PublicCount = useMemo(() => {
-    return _.filter(dataSource, (gizmo) => _.defaultTo(gizmo.tags, []).includes('public')).length
-  }, [dataSource])
-  const PrivateCount = useMemo(() => {
-    return _.filter(dataSource, (gizmo) => _.defaultTo(gizmo.tags, []).includes('private')).length
-  }, [dataSource])
+  const gptsList = useGPTStore(state => state.gptsList)
+  const setGPTsList = useGPTStore(state => state.setGPTsList)
+  const updateGPTs = useGPTStore(state => state.updateGPTs)
 
 
 
+  const handleFavoriteGPTs = async (gizmo: Gizmo) => {
+    console.log('click favorite', gizmo)
+    gizmo['is_favorite'] = !gizmo['is_favorite']
+    updateGPTs(gizmo)
+  }
 
-  const handleGetGptsList = async (searchValue: string = '') => {
-    setSpinning(true)
+  const dataSource = useMemo((searchValue: string = '') => {
+    console.log('重新渲染')
+    // setSpinning(true)
     const sortGizmos = (gizmos: Gizmo[], sortType: string, sortOrder: string) => {
       const sortKeyMap = {
         'time': 'updated_at',
@@ -70,23 +65,23 @@ const GPTsPanel = () => {
         'user': 'vanity_metrics.num_users_interacted_with',
         'pin': 'vanity_metrics.num_pins'
       };
-      console.log('sortType',sortType)
+
       return _.orderBy(
         gizmos,
-       [sortKeyMap[sortType]],
+        [sortKeyMap[sortType]],
         [sortOrder === 'asc' ? 'asc' : 'desc']
       );
     };
-    const gizmos = await storage.getItem<Gizmo[]>('gizmos')
-    const filteredGizmos = _.filter(gizmos, (gizmo) =>
+    // const gizmos = await storage.getItem<Gizmo[]>('gizmos')
+    // const gizmos = useGPTStore.getState().gptsList
+    const filteredGizmos = _.filter(gptsList, (gizmo) =>
       gizmo.display.name.includes(searchValue)
     );
 
     // 排序
     const sortedGizmos = sortGizmos(filteredGizmos, sortType, sortOrder);
 
-
-    const dataSource = _.map(sortedGizmos, (gizmo: Gizmo) => {
+    return _.map(sortedGizmos, (gizmo: Gizmo) => {
       return {
         id: gizmo.id,
         title: gizmo.display.name,
@@ -108,11 +103,26 @@ const GPTsPanel = () => {
         ),
       }
     })
-    setDataSource(dataSource)
-    setSpinning(false)
-  }
+    // setDataSource(dataSource)
+    // setSpinning(false)
+  }, [sortType, sortOrder, gptsList])
 
-  const handleAsyncGptsList = async () => {
+
+  const GPTSCount = useMemo(() => {
+    return dataSource.length
+  }, [dataSource])
+  const PinnedCount = useMemo(() => {
+    return _.filter(dataSource, (gizmo) => _.defaultTo(gizmo.tags, []).includes('pinned')).length
+  }, [dataSource])
+
+  const PublicCount = useMemo(() => {
+    return _.filter(dataSource, (gizmo) => _.defaultTo(gizmo.tags, []).includes('public')).length
+  }, [dataSource])
+  const PrivateCount = useMemo(() => {
+    return _.filter(dataSource, (gizmo) => _.defaultTo(gizmo.tags, []).includes('private')).length
+  }, [dataSource])
+
+  const handleAsyncGPTsList = async () => {
     const result = await sendToBackground({
       name: 'openai',
       body: {
@@ -171,7 +181,7 @@ const GPTsPanel = () => {
           resolve('')
         }, 300)
       })
-      console.log('handleAsyncGptsList', result.data)
+      console.log('handleAsyncGPTsList', result.data)
       cursor = result.data.cursor
 
       if (result.error) {
@@ -246,7 +256,6 @@ const GPTsPanel = () => {
   const handleReset = () => {
     setSortType('time')
     setSortOrder('desc')
-    handleGetGptsList('')
   }
 
   const handleEditGPT = (gizmo: Gizmo) => {
@@ -294,20 +303,16 @@ const GPTsPanel = () => {
 
   }
 
-  useEffect(() => {
-    handleGetGptsList()
-  }, [sortOrder, sortType])
 
   storage.watch({
     "gizmos": (c) => {
-      handleGetGptsList()
+      console.log("更新")
+      setGPTsList(c.newValue)
     },
-
   })
 
   return (
     <div className='py-2 bg-[var(--opengpts-option-card-bg-color)] h-full'>
-
       <div className='mx-4'>
         <div className='flex items-center justify-between h-12 pb-2'>
           <Typography.Title style={{ margin: 0 }} level={3}>Open GPTS</Typography.Title>
@@ -330,7 +335,7 @@ const GPTsPanel = () => {
               loading={syncing}
               type="primary"
               onClick={() => {
-                handleAsyncGptsList()
+                handleAsyncGPTsList()
               }}
             >
               {t('AsyncGPTsFromChatGPT')}
@@ -411,6 +416,13 @@ const GPTsPanel = () => {
                       onClick={() => handleCopyGPTInfo(record.gizmo)}
                       className=" text-[var(--opengpts-sidebar-model-btn-color)] hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer   h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px]"
                       role="button">
+                      <CopyOutlined size={16} />
+                    </div>
+
+                    <div
+                      onClick={() => handlePublish(record.gizmo)}
+                      className=" text-[var(--opengpts-sidebar-model-btn-color)] hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer   h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px]"
+                      role="button">
                       <ShareAltOutlined size={16} />
                     </div>
                     {/* Delete GPT */}
@@ -438,12 +450,11 @@ const GPTsPanel = () => {
                       icon={<SendOutlined style={{ color: '' }} />}
                     >
                       <div
-                        className="  hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer  h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px] "
+                        className="hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer  h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px] "
                         role="button">
                         <SendOutlined size={16} />
                       </div>
                     </Popconfirm>
-                    {/* change language */}
                     <LanguageSelectPopover gizmo={record.gizmo} notificationApi={notificationApi} ></LanguageSelectPopover>
                     {/* <OnePromptClonePopover notificationApi={notificationApi} gizmo={record.gizmo}>
                       <div
@@ -452,21 +463,18 @@ const GPTsPanel = () => {
                         <SwapOutlined />
                       </div>
                     </OnePromptClonePopover> */}
-                    <Popconfirm
-                      title={t('publishGPTTitle')}
-                      description={t('publishGPTDescription')}
-                      okText={t('Confirm')}
-                      cancelText={t('Cancel')}
-                      onConfirm={() => handlePublish(record.gizmo)}
-                      icon={<CloudUploadOutlined style={{ color: 'blueviolet' }} />}
+                    <Tooltip
+                      title='Pin this GPTs to my contact list for easy access and communication.'
                     >
                       <div
+                        onClick={() => handleFavoriteGPTs(record.gizmo)}
                         className="hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] cursor-pointer  h-[28px] w-[28px] flex overflow-hidden  items-center justify-center text-sm leading-4 rounded-[30px] "
                         role="button">
-                        <CloudUploadOutlined size={16} />
+                        {
+                          record?.gizmo.is_favorite ? <HeartFilled style={{ color: 'red' }} size={16} /> : <HeartOutlined size={16} />
+                        }
                       </div>
-                    </Popconfirm>
-
+                    </Tooltip>
                   </div>
                 </div>
               )
@@ -560,7 +568,7 @@ const GPTsPanel = () => {
                   <DownOutlined />
                 </div>
               </Dropdown>,
-              <Search onSearch={(value) => { handleGetGptsList(value) }} placeholder="input search text" allowClear />,
+              <Search onSearch={(value) => { handleGetGPTsList(value) }} placeholder="input search text" allowClear />,
               <Button onClick={handleReset} type="primary" key="primary">
                 {t('Reset')}
               </Button>,

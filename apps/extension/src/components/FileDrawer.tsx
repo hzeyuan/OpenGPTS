@@ -79,7 +79,6 @@ const FileDrawer: React.FC<FileDrawerProps> = ({ chatId }) => {
 
     useEffect(() => {
         const fileList = getChatFileList()
-        console.log('fileList', fileList)
         setFileList(fileList)
     }, [curChatId])
 

@@ -136,7 +136,7 @@ const DynamicSplitPanel: React.FC<any> = ({ panels, splitPanelNum, style }) => {
 
 
   return (
-    <div className="h-full overflow-x-scroll overflow-y-hidden" id="orion-split-panel" style={style} >
+    <div className="h-full overflow-x-scroll overflow-y-hidden"  style={style} >
       <Split
         gridTemplateRows={gridTemplateRows}
         gridTemplateColumns={gridTemplateColumns}

@@ -148,7 +148,6 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
     const { t } = useTranslation();
     const isChatDrawerVisible = useMemo(() => chatDrawers.some(drawer => drawer.chatId === chatId && drawer.isVisible), [chatDrawers]);
 
-    console.log('isChatDrawerVisible', chatId, isChatDrawerVisible, chatDrawers)
 
     const handleClick = (clickedChatId: string) => {
         setChatId(clickedChatId)

@@ -1,8 +1,8 @@
 import { t } from 'i18next';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { OCommand } from '@opengpts/types';
-import useChatCommandStore from '~src/store/useChatCommandStore';
 import { useTranslation } from 'react-i18next';
+import { useChatPanelContext } from '../Panel/ChatPanel';
 
 interface CommandListProps {
   items: OCommand[];
@@ -18,14 +18,15 @@ interface CommandListRef {
 
 const CommandList = forwardRef<CommandListRef, CommandListProps>((props, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const setCommand = useChatCommandStore(state => state.setCommand);
+  const { setCommand } = useChatPanelContext();
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const { t } = useTranslation();
   const selectItem = index => {
     const item = props.items[index];
 
     if (item) {
-      setCommand(props.chatId, item);
+      setCommand(item);
+
       props.onSelect && props.onSelect();
       const startPosition = props.editor.state.selection.$from.pos - 1;
       props.editor.commands.deleteRange({

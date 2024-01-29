@@ -11,6 +11,7 @@ import mentionSuggestion from './mentionSuggestion'
 import commandSuggestion from './commandSuggestion'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
 import { useChatPanelContext } from '../Panel/ChatPanel';
+import React from 'react';
 
 
 export interface TiptapProps {
@@ -33,14 +34,20 @@ const commandKey = new PluginKey('command');
 
 const Tiptap = forwardRef<TiptapRef, TiptapProps>(({ chatId, onSubmit, onContentChange, initContent = '' }, ref) => {
 
- 
+  Mention.configure({
+
+  })
   const { model, webAccess } = useChatPanelContext()
+
+
+
   const mention = Mention.extend({
     name: 'mention',
   }).configure({
     HTMLAttributes: {
       class: ' bg-[#dafbe1] px-1 rounded-md mx-0.5',
     },
+
     suggestion: {
       ...mentionSuggestion,
       pluginKey: mentionKey,
@@ -72,7 +79,7 @@ const Tiptap = forwardRef<TiptapRef, TiptapProps>(({ chatId, onSubmit, onContent
   ]
 
   const handleKeyDown = useCallback((view, event) => {
-    console.log('handleKeyDown', event.key,mentionKey,view.state,mentionKey.getState(view.state))
+    console.log('handleKeyDown', event.key, mentionKey, view.state, mentionKey.getState(view.state))
     if (mentionKey.getState(view.state)?.active) return;
     if (commandKey.getState(view.state)?.active) return;
 
@@ -92,7 +99,7 @@ const Tiptap = forwardRef<TiptapRef, TiptapProps>(({ chatId, onSubmit, onContent
     // element: document.querySelector('.element')!,
     editorProps: {
       attributes: {
-        class: 'orion-tiptap outline-none focus:outline-none',
+        class: 'opengpts-tiptap outline-none focus:outline-none',
         style: ' outline:none; height: 61px; opacity: 1; padding: 2px; line-height: normal; overflow-y: scroll; resize: none; min-height: 61px; max-height: 156px'
       },
       handleKeyDown: handleKeyDown,

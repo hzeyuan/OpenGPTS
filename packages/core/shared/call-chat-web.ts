@@ -46,6 +46,7 @@ export async function callChatWeb({
     ...body,
   };
 
+  console.log('session',session)
   appendMessage({ ...responseMessage });
 
   // Define event handlers based on the callChatApi structure

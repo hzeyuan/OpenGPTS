@@ -15,45 +15,53 @@ interface Chat {
     messages: OMessage[];
     workspaceId: number;
     title?: string,
-    fileList?: Record<string,any>[];
+    fileList?: Record<string, any>[];
     // type: "tab" | "image" | "file";
 }
 
 
 interface OCommand {
-	icon?: string;
-	name: string;
-	prompt?: string;
+    icon?: string;
+    name: string;
+    prompt?: string;
 }
 
 
+interface Mention {
+    key: string;
+    name: string;
+    icon?: string;
+    type: 'GPTs' | 'languageModel';
+
+}
+
 type OChatRequest = {
-	messages: OMessage[];
-	options?: RequestOptions;
-	functions?: ChatRequestOptions['functions'];
-	function_call?: FunctionCall;
-	data?: Record<string, string>;
+    messages: OMessage[];
+    options?: RequestOptions;
+    functions?: ChatRequestOptions['functions'];
+    function_call?: FunctionCall;
+    data?: Record<string, string>;
 };
 
 
 
 type ChatMessage = {
-	chatId: string;
-	messages: OMessage[];
+    chatId: string;
+    messages: OMessage[];
 }
 
 interface QuoteMessage extends OMessage {
-	chatId: string;
+    chatId: string;
 }
 
 
 
 interface OMessage extends Message {
-	isError?: boolean
-	command?: OCommand;
-	quoteMessage?: QuoteMessage;
-	images?: string[];
+    isError?: boolean
+    command?: OCommand;
+    quoteMessage?: QuoteMessage;
+    images?: string[];
 }
 
 
-export type { OMessage, OChatRequest, ChatMessage, QuoteMessage, OCommand,Chat }
+export type { OMessage, OChatRequest, ChatMessage, QuoteMessage, OCommand, Chat, Mention }

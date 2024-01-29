@@ -5,7 +5,6 @@ import {
   useRef,
 } from "react"
 
-import useChatCommandStore from "~src/store/useChatCommandStore"
 import useChatDrawerStore from "~src/store/useChatDrawerStore"
 import useChatQuoteStore from "~src/store/useChatQuoteStore"
 
@@ -35,13 +34,12 @@ type ChatInputAreaProps = {
 export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
   ({ chatId, onSubmit, onInputChange, content }, ref) => {
     const tiptapRef = useRef<TiptapRef>(null)
-    const { model, setModel, webAccess, setWebAccess, fileList, setFileList } = useChatPanelContext()
+    const { model, setModel, webAccess, setWebAccess, fileList, setCommand } = useChatPanelContext()
     const { t } = useTranslation()
     const showChatDrawer = useChatDrawerStore((state) => state.showChatDrawer)
     const showFileDrawer = useFileDrawerStore((state) => state.showFileDrawer)
     const handleGetChatHistory = () => { showChatDrawer(chatId) }
     const handleShowFileDrawer = () => { showFileDrawer(chatId) }
-    const setCommand = useChatCommandStore((state) => state.setCommand)
     const setQuoteMessage = useChatQuoteStore((state) => state.setQuote)
 
     const handleAtAgent = () => { tiptapRef.current?.triggerMention("@") }
@@ -51,7 +49,7 @@ export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
       console.log("handleSubmit", content, model)
       onSubmit && onSubmit({ content, model })
       tiptapRef.current?.setContent("")
-      setCommand(chatId, undefined)
+      setCommand(undefined)
       setQuoteMessage(chatId, undefined)
     }
     const handleInputChange = (v: string) => {

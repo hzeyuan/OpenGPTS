@@ -23,7 +23,6 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         const token = authHeader?.value?.replace('Bearer ', '').trim()
         if (authHeader) {
             storage.getItem<ChatConfig>('chatgpt-config').then(preConfig => {
-                console.log('preConfig', preConfig)
                 storage.setItem('chatgpt-config', {
                     ...DEFAULT_CONFIG,
                     ...preConfig,

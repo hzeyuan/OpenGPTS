@@ -252,12 +252,12 @@ importers:
       '@next/eslint-plugin-next':
         specifier: ^14.0.4
         version: registry.npmmirror.com/@next/eslint-plugin-next@14.0.4
-      '@opengpts/tailwind-config':
-        specifier: workspace:*
-        version: link:../../packages/tailwind-config
       '@opengpts/eslint-config':
         specifier: workspace:*
         version: link:../../packages/config-eslint
+      '@opengpts/tailwind-config':
+        specifier: workspace:*
+        version: link:../../packages/tailwind-config
       '@opengpts/typescript-config':
         specifier: workspace:*
         version: link:../../packages/config-typescript
@@ -299,12 +299,12 @@ importers:
 
   packages/core:
     dependencies:
-      '@plasmohq/storage':
-        specifier: ^1.9.0
-        version: registry.npmmirror.com/@plasmohq/storage@1.9.0(react@18.2.0)
       '@opengpts/typescript-config':
         specifier: workspace:^
         version: link:../config-typescript
+      '@plasmohq/storage':
+        specifier: ^1.9.0
+        version: registry.npmmirror.com/@plasmohq/storage@1.9.0(react@18.2.0)
       '@types/lodash':
         specifier: ^4.14.202
         version: registry.npmmirror.com/@types/lodash@4.14.202

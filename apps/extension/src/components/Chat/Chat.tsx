@@ -15,7 +15,6 @@ import { MessagesList } from "../Message/MessageList"
 import type { MessagesListMethods } from "../Message/MessageList"
 import { useChatStore } from "~src/store/useChatStore"
 import { ofetch } from "ofetch"
-import useChatCommandStore from "~src/store/useChatCommandStore"
 import useChatQuoteStore from "~src/store/useChatQuoteStore"
 import { useChatPanelContext } from "../Panel/ChatPanel"
 import useScreenCapture from "~src/store/useScreenCapture"
@@ -49,7 +48,7 @@ const apiMapping = {
 
 export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMessage = "你好有什么我可以帮助你的么？", children = '', className = '' }, ref) => {
     const [content, setContent] = useState<string>("")
-    const { setModel, chatId, setChatId, model, webAccess, setFileList } = useChatPanelContext()
+    const { mentions, setMentions, command, setModel, chatId, setChatId, model, webAccess, setFileList } = useChatPanelContext()
     const messagesListRef = useRef<MessagesListMethods>(null);
     const inputRef = useRef<any>(null);
 
@@ -60,7 +59,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
     const checkChatExist = useChatStore(state => state.checkChatExist)
     const getChatMessages = useChatStore(state => state.getChatMessages)
     const addChatMessage = useChatStore(state => state.addChatMessage)
-    const getCommand = useChatCommandStore(state => state.getCommand)
     const getQuoteMessage = useChatQuoteStore(state => state.getQuote)
     const addChatIfNotExist = useChatStore(state => state.addChatIfNotExist)
     const [chatgptConfig] = useStorage({
@@ -162,7 +160,8 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
                 session?: Session,
                 conversation?: OpenAI['conversation']
             ) => {
-                console.log("onFinish", message, session)
+                // clear mentions
+                setMentions([])
                 if (!session) return;
                 const chatMessages = getChatMessages(chatId)
                 const chat = {
@@ -208,18 +207,11 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
         })
 
     const handleSubmit = async ({ content }) => {
-
         let webSearchPrompt = ''
-        console.log('webAccess,', webAccess)
-
-        console.log('input', content, !content)
         if (!content) return;
-
-
-        // const chatCommand = useChatCommandStore.getState().command
-        const chatCommand = getCommand(chatId)
         const quoteMessage = getQuoteMessage(chatId)
         const capturedImage = useScreenCapture.getState().capturedImage
+
         const message: OMessage = {
             id: nanoid(),
             content: `${selection}
@@ -227,7 +219,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
             role: "user",
             quoteMessage: quoteMessage,
             images: capturedImage ? [capturedImage] : [],
-            command: chatCommand,
+            command,
             ui: quoteMessage?.content
         }
         setMessages([
@@ -260,12 +252,20 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
         addChatMessage(chatId, message)
         setFileList([])
         const options = {}
+        //TODO: use model that was mentioned last, if not exist, use default model, temporarily
+        const mention = mentions[mentions.length - 1]
+        const modelName = mention.key ?? model.key
+        console.log('mention', mention, modelName)
 
         if (model.mode === 'web') {
             if (checkChatExist(chatId)) {
                 options['body'] = {
                     conversationId: chatId,
-                    modelName: model.key,
+                    modelName: modelName,
+                }
+            } else {
+                options['body'] = {
+                    modelName: modelName,
                 }
             }
         } else {

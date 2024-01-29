@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { create } from "zustand";
-import { devtools, persist } from 'zustand/middleware'
+import { persist } from 'zustand/middleware'
 import type { Chat, OMessage } from "@opengpts/types";
 interface ChatState {
     curChatId: string;

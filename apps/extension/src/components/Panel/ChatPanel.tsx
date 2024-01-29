@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { DEFAULT_MODEL } from "~src/constant";
 
 import { PlusOutlined } from "@ant-design/icons";
-import type { ModelOptions } from "@opengpts/types";
+import type { Mention, ModelOptions, OCommand } from "@opengpts/types";
 import { ChatHistoryDrawer } from "../Chat/ChatHistoryDrawer";
 
 interface ChatContextType {
@@ -23,6 +23,10 @@ interface ChatContextType {
     setWebAccess: (webAccess: boolean) => void;
     fileList: UploadFile[];
     setFileList: (fileList: UploadFile[]) => void;
+    command?: OCommand;
+    setCommand: (command?: OCommand) => void;
+    setMentions: (mentions: Mention[]) => void;
+    mentions: Mention[];
 }
 
 
@@ -34,7 +38,10 @@ const defaultContextValue: ChatContextType = {
     webAccess: false,
     setWebAccess: (webAccess: boolean) => { },
     fileList: [],
-    setFileList: (fileList: any[]) => { }
+    setFileList: (fileList: any[]) => { },
+    setCommand: (command?: OCommand) => { },
+    setMentions: (mentions: Mention[]) => { },
+    mentions: [],
 };
 
 
@@ -58,6 +65,8 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
     const [chatId, setChatId] = useState(initialChatId);
     const [model, setModel] = useState<ModelOptions>(DEFAULT_MODEL);
     const [webAccess, setWebAccess] = useState<boolean>(false);
+    const [command, setCommand] = useState<OCommand>()
+    const [mentions, setMentions] = useState<Mention[]>([])
     const [fileList, setFileList] = useState<any[]>([])
     const chatRef = useRef<any>();
     const { t } = useTranslation();
@@ -67,6 +76,7 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
         const chatId = nanoid()
         updateChatId(chatId)
         setChatId(chatId)
+        setCommand(undefined)
     }
 
     useImperativeHandle(ref, () => ({
@@ -87,7 +97,9 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
             model,
             setModel,
             webAccess, setWebAccess,
-            fileList, setFileList
+            fileList, setFileList,
+            command, setCommand,
+            setMentions, mentions
         }}>
             <motion.div
                 className="h-full"
@@ -112,9 +124,6 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
                 </Panel>
             </motion.div>
         </ChatPanelContext.Provider>
-
-
-
     )
 });
 
