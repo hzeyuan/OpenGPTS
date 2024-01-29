@@ -58,7 +58,7 @@ QQ群：860859251
 |一键生成|输入标题，一键生成GPTs，复刻官网功能，但可以自定义提示词！（后续封装出接口）|
 |一键复刻|对自己已有GPTs，一键复刻成其他语言，或者通过语言调整其他微调版本|
 |批量删除GPT对话|参考[chatGPTBox](https://github.com/josStorer/chatGPTBox)，我们为大家提供了批量删除OpenAI对话的功能，这个功能实在是太痛点了！|
-|一键调用GPTs对话|目前版本已经实现调用3.5/4.0和任意GPTs对话的功能，后续将封装成模块，供大家定制化开发！|
+|一键调用GPTs对话|一次输入，同时调用多个模型，快速对比结果。|
 |排行榜|参考[gpts-works](https://github.com/all-in-aigc/gpts-works)，我们希望提供一个更加全面和准确的排行榜，让大家更好的选择和推广自己的GPTs|
 |更漂亮UI|提供更漂亮的UI和更便捷的交互模式|
 
@@ -210,8 +210,7 @@ QQ群：860859251
 
 ## 一键调用GPTs对话
 参考视频：
-<iframe src="//player.bilibili.com/player.html?aid=454449682&bvid=BV1u5411C74D&cid=1422625040&p=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-
+[【开源,免费,白嫖ChatGPT:6倍效率提供的AI插件】](https://www.bilibili.com/video/BV1u5411C74D)
 </details>
 
 
