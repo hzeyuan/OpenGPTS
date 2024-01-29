@@ -266,7 +266,9 @@ npm run dev:web
 - [ ] 一键调用GPTs对话
 - [ ] 多GPTs对话
 - [ ] 开发教程
-
+- [ ] 批量对话时，可以选择隐藏独立输入框
+- [ ] 多对话框的输入输出可以编排
+- [ ] 在GPTs管理界面选择可@的GPTs，然后在对话框中输入@，就可以选择对话的GPTs
 
 ## Credits:
 Special thanks to the following projects and contributors:
