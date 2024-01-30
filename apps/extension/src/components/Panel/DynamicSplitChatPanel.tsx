@@ -53,6 +53,12 @@ const DynamicSplitChatPanel = () => {
         })
     }
 
+    const setAllChatPanelInputArea = (res) => {
+        chatPanelRefs.current.forEach((chatPanelRef) => {
+            chatPanelRef?.setHideInputArea(res)
+        })
+    }
+
 
     return <div className="flex flex-col h-full ">
         <DynamicSplitPanel
@@ -77,9 +83,14 @@ const DynamicSplitChatPanel = () => {
                         </div>
                     ))}
                 </div>
-                <div className="flex-1 pl-2"> <CommandCenter
-                    onAllSubmit={handleAllSubmit}
-                    onInputChange={handleAllInputChange}></CommandCenter></div>
+                <div className="flex-1 pl-2">
+                    <CommandCenter
+                        setAllChatPanelInputArea={setAllChatPanelInputArea}
+                        onAllSubmit={handleAllSubmit}
+                        onInputChange={handleAllInputChange}>
+
+                    </CommandCenter>
+                </div>
             </div>
         </div>
     </div>

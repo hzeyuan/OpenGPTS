@@ -79,6 +79,7 @@ const ChatHistoryItem = ({ chat, onClick }: {
             title: 'Delete Chat',
             content: 'Are you sure to delete this chat?',
             onOk: () => {
+                console.log('chatId', chatId)
                 deleteChat(chatId)
                 const newChatId = nanoid()
                 updateChatId(newChatId)
@@ -148,7 +149,6 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
     const { t } = useTranslation();
     const isChatDrawerVisible = useMemo(() => chatDrawers.some(drawer => drawer.chatId === chatId && drawer.isVisible), [chatDrawers]);
 
-    console.log('isChatDrawerVisible', chatId, isChatDrawerVisible, chatDrawers)
 
     const handleClick = (clickedChatId: string) => {
         setChatId(clickedChatId)
@@ -165,17 +165,19 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
 
     const handleProcessChatList = () => {
         let newChatList = [...chatList]
-        if (!chatList.length) return [];
-        const searchTermLower = searchTerm.toLowerCase(); // 小写化搜索词
-        if (searchTerm !== '') {
-            newChatList = _.filter(chatList, (item) => {
-                return (item?.title ?? '').toLowerCase().includes(searchTermLower) ||
-                    item?.latestReply.toLowerCase().includes(searchTermLower)
-            });
-        }
-        const sortedChatList = sortOrder === 'asc'
-            ? _.sortBy(newChatList, ['created_at'])
-            : _.sortBy(newChatList, ['created_at']).reverse();
+        let sortedChatList = []
+        if (chatList.length) {
+            const searchTermLower = searchTerm.toLowerCase(); // 小写化搜索词
+            if (searchTerm !== '') {
+                newChatList = _.filter(chatList, (item) => {
+                    return (item?.title ?? '').toLowerCase().includes(searchTermLower) ||
+                        item?.latestReply.toLowerCase().includes(searchTermLower)
+                });
+            }
+            sortedChatList = sortOrder === 'asc'
+                ? _.sortBy(newChatList, ['created_at'])
+                : _.sortBy(newChatList, ['created_at']).reverse();
+        };
         setFilteredChatList(sortedChatList);
         return sortedChatList;
     }
@@ -224,10 +226,9 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
                     prefix={<SearchOutlined size={24} />
                     }></Input>
             </div>
-
             <div className="flex flex-col flex-1 px-4 pb-3 overflow-y-auto chat-history-box custom-scrollbar">
                 <VirtualList
-                    height={400}
+                    height={document.body.clientHeight * 0.7}
                     itemHeight={47}
                     data={filteredChatList}
                     onScroll={onScroll}

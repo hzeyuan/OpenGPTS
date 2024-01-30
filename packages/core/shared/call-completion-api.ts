@@ -28,7 +28,7 @@ export async function callCompletionApi({
     setLoading: (loading: boolean) => void;
     setError: (error: Error | undefined) => void;
     setAbortController: (abortController: AbortController | null) => void;
-    onResponse?: (response: Response) => void | Promise<void>;
+    onResponse?: (response: Response) => void;
     onFinish?: (prompt: string, completion: string) => void;
     onError?: (error: Error) => void;
     onData?: (data: JSONValue[]) => void;

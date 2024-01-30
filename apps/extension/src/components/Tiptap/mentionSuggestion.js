@@ -2,18 +2,28 @@ import { ReactRenderer } from '@tiptap/react'
 import tippy from 'tippy.js'
 import { PluginKey } from '@tiptap/pm/state';
 import MentionList from './MentionList'
+import chatgpt3_5Svg from "data-base64:~assets/chatgpt3.5.svg"
+import chatgpt4Svg from "data-base64:~assets/chatgpt4.svg"
+
 
 export default {
   items: ({ query }) => {
-    console.log('Mention query:', query);
-
     return [
-      'GPT-3.5-Turbo',
-      'GPT-4-Turbo',
+      {
+        key: 'chatgptFree35',
+        icon: chatgpt3_5Svg,
+        name: 'GPT-3.5-Turbo (Web)',
+        type:'languageModel',
+      },
+      {
+        key:'chatgptPlus4Browsing',
+        icon: chatgpt4Svg,
+        name: 'GPT-4-Turbo (Web)',
+        type:'languageModel',
+      }
     ]
   },
   char: '@',
-  // pluginKey:'oMention',
   allowedPrefixes: [' '],
   pluginKey: new PluginKey('mention'),
   // decorationTag:'',
@@ -51,7 +61,7 @@ export default {
 
         popup = tippy('body', {
           getReferenceClientRect: props.clientRect,
-          appendTo:'parent',
+          appendTo: 'parent',
           content: component.element,
           showOnCreate: true,
 

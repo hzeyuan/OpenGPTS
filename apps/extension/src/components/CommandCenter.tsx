@@ -1,14 +1,15 @@
-import { Input, Select, Space } from "antd"
+import { Button, Input, Select, Space } from "antd"
 import { useEffect, useState } from "react"
 
 const CommandCenter = ({
     onInputChange,
-    onAllSubmit
+    onAllSubmit,
+    setAllChatPanelInputArea
 }) => {
 
     const [canSend, setCanSend] = useState<boolean>(false)
     const [value, setValue] = useState<string>("")
-
+    const [hideInputArea, setHideInputArea] = useState<boolean>(false)
     const options = [
         { label: '', value: 'Zhejiang' },
         { label: 'Jiangsu', value: 'Jiangsu' },
@@ -48,6 +49,8 @@ const CommandCenter = ({
         setValue(e.target.value)
         onInputChange && onInputChange(e.target.value)
     }
+    // const handle÷
+    // setAllChatPanelInputArea
 
     useEffect(() => {
         if (value) {
@@ -58,10 +61,19 @@ const CommandCenter = ({
 
     }, [value])
 
+    useEffect(() => {
+        setAllChatPanelInputArea(hideInputArea)
+    }, [hideInputArea])
+
     return (
-        <div>
+        <div className="flex">
             < Input
-             placeholder="input something ... all in one" onKeyDown={handleKeyDown} value={value} onChange={handleChange} suffix={suffix} size="small" defaultValue="" />
+                placeholder="input something ... all in one" onKeyDown={handleKeyDown} value={value} onChange={handleChange} suffix={suffix} size="small" defaultValue="" />
+            <Button onClick={() => {
+                setHideInputArea(!hideInputArea)
+            }} className="ml-1">{
+                    hideInputArea ? "Show" : "Hide"
+                }</Button>
         </div>
     )
 }

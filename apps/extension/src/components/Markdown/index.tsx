@@ -60,7 +60,7 @@ const Markdown: FC<{ children: string }> = ({ children }) => {
         [rehypeHighlight, { detect: false, ignoreMissing: true }]
 
       ]}
-      className={`markdown-body `}
+      className={`markdown-body markdown-custom-styles`}
       linkTarget="_blank"
       components={{
         pre: PreCode,

@@ -10,8 +10,6 @@ const InputImgs = ({ fileList }) => {
 
 
     const handleClose = () => { setShow(false) }
-
-    console.log('fileList', fileList)
     
     useEffect(() => {
         setShow(fileList.length > 0);

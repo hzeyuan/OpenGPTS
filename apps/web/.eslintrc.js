@@ -1,5 +1,5 @@
 module.exports = {
-    extends: ["@repo/eslint-config/next.js"],
+    extends: ["@opengpts/eslint-config/next.js"],
 }
 
 

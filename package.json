@@ -14,7 +14,7 @@
     "eslint": "^8.56.0",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.10",
-    "@repo/typescript-config": "workspace:*",
+    "@opengpts/typescript-config": "workspace:*",
     "@opengpts/types": "workspace:*",
     "turbo": "latest"
   },

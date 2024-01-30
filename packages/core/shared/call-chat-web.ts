@@ -1,6 +1,6 @@
 import type { ChatRequest, IdGenerator, JSONValue, Message } from 'ai';
-import { OpenAI } from '../web/openai';
-import type { Config, Session } from '@opengpts/types';
+import { OpenAI, StreamEvent } from '../web/openai';
+import type { ChatConfig, OMessage, Session } from '@opengpts/types';
 
 export async function callChatWeb({
   callMethod,
@@ -14,6 +14,7 @@ export async function callChatWeb({
   onFinish,
   generateId,
   webConfig,
+  messageConfig
 }: {
   callMethod: OpenAI['gpt']['call']; // The provided call function
   messages: Message[];
@@ -23,35 +24,39 @@ export async function callChatWeb({
   appendMessage: (message: Message) => void;
   onResponse?: (response: Response) => void | Promise<void>;
   onUpdate: (merged: Message[], data: JSONValue[] | undefined) => void;
-  onFinish?: (message: Message, session?: any) => void;
+  onFinish?: (message: Message, session?: any, conversation?: OpenAI['conversation']) => void;
   generateId: IdGenerator;
-  webConfig?: Config
+  webConfig?: ChatConfig
+  messageConfig?: any
 }) {
 
   const createdAt = new Date();
   const replyId = generateId();
-  let responseMessage: Message = {
+  let responseMessage: OMessage = {
     id: replyId,
     createdAt,
     content: '',
     role: 'assistant',
+    display: {
+      name: messageConfig?.mention?.name || 'AI',
+      icon: messageConfig?.mention?.icon
+    },
   };
 
 
-  console.log('body', body)
   // Convert messages and body to a suitable format for the call method
   let session: Session = {
     question: messages[messages.length - 1].content,
-    // autoClean: true,
     modelName: 'chatgptFree35',
     parentMessageId: messages[messages.length - 1]?.id,
     ...body,
   };
 
+  console.log('session', session)
   appendMessage({ ...responseMessage });
 
   // Define event handlers based on the callChatApi structure
-  let event: any = {
+  let event: StreamEvent = {
     onStart: () => {
 
     },
@@ -66,9 +71,9 @@ export async function callChatWeb({
       appendMessage({ ...responseMessage });
 
     },
-    onFinish: () => {
+    onFinish: ({ conversation }) => {
       responseMessage['id'] = session.messageId!
-      onFinish && onFinish(responseMessage, session);
+      onFinish && onFinish(responseMessage, session, conversation);
     },
     onError: (resp: Response | Error) => { },
     onAbort: () => { }

@@ -85,7 +85,7 @@ interface Window {
 }
 
 
-interface Config {
+interface ChatConfig {
 	token: string;
 	customChatGptWebApiUrl: string;
 	customChatGptWebApiPath: string;
@@ -99,8 +99,9 @@ type ModelKey = 'chatgpt35API' | 'chatgptFree35' | 'chatgptPlus4' | 'chatgptPlus
 
 interface ModelOptions {
 	key: ModelKey;
+	icon?: string;
 	name: string;
-	description: string;
+	description?: string;
 	mode: 'api' | 'web';
 }
 
@@ -116,7 +117,7 @@ export {
 	GPTInfo,
 	UploadGPTInfo,
 	Window,
-	Config,
+	ChatConfig,
 	Gpts,
 	Session,
 	ModelOptions,

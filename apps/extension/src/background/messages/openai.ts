@@ -2,7 +2,7 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage";
 import _ from 'lodash'
 import { ofetch } from 'ofetch'
-import type { Config, Gizmo } from '@opengpts/types'
+import type { ChatConfig, Gizmo } from '@opengpts/types'
 import { OpenAI } from '@opengpts/core'
 
 const storage = new Storage({
@@ -12,18 +12,18 @@ const storage = new Storage({
 
 
 
-const createItem = async (newItem) => {
+const createGPTs = async (newItem) => {
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     console.log('newItem', newItem)
     await storage.setItem('gizmos', [newItem, ...items]);
 };
 
-const readItemById = async (id) => {
+const getGPTsById = async (id) => {
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     return items.find(item => item.id === id);
 };
 
-const updateItem = async (id, updatedFields) => {
+const updateGPTs = async (id, updatedFields) => {
     let updatedItem;
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     const newItems = items.map(item => {
@@ -38,7 +38,7 @@ const updateItem = async (id, updatedFields) => {
     return updatedItem;
 };
 
-const deleteItem = async (id) => {
+const deleteGPTs = async (id) => {
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     const newItems = items.filter(item => item.id !== id);
     await storage.setItem('gizmos', newItems);
@@ -49,7 +49,7 @@ const checkChatGPTsAuth: () => Promise<{
     error?: string;
     data?: string;
 }> = async () => {
-    const config = await storage.getItem<Config>('config')
+    const config = await storage.getItem<ChatConfig>('config')
     console.log('chatgptArkoseReqUrl', config)
     if (!config?.chatgptArkoseReqUrl) {
         return {
@@ -64,8 +64,8 @@ const checkChatGPTsAuth: () => Promise<{
 }
 
 const isLogin = async () => {
-    const chatgptConfig = await storage.getItem<Config>('chatgpt-config')
-    if (!chatgptConfig.token) {
+    const chatgptConfig = await storage.getItem<ChatConfig>('chatgpt-config')
+    if (!chatgptConfig?.token) {
         return {
             ok: false,
             error: 'Please Chat with any GPTS https://chat.openai.com/gpts',
@@ -79,7 +79,7 @@ const isLogin = async () => {
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 
-    const chatgptConfig = await storage.getItem<Config>('chatgpt-config');
+    const chatgptConfig = await storage.getItem<ChatConfig>('chatgpt-config');
     const token = chatgptConfig?.token;
     const openai = new OpenAI({ token })
 
@@ -108,7 +108,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
         } else if (action === 'delete') {
             try {
                 await openai.gpt.del(gizmoId);
-                await deleteItem(gizmoId)
+                await deleteGPTs(gizmoId)
                 res.send({
                     ok: true
                 })
@@ -145,7 +145,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             try {
                 const { gizmoId, gizmo, draft } = req.body
                 const newGizmo = await openai.gpt.update(gizmoId, gizmo)
-                await updateItem(gizmoId, newGizmo)
+                await updateGPTs(gizmoId, newGizmo)
                 res.send({
                     ok: true,
                     data: gizmo
@@ -161,7 +161,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
             try {
                 console.log('gizmoId', gizmoId)
                 await openai.gpt.publish(gizmoId)
-                await updateItem(gizmoId, {
+                await updateGPTs(gizmoId, {
                     tags: ['public']
                 })
                 res.send({ ok: true, data: '' })
@@ -177,7 +177,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                 const tools = req.body.tools || []
                 const newGizmo = await openai.gpt.create(gizmo, tools)
                 console.log('createGPT', newGizmo)
-                await createItem(newGizmo)
+                await createGPTs(newGizmo)
                 res.send({
                     ok: true,
                     data: newGizmo

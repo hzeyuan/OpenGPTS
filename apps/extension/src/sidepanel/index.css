@@ -33,6 +33,11 @@ body {
   height: auto;
 }
 
+
+.opengpts-tiptap p {
+  margin: 0;
+}
+
 #opengpts-sidebar ul {
   padding: 0;
   margin: 0;

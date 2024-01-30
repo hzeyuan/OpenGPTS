@@ -4,17 +4,17 @@ import { ChatInputArea } from "./ChatInputArea"
 import { nanoid } from '@opengpts/core/shared/utils'
 import { motion } from "framer-motion"
 import useUserSelection from "~src/hooks/useUserSelection"
+import _ from "lodash"
 // import InteractivePanel from "../InteractivePanel"
 import { webSearch, type SearchRequest } from "~src/contents/web-search"
 import { PauseCircleOutlined } from "@ant-design/icons"
 import { Button } from "antd"
 import type { ChatRequest, FunctionCallHandler } from 'ai';
-import type { OMessage } from "@opengpts/types"
+import type { OMessage, Session } from "@opengpts/types"
 import { MessagesList } from "../Message/MessageList"
 import type { MessagesListMethods } from "../Message/MessageList"
 import { useChatStore } from "~src/store/useChatStore"
 import { ofetch } from "ofetch"
-import useChatCommandStore from "~src/store/useChatCommandStore"
 import useChatQuoteStore from "~src/store/useChatQuoteStore"
 import { useChatPanelContext } from "../Panel/ChatPanel"
 import useScreenCapture from "~src/store/useScreenCapture"
@@ -22,6 +22,8 @@ import { useTranslation } from "react-i18next"
 import { useStorage } from "@plasmohq/storage/hook"
 import { Storage } from "@plasmohq/storage"
 import { MODELS_DICT } from "~src/constant"
+import { OpenAI } from "@opengpts/core"
+import { useDebouncedCallback } from "use-debounce"
 export type ChatProps = {
     ref: RefObject<any>
     uiMessages?: any[],
@@ -47,7 +49,8 @@ const apiMapping = {
 
 export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMessage = "你好有什么我可以帮助你的么？", children = '', className = '' }, ref) => {
     const [content, setContent] = useState<string>("")
-    const { setModel, chatId, setChatId, model, webAccess, setFileList } = useChatPanelContext()
+    const { mention, setMention, command, setCommand, setModel, chatId, setChatId, model, webAccess, setFileList } = useChatPanelContext()
+    const [hideInputArea, setHideInputArea] = useState(false)
     const messagesListRef = useRef<MessagesListMethods>(null);
     const inputRef = useRef<any>(null);
 
@@ -58,7 +61,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
     const checkChatExist = useChatStore(state => state.checkChatExist)
     const getChatMessages = useChatStore(state => state.getChatMessages)
     const addChatMessage = useChatStore(state => state.addChatMessage)
-    const getCommand = useChatCommandStore(state => state.getCommand)
     const getQuoteMessage = useChatQuoteStore(state => state.getQuote)
     const addChatIfNotExist = useChatStore(state => state.addChatIfNotExist)
     const [chatgptConfig] = useStorage({
@@ -141,7 +143,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
     }
 
 
-
     const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } =
         useChat({
             initMode: 'web',
@@ -155,48 +156,50 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
                 // setError(error.message)
                 // alert(error.message)
             },
-            onFinish: async (message: OMessage, session) => {
-                console.log("onFinish", message, session)
+            onResponse: (response) => {
+                handleScrollToBottom()
+            },
+            onFinish: async (
+                message: OMessage,
+                session?: Session,
+                conversation?: OpenAI['conversation']
+            ) => {
+                // clear mentions
+                setMention(undefined)
+                if (!session) return;
                 const chatMessages = getChatMessages(chatId)
+                const chat = {
+                    chatId: session.conversationId,
+                    title: chatMessages[0].content,
+                    latestReply: message.content,
+                    created_at: new Date().getTime(),
+                    updated_at: new Date().getTime(),
+                    latestRecord: {
+                        message: {
+                            // id: session.messageId,
+                            ...message,
+                        }
+                    },
+                    fileList: []
+                }
                 if (mode === 'web') {
-                    addChatIfNotExist({
-                        chatId: session.conversationId,
-                        title: chatMessages[0].content,
-                        latestReply: message.content,
-                        created_at: new Date().getTime(),
-                        updated_at: new Date().getTime(),
-                        latestRecord: {
-                            message: {
-                                // id: session.messageId,
-                                ...message,
-                            }
-                        },
-                        fileList: []
-                    })
-                    if (chatId !== session.conversationId) {
-                        setChatId(session.conversationId);
-                        addChatMessage(session.conversationId, chatMessages[0])
-                        addChatMessage(session.conversationId, message)
-                    } else {
-                        addChatMessage(session.conversationId, message)
+                    const newChatId = session.conversationId!
+                    if (!checkChatExist(chatId)) {
+                        const initialTitle = chatMessages[0].content.slice(0, 30)
+                        chat['chatId'] = newChatId
+                        setChatId(newChatId);
+                        addChatIfNotExist(chat)
+                        addChatMessage(newChatId, chatMessages[0])
+                        addChatMessage(newChatId, message)
+                        if (conversation) conversation.updateTitle(newChatId, initialTitle)
                     }
-
+                    else {
+                        addChatMessage(newChatId, message)
+                    }
                 } else {
-                    const chat = {
-                        chatId: chatId,
-                        title: chatMessages[0].content,
-                        latestReply: message.content,
-                        created_at: new Date().getTime(),
-                        updated_at: new Date().getTime(),
-                        latestRecord: {
-                            message: message
-                        },
-                        fileList: []
-                    }
                     addChatIfNotExist(chat)
                     addChatMessage(chatId, message)
                 }
-
             },
             body: {
                 modelName: model.key,
@@ -208,32 +211,29 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
         })
 
     const handleSubmit = async ({ content }) => {
-
-        let webSearchPrompt = ''
-        console.log('webAccess,', webAccess)
-
-        console.log('input', content, !content)
         if (!content) return;
-
-
-        // const chatCommand = useChatCommandStore.getState().command
-        const chatCommand = getCommand(chatId)
+        let webSearchPrompt = ''
+        //TODO: use model that was mentioned last, if not exist, use default model, temporarily
+        const mentionType = _.get(mention, 'type', '')
+        const modelKey = mentionType === 'GPTs' ? 'gpt-4-gizmo' : mention?.key ?? model.key
         const quoteMessage = getQuoteMessage(chatId)
         const capturedImage = useScreenCapture.getState().capturedImage
+
         const message: OMessage = {
             id: nanoid(),
             content: `${selection}
             ${content}`,
             role: "user",
+            display: {
+                name: 'Me',
+                icon: '',
+            },
             quoteMessage: quoteMessage,
             images: capturedImage ? [capturedImage] : [],
-            command: chatCommand,
-            ui: quoteMessage?.content
+            command,
+            ui: quoteMessage?.content,
         }
-        setMessages([
-            ...messages,
-            message
-        ])
+        setMessages([...messages, message])
         if (webAccess) {
             try {
                 const searchRequest: SearchRequest = {
@@ -259,22 +259,36 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
 
         addChatMessage(chatId, message)
         setFileList([])
+
         const options = {}
 
-        if (model.mode === 'web') {
-            if (checkChatExist(chatId)) {
-                options['body'] = {
-                    conversationId: chatId,
-                    modelName: model.key,
-                }
-            }
-        } else {
-            const modelName = MODELS_DICT[model.key].value;
-            options['body'] = {
-                model: modelName,
-                imgUrl: useScreenCapture.getState().capturedImage,
-            }
+        function handleGPTsOptions(mention) {
+            const gizmoId = _.get(mention, 'key', '');
+            if (!gizmoId) throw new Error('gizmo_id is required');
+            return { gizmoId, ...webConfig };
         }
+
+        // Helper function to handle web mode options
+        function handleWebModeOptions(chatId) {
+            return checkChatExist(chatId) ? { conversationId: chatId } : {};
+        }
+
+        // Helper function to handle default options
+        function handleDefaultOptions(modelKey, capturedImage) {
+            const modelName = MODELS_DICT[modelKey].value;
+            return { model: modelName, imgUrl: capturedImage };
+        }
+        let bodyOptions = {};
+
+        if (mention && mentionType === 'GPTs') {
+            bodyOptions = handleGPTsOptions(mention);
+        } else {
+            bodyOptions = model.mode === 'web' ?
+                handleWebModeOptions(chatId) :
+                handleDefaultOptions(model.key, useScreenCapture.getState().capturedImage);
+        }
+
+        options['body'] = { modelName: modelKey, ...bodyOptions };
 
         append({
             ...message,
@@ -283,30 +297,43 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
             ${content}`
         }, {
             options,
+        }, {
+            mention: mention ?? {
+                name: model.name,
+                icon: model.icon,
+            }
         })
 
         setContent('')
+        setMention(undefined)
+        setCommand(undefined)
         handleScrollToBottom()
         resetCapture()
     }
 
-    const handleScrollToBottom = () => {
+    const handleScrollToBottom = useDebouncedCallback(() => {
         if (messagesListRef.current) {
             messagesListRef.current.scrollToBottom();
         }
-    }
+    }, 300)
+
+
 
     const onInputChange = (v: string) => {
         inputRef.current.setContent(v)
         setContent(v)
     }
 
+    const handleHideInputArea = () => {
+
+    }
 
     useImperativeHandle(ref, () => {
         return {
             handleSubmit: () => inputRef.current.submit(),
             handleScrollToBottom: handleScrollToBottom,
             onInputChange: onInputChange,
+            setHideInputArea: setHideInputArea,
         }
     })
 
@@ -369,15 +396,24 @@ export const Chat = forwardRef<ChatRef, ChatProps>(({ uiMessages = [], systemMes
                         </Button>
                     </motion.div>
                 }
-                <div className=" input-box">
+
+                <motion.div
+                    className="input-box"
+                    animate={hideInputArea ? "hidden" : "visible"}
+                    variants={{
+                        hidden: { opacity: 0, height: 0, overflow: 'hidden' },
+                        visible: { opacity: 1, height: 'auto' }
+                    }}
+                    transition={{ duration: 0.5 }}
+                >
                     <ChatInputArea
                         chatId={chatId}
                         ref={inputRef}
                         onSubmit={handleSubmit}
                         onInputChange={onInputChange}
                         content={content}
-                    ></ChatInputArea>
-                </div>
+                    />
+                </motion.div>
             </div >
         </>
     )
