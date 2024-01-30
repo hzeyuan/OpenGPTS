@@ -11,7 +11,7 @@ export default () => {
           {/* <div className="my-4 text-3xl font-semibold text-gray-500 ">The Best GPTs Manager</div> */}
           <p className="mt-8">
             <a
-              href="https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip"
+              href="https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.3.zip"
               className="inline-block px-4 py-2 text-lg border md:px-8 md:py-4 bg-slate-50 border-primary rounded-xl"
             >
               <span className="flex items-center ">
