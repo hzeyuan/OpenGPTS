@@ -8,71 +8,135 @@
 
 # OpenGPTs
 
-OpenGPTs 是开源的浏览器插件，支持语音，多窗口，多模型，多模态<br/>
+OpenGPTs 是一款开源的浏览器插件，支持语音输入,函数调用,多模型,多模态,批量对话，网页端或者APIKey调用模型<br/>
 我们希望这款插件可以帮助你更高效的使用GPT，甚至未来代替你控制网页，实现各种RPA操作 <br/>
 
-<div style="font-size: 1.2rem;">
-  <a href="./README.md">中文</a> |
-  <a href="./README_EN.md">English</a>
-</div>
+**简体中文** · [Enlish](./README_EN.md) · [Changelog](./CHANGELOG.md) · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
 </br>
 
+<!-- SHIELD GROUP -->
+
+[![][github-release-shield]][github-release-link]
+[![][vercel-shield]][vercel-link]
+
+[![][github-releasedate-shield]][github-releasedate-link]
+[![][github-contributors-shield]][github-contributors-link]
+[![][github-forks-shield]][github-forks-link]
+[![][github-stars-shield]][github-stars-link]<br>
+[![][github-issues-shield]][github-issues-link]
+[![][github-license-shield]][github-license-link]<br>
+
+
+**Share OpenGPTs Repository**
+
+[![][share-x-shield]][share-x-link]
+[![][share-telegram-shield]][share-telegram-link]
+[![][share-whatsapp-shield]][share-whatsapp-link]
+[![][share-reddit-shield]][share-reddit-link]
+[![][share-weibo-shield]][share-weibo-link]
+[![][share-mastodon-shield]][share-mastodon-link]
+[![][share-linkedin-shield]][share-linkedin-link]
+
 </div>
 
-💥💥💥<strong>01.29 OpenGPTs插件更新了对话模块：
 
-1. 批量输入，一次输入，同时调用多个模型，快速对比结果。
-2. 可以直接在插件使用web端的GPT3.5，GPT4(需plus权限)
-3. 可以@任意GPTs用于对话！（这两天上线）
-   </strong>
 
-## 一句话介绍
+## 👋🏻 开始和介绍
 
-非常好用的GPTs管理器，[ChatPaper](https://github.com/kaixindelele/chatpaper)团队开源一款功能强大的浏览器插件，适合所有拥有Plus权限的朋友。
+开源的GPT浏览器插件并不多，但我觉得浏览器插件是AI当前很好的一个形态，所以我们决定开发一个。
 
-## 为什么要做OpenGPTs？ 🤔💡
+在使用众多AI插件后，Sider , Mocia , ChatALL , ChatGPTBox , GPTs Store等 我希望能写一款插件，能集合众家之长，取及精华。-[ChatPaper](https://github.com/kaixindelele/chatpaper)团队
 
-<details><summary><code><b>为什么要做OpenGPTs？</b></code></summary>
-
-众所周知，OpenAI官网的GPTs几乎没有管理功能。如果你创建了几个GPTs，你应该会想着今天有多少人使用过你的GPTs，你想要能够一键分享给群友，你希望能够产生不同的微调版本。🔁
-
-但是！这些功能在官网上只能手动去做！😩🖐️
-
-这种重复性的工作，能不能让浏览器自动帮你完成？🤖⚙️
-
-为此，我们团队花了一周时间，特意为大家开发了一款强大的浏览器插件--OpenGPTs，它可以帮助大家更好的管理自己的GPTs。💻🚀 我们不仅将完整的插件免费发布，并且将所有插件代码开源出来，希望以此为平台为基础，和广大的开发者们一起，做出更好的、更强大的插件管理器。🌍❤️️
+- 下载: [插件链接]("https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.3.zip")
+- 问题： 有任何需求或者问题可以到[issues][github-issues-link]上提问，我们会积极处理并解决的。
+- 开发: 👏🏻欢迎任何小伙伴参与进来，关于开发可以查看 [这里](#开发指导)
 
 **野望**：我们的最终设想是希望能够以这个插件为平台📈，把**每个GPTs当成一个Agent**🤖，实现各种业务流程的自动化，最大程度解放大家的生产力🚀，帮助大家更好的摸鱼🐟！哈哈！😄
 
 如果本项目对大家有帮助，欢迎点一下上面的Star🌟，欢迎转发，这是对我们最大的支持！🙌
 
-转发文案：
+如果有任何问题，欢迎提issue💬，如果有新的功能，欢迎大家提PR。也欢迎加入我们的开发者群：860859251。👩‍💻
 
-```css
-OpenGPTs：一款外挂般的GPTs管理器，由ChatPaper团队开源！
-亮点功能：一键同步，自定义排序搜索，一键创建，一键复刻到其他语言，一键分享，等等功能。还有多GPTs对话等功能正在开发ing。
-Chrome插件下载链接：https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.1-beta.zip
-Github仓库：https://github.com/hzeyuan/OpenGPTS
-QQ群：860859251
-肝了一周，求star，和转发！这是对我们最大的支持！
-```
+
+## 为什么要做OpenGPTs？ 🤔💡
+
+<details><summary><code><b>1. 关于AI应用的一些想法</b></code></summary>
+
+* 网页对浏览器的权限有限，但插件却可以修改任何页面，所以我觉得插件是做AI产品的一个很好的形态。
+* 我讨论重复的工作，作为一名开发，每次打开F12,都是一些重复工作~，这时候我会幻想AI能否替我解决一些事情。
+* - GPT能否帮我处理网络请求，方便我更好的抓取数据？
+* - 能否让GPT来操作dom，来帮我做一些固定的操作，自动发推特，自动b站点赞？或者满足一些人们千奇百怪的需求(重点是让GPT生成这些脚本)
+* - AIGC时代，能否有一款AI版的插件系统，上面有各种各样的插件，去广告，甚至改面网页的样貌，每个人都有独一无二的网站。
 
 </details>
 
-如果有任何问题，欢迎提issue💬，如果有新的功能，欢迎大家提PR。也欢迎加入我们的开发者群：860859251。👩‍💻
+<details><summary><code><b>2. 关于ChatGPT套壳(ChatGPT类产品)</b></code></summary>
 
-## 2. 亮点功能：
+### 套壳并不可耻，套壳到极致就是牛逼。
 
-|     功能名称     |                                                               功能描述                                                                |
-| :--------------: | :-----------------------------------------------------------------------------------------------------------------------------------: |
-|     一键同步     |                                           自动同步官网GPTs所有数据：对话数，收藏数，用户数                                            |
-|     批量管理     |              批量管理自己的所有GPTs：自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）               |
-|     一键生成     |                             输入标题，一键生成GPTs，复刻官网功能，但可以自定义提示词！（后续封装出接口）                              |
-|     一键复刻     |                                   对自己已有GPTs，一键复刻成其他语言，或者通过语言调整其他微调版本                                    |
-| 批量删除GPT对话  |     参考[chatGPTBox](https://github.com/josStorer/chatGPTBox)，我们为大家提供了批量删除OpenAI对话的功能，这个功能实在是太痛点了！     |
-| 一键调用GPTs对话 |                                              一次输入，同时调用多个模型，快速对比结果。                                               |
-|      排行榜      | 参考[gpts-works](https://github.com/all-in-aigc/gpts-works)，我们希望提供一个更加全面和准确的排行榜，让大家更好的选择和推广自己的GPTs |
-|     更漂亮UI     |                                                   提供更漂亮的UI和更便捷的交互模式                                                    |
+ChatGPT很厉害，但ChatGPT的产品交互我觉得可以做的更好，甚至有时候有很多想要吐槽的地方。
+与其等Openai更新，不如自己动手，满足自己的功能，结合插件可以实现各式各样的效果。
+* 截图，直接提交，而不是保存图片，在到页面上提交
+* 同时多个GPTs对话，而不是要一个个切换。
+* @功能,GPTs之间能否共享对话,互相调用, 而不是一个回答完后，在粘贴给下一个GPTs
+* 同时多个窗口，比如网页中有6个窗口，而不是只有固定一个。
+* 对话自动播放语音，音色可以选择。
+* 直接集成多家大模型，Claude2 gpt3.5,Gemini pro,可以在网页端调用。
+
+还有一些很多我感觉很有用的功能。
+
+</details>
+
+
+## 2. ✨ 亮点功能：
+
+### 2.1 GPTs模块
+
+|     功能名称     |                                                               功能描述                                                                | 完成 |
+| :--------------: | :-----------------------------------------------------------------------------------------------------------------------------------: | :------: |
+|     一键同步     |                                           自动同步官网GPTs所有数据：对话数，收藏数，用户数                                            |    ✅    |
+|     批量管理     |              批量管理自己的所有GPTs：自定义排序；批量删除；查询搜索；一键发布到商店；一键复制到剪切板（标题+简介+链接）               |    ✅    |
+|     一键生成     |                             输入标题，一键生成GPTs，复刻官网功能，但可以自定义提示词！（后续封装出接口）                              |    ✅    |
+|     一键复刻     |                                   对自己已有GPTs，一键复刻成其他语言，或者通过语言调整其他微调版本                                    |    ✅    |
+| 批量删除GPT对话  |     参考[chatGPTBox](https://github.com/josStorer/chatGPTBox)，我们为大家提供了批量删除OpenAI对话的功能，这个功能实在是太痛点了！     |    ✅    |
+| 一键调用GPTs对话 |                                              一次输入，同时调用多个模型，快速对比结果。                                               |    ✅    |
+|      排行榜      | 参考[gpts-works](https://github.com/all-in-aigc/gpts-works)，我们希望提供一个更加全面和准确的排行榜，让大家更好的选择和推广自己的GPTs |    ✅    |
+|     更漂亮UI     |                                                   提供更漂亮的UI和更便捷的交互模式                                                    |    ✅    |
+
+
+
+### 2.2 Chat聊天模块
+
+|       功能名称       |                                                               功能描述                                                               | 完成 |
+| :------------------: | :----------------------------------------------------------------------------------------------------------------------------------: | :------: |
+|       截图提交       |                                            直接在聊天界面中提交截图，而不需先保存后上传                                             |    ❌    |
+|      多GPTs对话      |                                       同时与多个GPT模型对话，无需逐一切换，提升交互效率                                       |    ✅    |
+|    @任意GPTs，模型    | GPTs,模型之间可以共享对话内容，互相调用，实现信息的快速共享和传递，避免重复输入相同信息 |    ✅    |
+|      多窗口交互      |                                    在一个界面中开设多个窗口，同时进行多任务操作，提高效率                                     |    ✅   |
+|       语音播放       |                                                      对话内容自动转换为语音播放                                                      |    ❌    |
+|   网页端ChatGPT调用   |                                   让插件直接在网页端调用ChatGPT, GPT3.5, GPT4.0 GPTs                                   |    ✅    |
+|   网页端Claude调用   |                                   让插件直接在网页端调用Claude                             |    ❌    |
+|   网页端Gemini Pro调用   |                                   让插件直接在网页端调用Gemini Pro                                  |    ❌    |
+| ChatGPT API Key调用  |                                                  使用API key调用, GPT3.5, GPT4.0                                                   |    ✅    |
+| 聊天历史对话管理         |                                                     提供聊天历史的管理和搜索功能                                                     |    ✅    |
+|        /预设功能        |                                                   提供快捷操作和自定义预设功能选项                                                   |    ✅    |
+|       流程图生成       |                                                自动从描述中生成流程图或概念图等视觉内容                                                |    ❌    |
+|       函数调用       |                                                   通过命令行直接调用特定函数或服务                                                   |    ❌    |
+|      多模态输入      |                                                  支持文本、图像、音频等多种输入模式                                                  |    ❌    |
+
+
+### 2.3 知识库管理，文件夹系统模态
+
+#### 暂无
+
+
+### 2.4 RPA自动脚本执行，Agent WorkFlow
+
+#### 暂无
+
+
+
+
 
 ## 极简安装步骤：
 
@@ -332,3 +396,36 @@ Please cite the repo if you use the data or code in this repo.
 ## License
 
 GPL-3.0 License
+
+[github-issues-link]: https://github.com/hzeyuan/OpenGPTS/issues
+[github-release-shield]: https://img.shields.io/github/v/release/hzeyuan/OpenGPTS?color=369eff&labelColor=black&logo=github&style=flat-square
+[github-release-link]: https://github.com/hzeyuan/OpenGPTS/releases
+[github-contributors-shield]: https://img.shields.io/github/contributors/hzeyuan/OpenGPTS?color=c4f042&labelColor=black&style=flat-square
+[github-contributors-link]: https://github.com/hzeyuan/OpenGPTS/graphs/contributors
+[github-contributors-shield]: https://img.shields.io/github/contributors/hzeyuan/OpenGPTS?color=c4f042&labelColor=black&style=flat-square
+[github-forks-link]: https://github.com/hzeyuan/OpenGPTS/network/members
+[github-forks-shield]: https://img.shields.io/github/forks/hzeyuan/OpenGPTS?color=8ae8ff&labelColor=black&style=flat-square
+[github-issues-link]: https://github.com/hzeyuan/OpenGPTS/issues
+[github-issues-shield]: https://img.shields.io/github/issues/hzeyuan/OpenGPTS?color=ff80eb&labelColor=black&style=flat-square
+[github-license-link]: https://github.com/hzeyuan/OpenGPTS/blob/main/LICENSE
+[github-license-shield]: https://img.shields.io/github/license/hzeyuan/OpenGPTS?color=white&labelColor=black&style=flat-square
+[github-stars-link]: https://github.com/hzeyuan/OpenGPTS/network/stargazers
+[github-stars-shield]: https://img.shields.io/github/stars/hzeyuan/OpenGPTS?color=ffcb47&labelColor=black&style=flat-square
+[github-releasedate-link]: https://github.com/hzeyuan/OpenGPTS/releases
+[github-releasedate-shield]: https://img.shields.io/github/release-date/hzeyuan/OpenGPTS?labelColor=black&style=flat-square
+[vercel-link]: https://open-gpts.vercel.app
+[vercel-shield]: https://img.shields.io/website?down_message=offline&label=vercel&labelColor=black&logo=vercel&style=flat-square&up_message=online&url=https%3A%2F%2Fyour-vercel-app.vercel.app
+[share-linkedin-link]: https://linkedin.com/feed
+[share-linkedin-shield]: https://img.shields.io/badge/-share%20on%20linkedin-black?labelColor=black&logo=linkedin&logoColor=white&style=flat-square
+[share-mastodon-link]: https://mastodon.social/share?text=Check%20this%20GitHub%20repository%20out%20%F0%9F%A4%AF%20OpenGPTs%20-%20Powerful%20GPTs%20Colipot%20%7C%20%E5%BC%BA%E5%A4%A7%E7%9A%84gpts%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%7C%E5%A4%9A%E7%AA%97%E5%8F%A3%7C%E6%89%B9%E9%87%8F%E5%AF%B9%E8%AF%9D%7Cchatgpt3.5%7Cchatgpt4.0%20https%3A%2F%2Fgithub.com%2Fhzeyuan%2FOpenGPTS
+[share-mastodon-shield]: https://img.shields.io/badge/-share%20on%20mastodon-black?labelColor=black&logo=mastodon&logoColor=white&style=flat-square
+[share-reddit-link]: https://www.reddit.com/submit?title=Check%20this%20GitHub%20repository%20out%20%F0%9F%A4%AF%20OpenGPTs%20-%20Powerful%20GPTs%20Colipot%20%7C%20%E5%BC%BA%E5%A4%A7%E7%9A%84gpts%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%7C%E5%A4%9A%E7%AA%97%E5%8F%A3%7C%E6%89%B9%E9%87%8F%E5%AF%B9%E8%AF%9D%7Cchatgpt3.5%7Cchatgpt4.0&url=https%3A%2F%2Fgithub.com%2Fhzeyuan%2FOpenGPTS
+[share-reddit-shield]: https://img.shields.io/badge/-share%20on%20reddit-black?labelColor=black&logo=reddit&logoColor=white&style=flat-square
+[share-telegram-link]: https://t.me/share/url?text=Check%20this%20GitHub%20repository%20out%20%F0%9F%A4%AF%20OpenGPTs%20-%20Powerful%20GPTs%20Colipot%20%7C%20%E5%BC%BA%E5%A4%A7%E7%9A%84gpts%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%7C%E5%A4%9A%E7%AA%97%E5%8F%A3%7C%E6%89%B9%E9%87%8F%E5%AF%B9%E8%AF%9D%7Cchatgpt3.5%7Cchatgpt4.0&url=https%3A%2F%2Fgithub.com%2Fhzeyuan%2FOpenGPTS
+[share-telegram-shield]: https://img.shields.io/badge/-share%20on%20telegram-black?labelColor=black&logo=telegram&logoColor=white&style=flat-square
+[share-weibo-link]: http://service.weibo.com/share/share.php?sharesource=weibo&title=Check%20this%20GitHub%20repository%20out%20%F0%9F%A4%AF%20OpenGPTs%20-%20Powerful%20GPTs%20Colipot%20%7C%20%E5%BC%BA%E5%A4%A7%E7%9A%84gpts%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%7C%E5%A4%9A%E7%AA%97%E5%8F%A3%7C%E6%89%B9%E9%87%8F%E5%AF%B9%E8%AF%9D%7Cchatgpt3.5%7Cchatgpt4.0%20https%3A%2F%2Fgithub.com%2Fhzeyuan%2FOpenGPTS
+[share-weibo-shield]: https://img.shields.io/badge/-share%20on%20weibo-black?labelColor=black&logo=sinaweibo&logoColor=white&style=flat-square
+[share-whatsapp-link]: https://api.whatsapp.com/send?text=Check%20this%20GitHub%20repository%20out%20%F0%9F%A4%AF%20OpenGPTs%20-%20Powerful%20GPTs%20Colipot%20%7C%20%E5%BC%BA%E5%A4%A7%E7%9A%84gpts%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%7C%E5%A4%9A%E7%AA%97%E5%8F%A3%7C%E6%89%B9%E9%87%8F%E5%AF%B9%E8%AF%9D%7Cchatgpt3.5%7Cchatgpt4.0%20https%3A%2F%2Fgithub.com%2Fhzeyuan%2FOpenGPTS
+[share-whatsapp-shield]: https://img.shields.io/badge/-share%20on%20whatsapp-black?labelColor=black&logo=whatsapp&logoColor=white&style=flat-square
+[share-x-link]: https://x.com/intent/tweet?hashtags=chatbot%2CchatGPT%2CopenAI&text=Check%20this%20GitHub%20repository%20out%20%F0%9F%A4%AF%20OpenGPTs%20-%20Powerful%20GPTs%20Colipot%20%7C%20%E5%BC%BA%E5%A4%A7%E7%9A%84gpts%E6%B5%8F%E8%A7%88%E5%99%A8%E6%8F%92%E4%BB%B6%7C%E5%A4%9A%E7%AA%97%E5%8F%A3%7C%E6%89%B9%E9%87%8F%E5%AF%B9%E8%AF%9D%7Cchatgpt3.5%7Cchatgpt4.0&url=https%3A%2F%2Fgithub.com%2Fhzeyuan%2FOpenGPTS
+[share-x-shield]: https://img.shields.io/badge/-share%20on%20x-black?labelColor=black&logo=x&logoColor=white&style=flat-square
