@@ -1,9 +1,9 @@
 // tailwind config is required for editor support
 
-import type { ChatConfig } from "tailwindcss";
+import type { Config } from "tailwindcss";
 import sharedConfig from "@opengpts/tailwind-config";
 
-const config: Pick<ChatConfig, "content" | "presets"> = {
+const config: Pick<Config, "content" | "presets"> = {
   content: ["**/*.tsx"],
   presets: [sharedConfig],
 };
