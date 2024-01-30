@@ -7,7 +7,7 @@ import { nanoid } from '../../shared/utils';
 
 import type { ChatRequest, ChatRequestOptions, CreateMessage, IdGenerator, JSONValue, ReactResponseRow, UseChatOptions, experimental_StreamingReactResponse } from 'ai';
 import type { Message } from 'ai';
-import type { Config, OChatRequest, OMessage } from '@opengpts/types';
+import type { ChatConfig, Mention, OChatRequest, OMessage } from '@opengpts/types';
 
 import { OpenAI } from '../../web/openai';
 export type { CreateMessage, Message, UseChatOptions };
@@ -87,7 +87,8 @@ const getStreamedResponse = async (
   onResponse?: (response: Response) => void | Promise<void>,
   sendExtraMessageFields?: boolean,
   mode: "api" | "web" = "api",
-  webConfig?: Config
+  webConfig?: ChatConfig,
+  messageConfig: any = {}
 ) => {
   // Do an optimistic update to the chat state to show the updated messages
   // immediately.
@@ -114,6 +115,10 @@ const getStreamedResponse = async (
     let responseMessage: OMessage = {
       id: replyId,
       createdAt,
+      display: {
+        name: messageConfig?.mention?.name || 'AI',
+        icon: messageConfig?.mention?.icon
+      },
       content: '',
       role: 'assistant',
     };
@@ -193,6 +198,7 @@ const getStreamedResponse = async (
     },
     onFinish,
     generateId,
+    messageConfig,
   }) : callChatWeb({
     callMethod: openai.gpt.call.bind(openai.gpt),
     messages: constructedMessagesPayload,
@@ -222,6 +228,7 @@ const getStreamedResponse = async (
     onFinish,
     generateId,
     webConfig,
+    messageConfig,
   });
 };
 
@@ -314,7 +321,7 @@ export function useChat({
    * zh: 触发 API 调用以获取助手的响应。
    */
   const triggerRequest = useCallback(
-    async (chatRequest: OChatRequest) => {
+    async (chatRequest: OChatRequest, messageConfig?: any) => {
       try {
         mutateLoading(true);
         setError(undefined);
@@ -339,6 +346,7 @@ export function useChat({
               sendExtraMessageFields,
               mode,
               webConfig,
+              messageConfig
             ),
           experimental_onFunctionCall,
           updateChatRequest: chatRequestParam => {
@@ -391,7 +399,7 @@ export function useChat({
       abortControllerRef,
       generateId,
       mode,
-      webConfig
+      webConfig,
     ],
   );
 
@@ -399,7 +407,7 @@ export function useChat({
     async (
       message: OMessage | CreateMessage,
       { options, functions, function_call, data }: ChatRequestOptions = {},
-      webConfig = {}
+      config = {} as { mention?: Mention }
     ) => {
       if (!message.id) {
         message.id = generateId();
@@ -418,7 +426,7 @@ export function useChat({
         ...(function_call !== undefined && { function_call }),
       };
 
-      return triggerRequest(chatRequest);
+      return triggerRequest(chatRequest, config);
     },
     [triggerRequest, generateId],
   );
@@ -488,7 +496,6 @@ export function useChat({
 
       e.preventDefault();
       if (!input) return;
-
       append(
         {
           content: input,

@@ -25,8 +25,8 @@ interface ChatContextType {
     setFileList: (fileList: UploadFile[]) => void;
     command?: OCommand;
     setCommand: (command?: OCommand) => void;
-    setMentions: (mentions: Mention[]) => void;
-    mentions: Mention[];
+    setMention: (mention?: Mention) => void;
+    mention?: Mention;
 }
 
 
@@ -40,8 +40,7 @@ const defaultContextValue: ChatContextType = {
     fileList: [],
     setFileList: (fileList: any[]) => { },
     setCommand: (command?: OCommand) => { },
-    setMentions: (mentions: Mention[]) => { },
-    mentions: [],
+    setMention: (mention?: Mention) => { },
 };
 
 
@@ -66,7 +65,7 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
     const [model, setModel] = useState<ModelOptions>(DEFAULT_MODEL);
     const [webAccess, setWebAccess] = useState<boolean>(false);
     const [command, setCommand] = useState<OCommand>()
-    const [mentions, setMentions] = useState<Mention[]>([])
+    const [mention, setMention] = useState<Mention>()
     const [fileList, setFileList] = useState<any[]>([])
     const chatRef = useRef<any>();
     const { t } = useTranslation();
@@ -87,6 +86,9 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
         // control panel input value
         onInputChange: (v: string) => {
             chatRef.current.onInputChange(v)
+        },
+        setHideInputArea: (bool: boolean) => {
+            chatRef.current.setHideInputArea(bool)
         }
     }));
 
@@ -99,7 +101,7 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
             webAccess, setWebAccess,
             fileList, setFileList,
             command, setCommand,
-            setMentions, mentions
+            setMention, mention
         }}>
             <motion.div
                 className="h-full"

@@ -1,8 +1,8 @@
-import { Input } from 'antd';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import useGPTStore from '~src/store/useGPTsStore';
 import { useChatPanelContext } from '../Panel/ChatPanel';
 import type { Mention } from '@opengpts/types';
+import GPTsSearch from '../GPTs/GPTsSearch';
 
 interface MentionListProps {
   items: Mention[];
@@ -17,14 +17,14 @@ interface MentionListRef {
 
 const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) => {
 
-  const { mentions, setMentions } = useChatPanelContext();
+  const { setMention } = useChatPanelContext();
   const [mentionList, setMentionObject] = useState<Mention[]>([
     ...props.items,
     ...useGPTStore(state => state.getFavoriteGPTsList)().map(item => ({
       key: item.id,
       name: item.display.name,
       icon: item.display.profile_picture_url,
-      type: 'GPTs'
+      type: 'GPTs',
     } as Mention
     ))
   ]);
@@ -35,18 +35,27 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
   const [selectedIndex, setSelectedIndex] = useState(0)
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
 
+
+  const handleSelect = (item: Mention) => {
+    setMention(item);
+    const startPosition = props.editor.state.selection.$from.pos - 1;
+    props.editor.commands.deleteRange({
+      from: startPosition,
+      to: startPosition + 1,
+    });
+    props.onSelect && props.onSelect();
+  };
+
   const selectItem = index => {
     const item = mentionList[index];
-    setMentions([...mentions, {
+    setMention({
       key: item.key,
       name: item.name,
       icon: item.icon,
       type: item.type
-    }])
-    console.log('props', props)
+    })
     if (item) {
-      props.command({ id: item.name })
-      props.onSelect && props.onSelect();
+      handleSelect(item);
     }
   }
 
@@ -89,17 +98,32 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
   }));
 
   return (
-    <div className="flex flex-col items-center w-full gap-1  py-1 bg-[var(--opengpts-sidebar-bg-color)] rounded-lg shadow cursor-pointer min-w-max"
+    <div
+      id='opengpts-mentionsList'
+      className=" flex flex-col items-center w-full gap-1  py-1 bg-[var(--opengpts-sidebar-bg-color)] rounded-lg shadow cursor-pointer min-w-max"
       style={{
         borderRadius: '10px',
         boxShadow: 'rgba(0, 0, 0, 0.08) 0px 6px 16px 0px, rgba(0, 0, 0, 0.12) 0px 3px 6px -4px, rgba(0, 0, 0, 0.05) 0px 9px 28px 8px',
         padding: '8px'
       }}
     >
-      <Input.Search></Input.Search>
+      <GPTsSearch
+        getPopupContainer={() => document.getElementById('opengpts-mentionsList')!}
+        showSearch={true}
+        placeholder="Search GPTs"
+        style={{ width: '100%' }}
+        onSelect={(value, options) => {
+          const selectedMention: Mention = {
+            key: options.id,
+            name: options.display.name,
+            icon: options.display.profile_picture_url,
+            type: 'GPTs'
+          };
+          handleSelect(selectedMention);
+        }}
+      ></GPTsSearch>
       <span className='w-full text-sm font-semibold '>Large Model</span>
       <div className="w-full h-px max-w-6xl mx-auto bg-[#ebebeb]"></div>
-
 
       {
         languageModelList.length
@@ -124,7 +148,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
               favoriteGPTsList.map((item, index) => (
                 <div
                   key={item.key}
-                  onClick={() => selectItem(index)}
+                  onClick={() => selectItem((languageModelList?.length || 0) + index)}
                   className={`flex items-center w-full p-1 text-sm text-[var(--opengpts-primary-text-color)] rounded-sm hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)]
                ${(languageModelList?.length || 0) + index === selectedIndex ? 'bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)]' : ''}`}>
                   <div className='flex items-center justify-center gap-x-2'>

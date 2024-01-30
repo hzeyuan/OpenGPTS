@@ -1,7 +1,9 @@
 import type { ChatConfig, ModelOptions } from "@opengpts/types"
+import chatgpt3_5Svg from '~assets/chatgpt3.5.svg'
+import chatgpt4Svg from '~assets/chatgpt4.svg'
 
 const DEFAULT_CONFIG: ChatConfig = {
-    token:'',
+    token: '',
     customChatGptWebApiUrl: 'https://chat.openai.com',
     customChatGptWebApiPath: '/backend-api/conversation',
     disableWebModeHistory: false,
@@ -28,26 +30,30 @@ const MODEL_OPTIONS: ModelOptions[] =
         name: 'ChatGPT (API)',
         description: 'ChatGPT (API)',
         mode: 'api',
+        icon: chatgpt3_5Svg
     },
     {
         key: 'chatgptFree35',
         name: 'ChatGPT3.5 (Web)',
         description: 'ChatGPT (Web)',
-        mode: 'web'
+        mode: 'web',
+        icon: chatgpt3_5Svg
     },
     {
         key: 'chatgptPlus4Browsing',
         name: 'ChatGPT4 (Web)',
         description: 'ChatGPT (Web)',
-        mode: 'web'
+        mode: 'web',
+        icon: chatgpt4Svg
     },
     {
         key: 'chatgptPlus4',
         name: 'GPTs (Web)',
         description: 'GPTs (Web)',
-        mode: 'web'
+        mode: 'web',
+        icon: chatgpt4Svg
     }
-    
+
     ]
 
 const DEFAULT_MODEL = MODEL_OPTIONS.find((model) => model.key === 'chatgptFree35')!

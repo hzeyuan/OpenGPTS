@@ -91,15 +91,12 @@ const useChatStore = create<ChatStore>()(
                 const chatIndex = _.findIndex(chatList, { chatId: chatId });
 
                 if (chatIndex !== -1) {
-                    // 获取现有的 fileList，如果不存在则初始化为空数组
                     const fileList: Chat['fileList'] = _.get(chatList, `[${chatIndex}].fileList`, []);
 
-                    // 创建更新后的 fileList
                     const updatedFileList = fileList?.filter((item) => {
                         return item.uid !== fileId
                     });
 
-                    // 使用 lodash 的 _.set 来更新 chatList
                     _.set(chatList, `[${chatIndex}].fileList`, updatedFileList);
 
                     // 更新状态
@@ -146,6 +143,7 @@ const useChatStore = create<ChatStore>()(
                     })
                     const chatListMessages = get().chatListMessages
                     delete chatListMessages[chatId]
+                    console.log(newChatList, 'newChatList')
                     set({ chatList: newChatList, chatListMessages })
                 }
             },

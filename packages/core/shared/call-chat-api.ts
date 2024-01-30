@@ -1,6 +1,7 @@
 import type { FunctionCall, IdGenerator, JSONValue, Message } from 'ai';
 import { parseComplexResponse } from './parse-complex-response';
 import { COMPLEX_HEADER, createChunkDecoder } from './utils';
+import { OMessage } from '@opengpts/types';
 
 export async function callChatApi({
   api,
@@ -15,6 +16,7 @@ export async function callChatApi({
   onUpdate,
   onFinish,
   generateId,
+  messageConfig
 }: {
   api: string;
   messages: Omit<Message, 'id'>[];
@@ -24,21 +26,26 @@ export async function callChatApi({
   abortController?: () => AbortController | null;
   restoreMessagesOnFailure: () => void;
   appendMessage: (message: Message) => void;
-  onResponse?: (response: Response) => Promise<void> ;
+  onResponse?: (response: Response) => Promise<void>;
   onUpdate: (merged: Message[], data: JSONValue[] | undefined) => void;
-  onFinish?: (message: Message) =>  Promise<void>;
+  onFinish?: (message: Message) => Promise<void>;
   generateId: IdGenerator;
+  messageConfig?: any
 }) {
 
   // -------为了在请求前显示 loading，先添加一个 loading 的消息
   // 
   const createdAt = new Date();
   const replyId = generateId();
-  let responseMessage: Message = {
+  let responseMessage: OMessage = {
     id: replyId,
     createdAt,
     content: '',
     role: 'assistant',
+    display: {
+      name: messageConfig?.mention?.name || 'AI',
+      icon: messageConfig?.mention?.icon
+    }
   };
   // ------------------------------------v
   appendMessage({ ...responseMessage });
@@ -118,7 +125,7 @@ export async function callChatApi({
     // TODO-STREAMDATA: Remove this once Stream Data is not experimental
     while (true) {
       const { done, value } = await reader.read();
-      console.log('value',value)
+      console.log('value', value)
       if (done) {
         break;
       }

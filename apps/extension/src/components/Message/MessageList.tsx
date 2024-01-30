@@ -35,7 +35,6 @@ export const MessagesList = React.forwardRef<MessagesListMethods, MessagesListPr
             scrollToBottom();
         }, []);
 
-
         useEffect(() => {
             // Update the displayed messages when the messages prop changes
             updateMessages(messages);

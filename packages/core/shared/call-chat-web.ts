@@ -1,6 +1,6 @@
 import type { ChatRequest, IdGenerator, JSONValue, Message } from 'ai';
 import { OpenAI, StreamEvent } from '../web/openai';
-import type { ChatConfig, Session } from '@opengpts/types';
+import type { ChatConfig, OMessage, Session } from '@opengpts/types';
 
 export async function callChatWeb({
   callMethod,
@@ -14,6 +14,7 @@ export async function callChatWeb({
   onFinish,
   generateId,
   webConfig,
+  messageConfig
 }: {
   callMethod: OpenAI['gpt']['call']; // The provided call function
   messages: Message[];
@@ -26,15 +27,20 @@ export async function callChatWeb({
   onFinish?: (message: Message, session?: any, conversation?: OpenAI['conversation']) => void;
   generateId: IdGenerator;
   webConfig?: ChatConfig
+  messageConfig?: any
 }) {
 
   const createdAt = new Date();
   const replyId = generateId();
-  let responseMessage: Message = {
+  let responseMessage: OMessage = {
     id: replyId,
     createdAt,
     content: '',
     role: 'assistant',
+    display: {
+      name: messageConfig?.mention?.name || 'AI',
+      icon: messageConfig?.mention?.icon
+    },
   };
 
 
@@ -46,7 +52,7 @@ export async function callChatWeb({
     ...body,
   };
 
-  console.log('session',session)
+  console.log('session', session)
   appendMessage({ ...responseMessage });
 
   // Define event handlers based on the callChatApi structure

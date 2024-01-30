@@ -5,6 +5,19 @@ import { Actions } from "./Actions"
 export const UserMessage = ({ message, chatId }: { message: OMessage, chatId: string }) => {
     return (
         <div className="overflow-hidden text-sm">
+            <div className="flex items-center justify-end">
+                <div className="role-icon-box mr-[6px] rounded-full">
+                    <div className="flex items-center justify-center rounded-full "
+                        style={{
+                            width: "20px",
+                            height: "20px",
+                        }}
+                    >
+                        <img className="w-4 h-4" src={message?.display?.icon}></img>
+                    </div>
+                </div>
+                <div className="role-title font-semibold  text-[14px]">{message?.display?.name}</div>
+            </div>
             <div className="flex flex-row-reverse items-end gap-1 mt-2">
                 <div
                     className="flex overflow-auto rounded-md text-[var(--opengpts-chat-user-bubble-color)] px-3 py-2 bg-[var(--opengpts-chat-primary-color)]  flex-col"

@@ -1,4 +1,5 @@
 import type { ChatRequestOptions, FunctionCall, RequestOptions, Message } from "ai";
+import { Author, Display, Gizmo } from "./gizmo";
 
 
 interface Chat {
@@ -32,7 +33,7 @@ interface Mention {
     name: string;
     icon?: string;
     type: 'GPTs' | 'languageModel';
-
+    meta?: Object
 }
 
 type OChatRequest = {
@@ -41,6 +42,7 @@ type OChatRequest = {
     functions?: ChatRequestOptions['functions'];
     function_call?: FunctionCall;
     data?: Record<string, string>;
+    mention?: Mention;
 };
 
 
@@ -61,6 +63,10 @@ interface OMessage extends Message {
     command?: OCommand;
     quoteMessage?: QuoteMessage;
     images?: string[];
+    display?: {
+        name: string;
+        icon?: string;
+    }
 }
 
 

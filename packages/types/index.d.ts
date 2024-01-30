@@ -99,8 +99,9 @@ type ModelKey = 'chatgpt35API' | 'chatgptFree35' | 'chatgptPlus4' | 'chatgptPlus
 
 interface ModelOptions {
 	key: ModelKey;
+	icon?: string;
 	name: string;
-	description: string;
+	description?: string;
 	mode: 'api' | 'web';
 }
 

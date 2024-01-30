@@ -463,7 +463,7 @@ class GPT {
         controller.signal.addEventListener('abort', onAbortHandler);
 
         const modelName = session?.modelName || 'chatgptFree35'
-        let usedModel = MODELS_DICT[modelName].value
+        let usedModel = MODELS_DICT[modelName]?.value
         if (session?.gizmoId) {
             usedModel = 'gpt-4-gizmo'
         }
