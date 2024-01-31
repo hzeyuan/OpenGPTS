@@ -110,7 +110,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
       <GPTsSearch
         getPopupContainer={() => document.getElementById('opengpts-mentionsList')!}
         showSearch={true}
-        placeholder="Search GPTs"
+        placeholder="Search GPTs in OpenGPTs"
         style={{ width: '100%' }}
         onSelect={(value, options) => {
           const selectedMention: Mention = {

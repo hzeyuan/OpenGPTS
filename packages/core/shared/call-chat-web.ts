@@ -3,7 +3,7 @@ import { OpenAI, StreamEvent } from '../web/openai';
 import type { ChatConfig, OMessage, Session } from '@opengpts/types';
 
 export async function callChatWeb({
-  callMethod,
+  callLLm,
   messages,
   body,
   abortController,
@@ -16,7 +16,7 @@ export async function callChatWeb({
   webConfig,
   messageConfig
 }: {
-  callMethod: OpenAI['gpt']['call']; // The provided call function
+  callLLm: OpenAI['gpt']['call']; // The provided call function
   messages: Message[];
   body: Record<string, any>;
   abortController?: () => AbortController | null;
@@ -75,18 +75,20 @@ export async function callChatWeb({
       responseMessage['id'] = session.messageId!
       onFinish && onFinish(responseMessage, session, conversation);
     },
-    onError: (resp: Response | Error) => { },
+    onError: (error: Error) => {
+      // restoreMessagesOnFailure()
+    },
     onAbort: () => { }
   };
 
 
-  try {
-    await callMethod(session, event, webConfig);
-
-
-    return responseMessage;
-  } catch (error) {
+  await callLLm(session, event, webConfig, {
+    controller: abortController?.(),
+  }).catch(err => {
+    if(err.message === 'noChatGPTPlusArkoseToken') return;
     restoreMessagesOnFailure();
-    throw error;
-  }
+    throw err;
+  })
+  return responseMessage;
+
 }

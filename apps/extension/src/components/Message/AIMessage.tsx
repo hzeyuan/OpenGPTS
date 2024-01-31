@@ -27,7 +27,8 @@ export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessa
           >
             <div className={`leading-relaxed break-words break-all  `}>
               {message.content ? (
-                <Markdown>{message.content}</Markdown>
+                message.content instanceof String ? <Markdown>{message.content}</Markdown> : message.content
+
               ) : (
                 <div className="flex justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">

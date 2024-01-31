@@ -1,5 +1,9 @@
 import type { ChatConfig, ModelKey } from '@opengpts/types'
 
+
+const WEBSITE_URL = 'https://open-gpts.vercel.app'
+
+
 const MODELS_DICT: Record<ModelKey, { value: string, desc: string }> = {
     chatgpt35API: { value: 'gpt-3.5-turbo-16k', desc: 'ChatGPT (API)' },
     chatgptFree35: { value: 'text-davinci-002-render-sha', desc: 'ChatGPT (Web)' },
@@ -26,5 +30,6 @@ const chatgptWebModelKeys = [
 export {
     chatgptWebModelKeys,
     MODELS_DICT,
-    DEFAULT_CONFIG
+    DEFAULT_CONFIG,
+    WEBSITE_URL
 }

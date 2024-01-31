@@ -14,8 +14,8 @@ interface Voice {
 interface Display {
     name: string;
     description: string;
-    welcome_message: string;
-    prompt_starters: string[];
+    welcome_message?: string;
+    prompt_starters?: string[];
     profile_picture_url?: string;
     profile_pic_id?: string;
     categories?: string[];

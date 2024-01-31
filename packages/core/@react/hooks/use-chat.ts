@@ -160,7 +160,7 @@ const getStreamedResponse = async (
 
 
   if (webConfig && !webConfig['token']) {
-    throw new Error('if you use web mode, you must provide a token')
+    throw new Error('chatGPT403')
   }
 
   const openai = new OpenAI({ token: webConfig!.token });
@@ -200,7 +200,7 @@ const getStreamedResponse = async (
     generateId,
     messageConfig,
   }) : callChatWeb({
-    callMethod: openai.gpt.call.bind(openai.gpt),
+    callLLm: openai.gpt.call.bind(openai.gpt),
     messages: constructedMessagesPayload,
     body: {
       data: chatRequest.data,
@@ -248,17 +248,19 @@ export function useChat({
   generateId = nanoid,
   initMode = 'api',
   initialWebConfig = {}
-}: Omit<UseChatOptions, 'api' | 'onFinish'> & {
+}: Omit<UseChatOptions, 'api' | 'onFinish' | 'onError'> & {
   api?: string | StreamingReactResponseAction;
   key?: string;
   initMode?: 'api' | 'web';
   initialWebConfig?: any;
   onFinish?: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => void;
+  onError?: (error: Error, updateMessage: (messageInfo: Partial<OMessage>) => void) => void;
 } = {}): UseChatHelpers & {
   mode: "api" | "web";
   webConfig: any;
   setMode: React.Dispatch<React.SetStateAction<"api" | "web">>;
   setWebConfig: React.Dispatch<React.SetStateAction<string>>;
+
 
 } {
   // Generate a unique id for the chat if not provided.
@@ -357,27 +359,38 @@ export function useChat({
 
         abortControllerRef.current = null;
       } catch (error) {
+
         // Ignore abort errors as they are expected.
         if ((error as any).name === 'AbortError') {
           abortControllerRef.current = null;
           return null;
         }
 
-        if (onError && error instanceof Error) {
-          onError(error);
-        }
         if (error instanceof Error) {
-          const newMessages = [...messagesRef.current, {
+          let newMessage = {
             id: generateId(),
             createdAt: new Date(),
             content: error.message,
             role: 'assistant',
             isError: true,
-          } as OMessage];
+          } as OMessage
+
+          const updateMessage = (messageInfo: Partial<OMessage>) => {
+            newMessage = {
+              ...newMessage,
+              ...messageInfo
+            }
+          }
+          onError && onError(error, updateMessage);
+
+          const newMessages = [...messagesRef.current, newMessage];
           mutate(newMessages, false);
           console.error(`[useChat] ${error.message}`)
           setError(error as Error);
         }
+
+
+
       } finally {
         mutateLoading(false);
       }

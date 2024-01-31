@@ -52,7 +52,7 @@ export function PreCode(props: { children: any }) {
 
 
 
-const Markdown: FC<{ children: string }> = ({ children }) => {
+const Markdown= ({ children }) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkMath, remarkBreaks, remarkGfm]}

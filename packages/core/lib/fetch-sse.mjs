@@ -136,43 +136,80 @@ function hasBom(buffer) {
 
 
 export async function fetchSSE(resource, options) {
-    const { onMessage, onStart, onFinish, onError, ...fetchOptions } = options
-    const resp = await fetch(resource, fetchOptions).catch(async (err) => {
-        await onError(err)
-    })
-    if (!resp) return
-    if (!resp.ok) {
-        await onError(resp)
-        return
-    }
-    const parser = createParser((event) => {
-        if (event.type === 'event') {
-            onMessage(event.data)
-        }
-    })
-    let hasStarted = false
-    const reader = resp.body.getReader()
-    let result
-    while (!(result = await reader.read()).done) {
-        const chunk = result.value
-        if (!hasStarted) {
-            const str = new TextDecoder().decode(chunk)
-            hasStarted = true
-            await onStart(str)
+    let timeoutId;
+    const { onMessage, onStart, onFinish, onError, timeout = 30000, ...fetchOptions } = options
 
-            let fakeSseData
-            try {
-                const commonResponse = JSON.parse(str)
-                fakeSseData = 'data: ' + JSON.stringify(commonResponse) + '\n\ndata: [DONE]\n\n'
-            } catch (error) {
-                console.debug('not common response', error)
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => {
+            reject(new Error("Request timed out"));
+        }, timeout);
+    });
+
+    try {
+        const resp = await Promise.race([
+            fetch(resource, fetchOptions),
+            timeoutPromise
+        ]).catch(async (err) => {
+            // The user aborted a request.
+            // Request timed out
+            onError && await onError(err);
+        });
+        if (!resp) return
+        if (!resp.ok) {
+            await onError(resp)
+            return
+        }
+        const parser = createParser((event) => {
+            if (event.type === 'event') {
+                if (timeoutId) {
+                    clearTimeout(timeoutId); // 当收到消息时，清除超时定时器
+                    timeoutId = null; // 重置定时器ID
+                }
+                onMessage(event.data);
             }
-            if (fakeSseData) {
-                parser.feed(new TextEncoder().encode(fakeSseData))
-                break
+        })
+        let hasStarted = false
+        const reader = resp.body.getReader()
+
+        try {
+            let result
+            while (!(result = await reader.read()).done) {
+                const chunk = result.value
+                if (!hasStarted) {
+                    const str = new TextDecoder().decode(chunk)
+                    hasStarted = true
+                    await onStart(str)
+
+                    let fakeSseData
+                    try {
+                        const commonResponse = JSON.parse(str)
+                        fakeSseData = 'data: ' + JSON.stringify(commonResponse) + '\n\ndata: [DONE]\n\n'
+                    } catch (error) {
+                        console.debug('not common response', error)
+                    }
+                    if (fakeSseData) {
+                        parser.feed(new TextEncoder().encode(fakeSseData))
+                        break
+                    }
+                }
+                parser.feed(chunk)
+            }
+
+        } catch (err) {
+            if (err.name === 'AbortError') {
+                console.log('Fetch was aborted');
+            } else {
+                throw err; // 抛出其他类型的错误
             }
         }
-        parser.feed(chunk)
+        onFinish && await onFinish()
+    } catch (error) {
+        console.log("报错3", error)
+        onError && await onError(error);
+    } finally {
+        if (timeoutId) {
+            clearTimeout(timeoutId); // 当收到消息时，清除超时定时器
+            timeoutId = null; // 重置定时器ID
+        }
     }
-    onFinish && await onFinish()
 }

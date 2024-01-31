@@ -19,7 +19,7 @@ interface StreamEvent {
     onFinish?: ({ conversation }: {
         conversation: Conversation
     }) => void
-    onError?: (resp: Response | Error) => void
+    onError?: (error: Error) => void
     onAbort?: () => void
 }
 
@@ -429,7 +429,9 @@ class GPT {
     }
 
 
-    public async call(session: Session, event?: StreamEvent, config: ChatConfig = DEFAULT_CONFIG): Promise<{
+    public async call(session: Session, event?: StreamEvent, config?: ChatConfig, options?: {
+        controller?: AbortController | null
+    }): Promise<{
         done: boolean,
         text?: string;
         imagePointers?: string[];
@@ -444,23 +446,20 @@ class GPT {
         if (!question) return {
             done: false,
             session,
-            error: `ques
-            tion is empty`
+            error: `question is empty`
         }
 
-        const controller = new AbortController();
+        // const controller = new AbortController();
 
         // Define the abort event handler
         const onAbortHandler = () => {
-            if (event?.onAbort) {
-                event.onAbort();
-            }
-            controller.signal.removeEventListener('abort', onAbortHandler);
+            event?.onAbort && event.onAbort();
+            options?.controller?.signal.removeEventListener('abort', onAbortHandler);
             if (session.autoClean && session.conversationId) {
                 this.conversation?.delete(session.conversationId);
             }
         };
-        controller.signal.addEventListener('abort', onAbortHandler);
+        options?.controller && options?.controller.signal.addEventListener('abort', onAbortHandler);
 
         const modelName = session?.modelName || 'chatgptFree35'
         let usedModel = MODELS_DICT[modelName]?.value
@@ -480,11 +479,7 @@ class GPT {
         // console.log('cookie', cookie)
         const needArkoseToken = modelName !== 'chatgptFree35'
         if (needArkoseToken) {
-            const errorMsg = 'Please ensure you are logged in at https://chat.openai.com. ' +
-                '\n' +
-                'After logging in, engage in any conversation at https://chat.openai.com/g/g-LJcAplYdM-opengptsz and then retry. ' +
-                '\n' +
-                'If you encounter any further issues or have questions, feel free to seek assistance at https://chat.openai.com/g/g-LJcAplYdM-opengptsz or contact us for more help.'
+            const errorMsg = 'noChatGPTPlusArkoseToken'
             if (!config?.chatgptArkoseReqUrl) {
                 throw new Error(errorMsg);
             }
@@ -507,10 +502,9 @@ class GPT {
         const conversationInstance = this.conversation
         let text = '', imagePointers: string[] = [];
         const response = await new Promise((resolve, reject) => {
-            console.log('this.token', this?.token, this)
-            return fetchSSE(`${config.customChatGptWebApiUrl}${config.customChatGptWebApiPath}`, {
+            return fetchSSE(`${config?.customChatGptWebApiUrl}${config?.customChatGptWebApiPath}`, {
                 method: 'POST',
-                signal: controller.signal,
+                signal: options?.controller?.signal,
                 credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
@@ -544,7 +538,7 @@ class GPT {
                     model: usedModel,
                     parent_message_id: session.parentMessageId,
                     timezone_offset_min: new Date().getTimezoneOffset(),
-                    history_and_training_disabled: config.disableWebModeHistory,
+                    history_and_training_disabled: config?.disableWebModeHistory || false,
                     arkose_token: arkoseToken,
                 }),
                 onMessage(message: string) {
@@ -565,7 +559,7 @@ class GPT {
                     if (data.error) {
                         if (data.error.includes('unusual activity'))
                             throw new Error(
-                                "Please keep https://chat.openai.com open and try again. If it still doesn't work, type some characters in the input box of chatgpt web page and try again.",
+                                "Please keep https://chat.openai.com open and try again.",
                             )
                         else throw new Error(data.error)
                     }
@@ -601,25 +595,34 @@ class GPT {
                     })
                 },
                 async onError(resp: Response | Error) {
-                    event?.onError && event.onError(resp);
-                    // port.onMessage.removeListener(messageListener)
-                    // port.onDisconnect.removeListener(disconnectListener)
-                    controller.signal.removeEventListener('abort', onAbortHandler)
-                    if (resp instanceof Error) throw resp
+                    options?.controller && options?.controller.signal.removeEventListener('abort', onAbortHandler)
 
-                    console.debug('resp.status', resp.status)
+                    if (resp instanceof Error) {
+                        reject(resp)
+                        return
+                    }
+                    console.debug('resp.status', resp.status, resp.ok)
+                    if (resp.status === 404) {
+                        reject(new Error('chatGPT404'))
+                        return;
+                    }
                     if (resp.status === 403) {
-                        reject(new Error('Authorization failed, please open or login https://chat.openai.com/  try again'))
+                        reject(new Error('chatGPT403'))
                         return;
                     }
                     if (resp.status === 429) {
-                        reject(new Error('Maybe You\'ve reached the current usage cap for GPT-4,'))
+                        reject(new Error('chatGPT429'))
                         return;
+                    } if (resp.status === 404) {
+
                     }
                     const error = await resp.json().catch(() => ({}))
-                    reject(new Error(!_.isEmpty(error) ? JSON.stringify(error) : `${resp.status} ${resp.statusText}`))
-                },
+                    reject(new Error(!_.isEmpty(error) ? JSON.stringify(resp) : `${resp.status} ${resp.statusText}`))
+                }
             })
+        }).catch(error => {
+            console.log('fetch-sse', error)
+            throw error
         });
         if (session?.autoClean && session?.conversationId) this.conversation?.delete(session?.conversationId)
         return response as any;

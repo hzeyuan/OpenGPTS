@@ -70,6 +70,20 @@ const resources = {
             'publishGPTDescription': 'Are you ready to make this GPT public and available to others?',
             'AsyncGPTsFromChatGPT.tooltip': 'One-Click Async GPTs From ChatGPT',
             'promptBuilder.tooltip': 'If there is an error, please {{gpts}} on any chat to automatically generate the logo',
+
+            // gpt request error
+            'NetworkApplication': 'ChatGPT Network Application',
+            'NetworkUnstableRequestFailed': 'Network unstable, request failed',
+            'DueToOpenAILimitation': 'Due to OpenAI limitations, you must keep your ChatGPT account logged in. Stability issues may require frequent refreshes.',
+            'GPT4AndGPTsCallFailed': 'GPT4 and GPTs call failed',
+            'VisitChatOpenAIPage': 'Please visit https://chat.openai.com/, start a ChatGPT4 conversation, then try again',
+            'ChatGPTPlusUsersCanTry': 'ChatGPT Plus users can try',
+            'OpenAIRestrictedYourRequestFrequency': 'OpenAI restricted your request frequency',
+            'CheckLimitOverage': 'Check if you have exceeded the limit of 40 messages in 3 hours for GPT4. If not, refresh the https://chat.openai.com/ page and try again',
+            'LogError': 'Log error',
+            'Error': 'Error',
+            'AlertErrorMessage': 'Alert error message',
+            "GPTsUnavailableOrDeleted": "This GPTs may have been converted to private or deleted, making it unavailable for use. You can try switching to another GPTs."
         }
     },
     zh: {
@@ -130,6 +144,20 @@ const resources = {
             'publishGPTDescription': '您准备好将这个 GPT 公开并向其他人提供了吗？',
             'AsyncGPTsFromChatGPT.tooltip': '一键从ChatGPT同步GPTs',
             'promptBuilder.tooltip': '如果出现错误，请{{gpts}} 上任意对话，才能自动生成Logo',
+
+            // gpt request error
+            'NetworkApplication': 'ChatGPT 网络应用',
+            'NetworkUnstableRequestFailed': '网络不稳定，请求失败',
+            'DueToOpenAILimitation': '由于 OpenAI 的限制，需时刻保持您的 ChatGPT 账户登录状态。稳定性问题可能需要频繁刷新。',
+            'GPT4AndGPTsCallFailed': 'GPT4 和 GPTs 调用失败',
+            'VisitChatOpenAIPage': '请访问 https://chat.openai.com/，开始一次 ChatGPT4 对话，然后重试',
+            'ChatGPTPlusUsersCanTry': 'ChatGPT Plus 用户可尝试',
+            'OpenAIRestrictedYourRequestFrequency': 'OpenAI 限制了您的请求频率',
+            'CheckLimitOverage': '检查是否超过了 GPT4 的 3 小时内 40 条信息的限制。如果没有，请刷新 https://chat.openai.com/ 页面后重试',
+            'LogError': '记录错误',
+            'Error': '错误',
+            'AlertErrorMessage': '警告错误信息',
+            "GPTsUnavailableOrDeleted": "这个GPTs可能已经被转为私有或者被删除了，导致无法使用，你可以尝试切换到其他的GPTs"
         }
     }
 };
