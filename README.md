@@ -11,7 +11,7 @@
 OpenGPTs 是一款开源的浏览器插件，支持语音输入,函数调用,多模型,多模态,批量对话，网页端或者APIKey调用模型<br/>
 我们希望这款插件可以帮助你更高效的使用GPT，甚至未来代替你控制网页，实现各种RPA操作 <br/>
 
-**简体中文** · [Enlish](./README_EN.md) · [Changelog](./CHANGELOG.md) · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
+**简体中文** · [Enlish](./README_EN.md) · [Changelog](./changeLog.md) · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
 </br>
 
 <!-- SHIELD GROUP -->
