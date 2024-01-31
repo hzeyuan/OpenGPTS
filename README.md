@@ -9,7 +9,7 @@
 # OpenGPTs
 
 OpenGPTs 是一款开源的浏览器插件，支持语音输入,函数调用,多模型,多模态,批量对话，网页端或者APIKey调用模型<br/>
-我们希望这款插件可以帮助你更高效的使用GPT，甚至未来代替你控制网页，实现各种RPA操作 <br/>
+我们希望这款插件可以帮助你更高效的使用GPT，甚至未来代替你控制网页，实现各种机器人自动化(RPA)操作 <br/>
 
 **简体中文** · [Enlish](./README_EN.md) · [Changelog](./changeLog.md) · [Report Bug][github-issues-link] · [Request Feature][github-issues-link]
 </br>
@@ -50,6 +50,8 @@ OpenGPTs 是一款开源的浏览器插件，支持语音输入,函数调用,多
 - 下载: [插件链接]("https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.3.zip")
 - 问题： 有任何需求或者问题可以到[issues][github-issues-link]上提问，我们会积极处理并解决的。
 - 开发: 👏🏻欢迎任何小伙伴参与进来，关于开发可以查看 [这里](#开发指导)
+- 联系方式: 请加入我们的QQ群：860859251,邮箱:yixotieq@gmail.com
+
 
 **野望**：我们的最终设想是希望能够以这个插件为平台📈，把**每个GPTs当成一个Agent**🤖，实现各种业务流程的自动化，最大程度解放大家的生产力🚀，帮助大家更好的摸鱼🐟！哈哈！😄
 
@@ -319,6 +321,8 @@ ChatGPT很厉害，但ChatGPT的产品交互我觉得可以做的更好，甚至
   \_ nextjs
 
 ## 开发指导：
+
+详细请查看[开发文档](./SETUP.md)
 
 ### 安装
 
