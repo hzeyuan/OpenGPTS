@@ -2,6 +2,20 @@
 
 # Changelog
 
+### [Version 0.0.4](https://github.com/hzeyuan/OpenGPTS/compare/v0.0.3...v0.0.4)
+
+#### 🐛 Bug Fixes
+
+1.Fix issue in chatgpt web where clicking the "Stop" button did not trigger an abort request.
+2.Modify the "@mention" functionality to search all GPT models available in opengpts.
+3.Add a welcome message to the chat panel.
+
+
+#### ✨ Enhancements
+* mermaid support,drag wheel,zoomIn zoomOut reset see [mermaid](https://mermaid-js.github.io/mermaid/#/)
+
+
+
 ### [Version 0.0.3](https://github.com/hzeyuan/OpenGPTS/compare/v0.0.2...v0.0.3)
 
 #### 🐛 Bug Fixes
