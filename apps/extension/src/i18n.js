@@ -83,7 +83,16 @@ const resources = {
             'LogError': 'Log error',
             'Error': 'Error',
             'AlertErrorMessage': 'Alert error message',
-            "GPTsUnavailableOrDeleted": "This GPTs may have been converted to private or deleted, making it unavailable for use. You can try switching to another GPTs."
+            "GPTsUnavailableOrDeleted": "This GPTs may have been converted to private or deleted, making it unavailable for use. You can try switching to another GPTs.",
+            "copy_tooltip": "Copy to clipboard",
+            "export_tooltip": "Export as image",
+            "copy_success": "Copied to clipboard successfully!",
+            "export_success": "Exported as image successfully!",
+            "Preview": "Preview",
+            "Code": "Code",
+            'zoomIn': 'Zoom In',
+            'zoomOut': 'Zoom Out',
+            'zoomReset': 'Zoom Reset',
         }
     },
     zh: {
@@ -157,7 +166,17 @@ const resources = {
             'LogError': '记录错误',
             'Error': '错误',
             'AlertErrorMessage': '警告错误信息',
-            "GPTsUnavailableOrDeleted": "这个GPTs可能已经被转为私有或者被删除了，导致无法使用，你可以尝试切换到其他的GPTs"
+            "GPTsUnavailableOrDeleted": "这个GPTs可能已经被转为私有或者被删除了，导致无法使用，你可以尝试切换到其他的GPTs",
+
+            "copy_tooltip": "复制到剪贴板",
+            "export_tooltip": "导出为图片",
+            "copy_success": "复制到剪贴板成功！",
+            "export_success": "成功导出为图片！",
+            "Preview": "预览",
+            "Code": "代码",
+            'zoomIn': '放大',
+            'zoomOut': '缩小',
+            'zoomReset': '重置',
         }
     }
 };

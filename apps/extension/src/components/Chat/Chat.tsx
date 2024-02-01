@@ -210,9 +210,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                         ),
                     });
                 }
-                console.log("useChat", error);
                 // setError(error.message)
-                // alert(error.message)
             },
             onResponse: (response) => {
                 handleScrollToBottom();
@@ -270,6 +268,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             //TODO: use model that was mentioned last, if not exist, use default model, temporarily
             const mentionType = _.get(mention, "type", "");
             const modelKey = mentionType === "GPTs" ? "gpt-4-gizmo" : mention?.key ?? model.key;
+            console.log('modelKey', modelKey)
             const quoteMessage = getQuoteMessage(chatId);
             const capturedImage = useScreenCapture.getState().capturedImage;
 
@@ -351,8 +350,8 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 {
                     ...message,
                     content: `${selection}
-            ${webSearchPrompt}
-            ${content}`,
+${webSearchPrompt}
+${content}`.trim(),
                 },
                 {
                     options,
@@ -383,8 +382,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             setContent(v);
         };
 
-        const handleHideInputArea = () => { };
-
         useImperativeHandle(ref, () => {
             return {
                 handleSubmit: () => inputRef.current.submit(),
@@ -407,8 +404,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
         }, [messages]);
 
         useEffect(() => {
-            // const model = MODELS.find(({ name }) => name === model.key)
-            console.log("设置模型为", model?.key);
+            console.debug("设置模型为", model?.key);
             if (model) {
                 setMode(model.mode);
             }
@@ -416,7 +412,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 
         useEffect(() => {
             const messages = getChatMessages(chatId);
-            console.log("messages", messages);
             setMessages(messages);
         }, [chatId]);
 

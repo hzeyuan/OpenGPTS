@@ -2,6 +2,7 @@ import Markdown from "../Markdown";
 import type { OMessage } from "@opengpts/types";
 import copy from "copy-to-clipboard";
 import { Actions } from "./Actions";
+import _ from "lodash";
 export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessage; error?: string }) => {
   return (
 
@@ -27,7 +28,10 @@ export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessa
           >
             <div className={`leading-relaxed break-words break-all  `}>
               {message.content ? (
-                message.content instanceof String ? <Markdown>{message.content}</Markdown> : message.content
+                 _.isString(message.content)? <Markdown>
+                  {message.content}
+                  </Markdown>
+                  : message.content
 
               ) : (
                 <div className="flex justify-center">

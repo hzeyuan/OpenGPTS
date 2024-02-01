@@ -622,6 +622,9 @@ class GPT {
             })
         }).catch(error => {
             console.log('fetch-sse', error)
+            if(error.message==='Failed to fetch') {
+                throw new Error('chatGPT404')
+            }
             throw error
         });
         if (session?.autoClean && session?.conversationId) this.conversation?.delete(session?.conversationId)

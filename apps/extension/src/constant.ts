@@ -28,7 +28,7 @@ const MODEL_OPTIONS: ModelOptions[] =
     [{
         key: 'chatgpt35API',
         name: 'ChatGPT (API)',
-        description: 'ChatGPT (API)',
+        description: 'ChatGPT 3.5-turbo (API)',
         mode: 'api',
         icon: chatgpt3_5Svg
     },
