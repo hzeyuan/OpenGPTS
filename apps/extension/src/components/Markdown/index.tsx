@@ -7,7 +7,6 @@ import remarkBreaks from 'remark-breaks'
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
 import { useDebouncedCallback } from 'use-debounce';
-import copyToClipboard from 'copy-to-clipboard'
 import Mermaid from './Mermaid'
 
 export function PreCode(props: { children: any }) {

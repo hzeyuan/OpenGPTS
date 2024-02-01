@@ -23,11 +23,59 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
   const [svgContent, setSvgContent] = useState('');
   const { t } = useTranslation()
   const [scale, setScale] = useState(1);
+  const [dragging, setDragging] = useState(false);
+  const [lastClientX, setLastClientX] = useState(0);
+  const [lastClientY, setLastClientY] = useState(0);
+  const [translateX, setTranslateX] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
+
+  const startDrag = (e) => {
+    setLastClientX(e.clientX);
+    setLastClientY(e.clientY);
+    setDragging(true);
+  };
+
+  const onDrag = (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastClientX;
+    const dy = e.clientY - lastClientY;
+    setTranslateX(translateX + dx);
+    setTranslateY(translateY + dy);
+    setLastClientX(e.clientX);
+    setLastClientY(e.clientY);
+  };
+
+  const stopDrag = () => {
+    setDragging(false);
+  };
+
+  useEffect(() => {
+    if (dragging) {
+      window.addEventListener('mousemove', onDrag);
+      window.addEventListener('mouseup', stopDrag);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', onDrag);
+      window.removeEventListener('mouseup', stopDrag);
+    };
+  }, [dragging, onDrag, stopDrag]);
 
 
 
   const zoomIn = () => setScale(scale => scale + 0.1);
   const zoomOut = () => setScale(scale => Math.max(scale - 0.1, 0.1));
+
+
+  const handleWheelZoom = (e) => {
+
+    e.preventDefault(); // 阻止默认的滚轮行为，即页面滚动
+    const scaleChange = e.deltaY * -0.01; // 根据滚轮方向调整缩放变化量
+    const newScale = Math.max(0.1, Math.min(scale + scaleChange, 5)); // 限制缩放级别在0.1到5之间
+    setScale(newScale);
+
+  };
+
 
   useEffect(() => {
     setLoading(true);
@@ -37,6 +85,7 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
         try {
           const { svg, bindFunctions } = await mermaid.render('graphDiv', chart);
           setSvgContent(svg);
+
           setLoading(false);
           if (bindFunctions && mermaidRef.current) {
             bindFunctions(mermaidRef.current);
@@ -78,13 +127,13 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
 
   const extra = <div className='flex gap-x-2'>
     <div className='flex gap-x-2'>
-      <Tooltip title={t('zoom_reset')}>
+      <Tooltip title={t('zoomReset')}>
         <Button size='small' icon={<RestFilled />} onClick={() => setScale(1)} />
       </Tooltip>
-      <Tooltip title={t('zoom_in')}>
+      <Tooltip title={t('zoomIn')}>
         <Button size='small' icon={<PlusOutlined />} onClick={zoomIn} />
       </Tooltip>
-      <Tooltip title={t('zoom_out')}>
+      <Tooltip title={t('zoomOut')}>
         <Button size='small' icon={<MinusOutlined />} onClick={zoomOut} />
       </Tooltip>
       <Tooltip title={t('copy_tooltip')}>
@@ -104,11 +153,18 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
       <Skeleton loading={loading} active>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extra}>
           <Tabs.TabPane tab={t('Preview')} key="1">
-            <div style={{ overflow: 'auto', padding: '10px' }}>
+            <div onWheel={handleWheelZoom} style={{ overflow: 'auto', padding: '10px' }}>
               <div
                 ref={mermaidRef}
                 dangerouslySetInnerHTML={{ __html: svgContent }}
-                style={{ transform: `scale(${scale})`, transformOrigin: '0 0' }}
+                style={{
+                  transform: `scale(${scale}) translate(${translateX}px, ${translateY}px)`,
+                  transformOrigin: '0 0',
+                  cursor: dragging ? 'grabbing' : 'grab',
+                  userSelect: dragging ? 'none' : 'auto',
+                }}
+                onMouseDown={startDrag}
+
               />
             </div>
           </Tabs.TabPane>
