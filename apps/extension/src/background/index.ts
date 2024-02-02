@@ -4,7 +4,7 @@
 import { Storage } from "@plasmohq/storage";
 import type { ChatConfig } from "@opengpts/types";
 import Browser from "webextension-polyfill";
-import { DEFAULT_CONFIG } from "~src/constant";
+import { CHATGPT_WEBAPPP_DEFAULT_CONFIG } from "@opengpts/core/constant";
 
 const storage = new Storage({
     area: "local",
@@ -24,7 +24,7 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         if (authHeader) {
             storage.getItem<ChatConfig>('chatgpt-config').then(preConfig => {
                 storage.setItem('chatgpt-config', {
-                    ...DEFAULT_CONFIG,
+                    ...CHATGPT_WEBAPPP_DEFAULT_CONFIG,
                     ...preConfig,
                     token
                 })
@@ -73,7 +73,7 @@ Browser.webRequest.onBeforeRequest.addListener(
             console.debug('chatgptArkoseReqUrl', config, 'bodyData', bodyData)
             console.log('config', config)
             await storage.setItem('chatgpt-config', {
-                ...DEFAULT_CONFIG,
+                ...CHATGPT_WEBAPPP_DEFAULT_CONFIG,
                 ...config,
                 chatgptArkoseReqUrl: details.url,
                 chatgptArkoseReqForm: bodyData,
@@ -91,7 +91,7 @@ Browser.webRequest.onBeforeRequest.addListener(
 
 storage.getItem<ChatConfig>('config').then((config) => {
     storage.setItem('config', {
-        ...DEFAULT_CONFIG,
+        ...CHATGPT_WEBAPPP_DEFAULT_CONFIG,
         ...config,
     })
 })

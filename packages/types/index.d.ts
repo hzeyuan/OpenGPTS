@@ -95,14 +95,29 @@ interface ChatConfig {
 	chatgptArkoseReqForm?: string;
 }
 
-type ModelKey = 'chatgpt35API' | 'chatgptFree35' | 'chatgptPlus4' | 'chatgptPlus4Browsing'
+type Mode = 'ChatGPT webapp' | 'OpenAI API' | "OpenGPTs"
+
+type ModelKey = 'gpt-3.5-turbo-0301' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | 'gpt-3.5-turbo-16k' | 'gpt-3.5'
+	| 'gpt-3.5-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-instruct' | 'gpt-3.5-turbo-instruct-0914'
+	| 'gpt-4-0125-preview' | 'gpt-4-1106-preview' | 'gpt-4' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0613'
+	| 'ChatGPT3.5 Turbo' | 'chatgpt4API'  //opengpts
+	| 'chatgptFree35' | 'chatgptPlus4Browsing' | 'chatgptPlus4' // web 
+
+
+
+type OpenGPTsConfig = {
+	mode: Mode;
+	apiKey: string;
+	baseUrl: string;
+	isProxy: boolean;
+}
 
 interface ModelOptions {
 	key: ModelKey;
 	icon?: string;
 	name: string;
 	description?: string;
-	mode: 'api' | 'web';
+	modes: Mode[];
 }
 
 
@@ -122,5 +137,6 @@ export {
 	Session,
 	ModelOptions,
 	ModelKey,
-
+	Mode,
+	OpenGPTsConfig
 }

@@ -5,10 +5,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { fetchSSE } from '../lib/fetch-sse.mjs'
 import { type $Fetch, ofetch } from 'ofetch'
 import type { ChatConfig, Gizmo, Session } from '@opengpts/types'
-import { MODELS_DICT, DEFAULT_CONFIG } from '~constant'
 
 
-interface StreamEvent {
+interface WebStreamEvent {
     onStart?: () => void,
     onMessage?: ({ text, imagePointers }: {
         done: boolean,
@@ -19,6 +18,20 @@ interface StreamEvent {
     onFinish?: ({ conversation }: {
         conversation: Conversation
     }) => void
+    onError?: (error: Error) => void
+    onAbort?: () => void
+}
+
+
+
+interface APIkeyStreamEvent {
+    onStart?: () => void,
+    onMessage?: ({ text, imagePointers }: {
+        done: boolean,
+        text: string
+        imagePointers?: string[]
+    }) => void,
+    onFinish?: () => void
     onError?: (error: Error) => void
     onAbort?: () => void
 }
@@ -37,6 +50,7 @@ class OpenAI {
     }) {
 
         this.token = token
+        if (!this.token) throw new Error('ChatGPT403')
         this.apiFetch = ofetch.create({
             baseURL: "`https://chat.openai.com",
             retry: 3,
@@ -103,6 +117,113 @@ class OpenAI {
         return { response };
     }
 
+
+    public static async callWithApiKey({ apiKey, baseUrl, event, request }: {
+        event?: APIkeyStreamEvent;
+        apiKey: string;
+        baseUrl: string;
+        request: {
+            controller?: AbortController | null,
+            body: any
+        }
+    }) {
+        const onAbortHandler = () => {
+            event?.onAbort && event.onAbort();
+            request?.controller?.signal.removeEventListener('abort', onAbortHandler);
+        };
+        request?.controller && request?.controller.signal.addEventListener('abort', onAbortHandler);
+
+        let text = '', imagePointers: string[] = [];
+        const response = await new Promise((resolve, reject) => {
+            return fetchSSE(`${baseUrl}`, {
+                method: 'POST',
+                signal: request?.controller?.signal,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                    ...request.body
+                }),
+                onMessage(message: string) {
+                    if (message.trim() === '[DONE]') {
+                        resolve({ done: true, text, imagePointers })
+                        return
+                    }
+                    let data
+                    try {
+                        data = JSON.parse(message)
+                    } catch (error) {
+                        console.debug('json error', error)
+                        return
+                    }
+                    if (data.error) {
+                        if (data.error.includes('unusual activity'))
+                            throw new Error(
+                                "Please keep https://chat.openai.com open and try again.",
+                            )
+                        else throw new Error(data.error)
+                    }
+                    // const imageAssetPointers = _.filter(_.get(data.message, 'content.parts', []), { 'content_type': 'image_asset_pointer' });
+                    // 从这些元素中提取asset_pointer值
+                    // const newImagePointers: string[] = _.map(imageAssetPointers, 'asset_pointer');
+                    // imagePointers = [...imagePointers, ...newImagePointers]
+                    text += data.choices?.[0]?.delta?.content || ''
+                    event?.onMessage && event.onMessage({
+                        done: false,
+                        text,
+                        imagePointers,
+                    });
+                },
+                async onStart() {
+                    event?.onStart && event?.onStart();
+                    // sendModerations(accessToken, question, session.conversationId, session.messageId)
+                },
+                async onFinish() {
+                    event?.onFinish && event?.onFinish();
+                    resolve({
+                        done: true,
+                        text,
+                        imagePointers,
+                    })
+                },
+                async onError(resp: Response | Error) {
+                    request?.controller && request?.controller.signal.removeEventListener('abort', onAbortHandler)
+
+                    if (resp instanceof Error) {
+                        reject(resp)
+                        return
+                    }
+                    console.debug('resp.status', resp.status, resp.ok)
+                    if (resp.status === 404) {
+                        reject(new Error('chatGPT404'))
+                        return;
+                    }
+                    if (resp.status === 403) {
+                        reject(new Error('chatGPT403'))
+                        return;
+                    }
+                    if (resp.status === 429) {
+                        reject(new Error('chatGPT429'))
+                        return;
+                    } if (resp.status === 404) {
+
+                    }
+                    const error = await resp.json().catch(() => ({}))
+                    reject(new Error(!_.isEmpty(error) ? JSON.stringify(resp) : `${resp.status} ${resp.statusText}`))
+                }
+            })
+        }).catch(error => {
+            console.log('fetch-sse', error)
+            if (error.message === 'Failed to fetch') {
+                throw new Error('chatGPT404')
+            }
+            throw error
+        });
+        return response as any;
+
+    }
 
     /**
      * Uploads an image to the server.
@@ -174,11 +295,6 @@ class OpenAI {
     get isLogin() {
         return !!this.token
     }
-
-
-
-
-
 }
 
 
@@ -233,8 +349,6 @@ class Conversation {
 
 
 class GPT {
-    DEFAULT_CONFIG: { customChatGptWebApiUrl: string; customChatGptWebApiPath: string; disableWebModeHistory: boolean; chatgptArkoseReqParams: string; chatgptArkoseReqUrl: string; };
-    models: { chatgptFree35: { value: string; desc: string; }; chatgptPlus4Browsing: { value: string; desc: string; }; chatgptPlus4: { value: string; desc: string; }; };
 
     token: string | undefined
 
@@ -252,15 +366,6 @@ class GPT {
 
         this.conversation = config.conversation
 
-        this.DEFAULT_CONFIG = {
-            customChatGptWebApiUrl: 'https://chat.openai.com',
-            customChatGptWebApiPath: '/backend-api/conversation',
-            disableWebModeHistory: false,
-            chatgptArkoseReqParams: 'cgb=vhwi',
-            chatgptArkoseReqUrl: '',
-        };
-
-        this.models = MODELS_DICT;
     }
 
     private ensureAuthenticated() {
@@ -429,7 +534,7 @@ class GPT {
     }
 
 
-    public async call(session: Session, event?: StreamEvent, config?: ChatConfig, options?: {
+    public async call(session: Session, event?: WebStreamEvent, config?: ChatConfig, options?: {
         controller?: AbortController | null
     }): Promise<{
         done: boolean,
@@ -461,11 +566,16 @@ class GPT {
         };
         options?.controller && options?.controller.signal.addEventListener('abort', onAbortHandler);
 
-        const modelName = session?.modelName || 'chatgptFree35'
-        let usedModel = MODELS_DICT[modelName]?.value
+        let usedModel = 'text-davinci-002-render-sha'
+        if (session?.modelName === 'chatgptPlus4Browsing') {
+            usedModel = 'gpt-4'
+        } else if (session?.modelName === 'chatgptPlus4') {
+            usedModel = 'gpt-4-gizmo'
+        }
         if (session?.gizmoId) {
             usedModel = 'gpt-4-gizmo'
         }
+
         console.debug('usedModel', usedModel)
 
 
@@ -477,7 +587,7 @@ class GPT {
         //         })
         //         .join('; ')
         // console.log('cookie', cookie)
-        const needArkoseToken = modelName !== 'chatgptFree35'
+        const needArkoseToken = usedModel !== 'chatgptFree35'
         if (needArkoseToken) {
             const errorMsg = 'noChatGPTPlusArkoseToken'
             if (!config?.chatgptArkoseReqUrl) {
@@ -549,6 +659,7 @@ class GPT {
                         // port.postMessage({ answer: null, done: true, session: session })
                         resolve({ done: true, text, imagePointers, session })
                     }
+                    console.debug('message', message)
                     let data
                     try {
                         data = JSON.parse(message)
@@ -573,7 +684,7 @@ class GPT {
                     imagePointers = [...imagePointers, ...newImagePointers]
                     const respAns = data.message?.content?.parts?.[0]
                     if (respAns) text = respAns
-                    console.debug('respAns', respAns)
+
                     event?.onMessage && event.onMessage({
                         done: false,
                         text,
@@ -622,7 +733,7 @@ class GPT {
             })
         }).catch(error => {
             console.log('fetch-sse', error)
-            if(error.message==='Failed to fetch') {
+            if (error.message === 'Failed to fetch') {
                 throw new Error('chatGPT404')
             }
             throw error
@@ -630,6 +741,8 @@ class GPT {
         if (session?.autoClean && session?.conversationId) this.conversation?.delete(session?.conversationId)
         return response as any;
     }
+
+
 
 }
 
@@ -639,6 +752,7 @@ export {
     GPT,
     Conversation,
     OpenAI,
-    type StreamEvent
+    type WebStreamEvent,
+    type APIkeyStreamEvent
 }
 

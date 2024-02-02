@@ -44,7 +44,7 @@ OpenGPTs 是一款开源的浏览器插件，支持语音输入,函数调用,多
 
 在使用众多AI插件后，Sider , Mocia , ChatALL , ChatGPTBox , GPTs Store等 我希望能写一款插件，能集合众家之长，取及精华。-[ChatPaper](https://github.com/kaixindelele/chatpaper)团队
 
-- 下载: [插件链接]("https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.3.zip")
+- 下载: [插件链接]("https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.4/OpenGPTsv0.0.4.zip")
 - 问题： 有任何需求或者问题可以到[issues][github-issues-link]上提问，我们会积极处理并解决的。
 - 开发: 👏🏻欢迎任何小伙伴参与进来，关于开发可以查看 [这里](#开发指导)
 - 联系方式: 请加入我们的QQ群：860859251,邮箱:yixotieq@gmail.com

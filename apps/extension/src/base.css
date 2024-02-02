@@ -6,6 +6,8 @@
   --opengpts-gutter-bg-color: #1414145c;
   --opengpts-gutter-handle-bg-color: #fafafa33;
 
+
+
   --opengpts-primary-color: rgb(55, 113, 224);
   --opengpts-primary-text-color: rgba(var(--opengpts-fg-rgb), 0.65);
   --opengpts-primary-content-text-color: rgba(var(--opengpts-fg-rgb), 0.65);
@@ -124,7 +126,6 @@
 
   --plasmo-opengpts-sidebar-width: 458px;
   --plasmo-sidebar-border-color: #ececec;
-  --plasmo-sidebar-bg-color: rgba(255, 255, 255, 1);
 
   --opengpts-primary-color: #3771e0;
   --opengpts-primary-text-color: rgba(var(--opengpts-fg-rgb), 0.8);

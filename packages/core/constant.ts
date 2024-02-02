@@ -1,18 +1,11 @@
-import type { ChatConfig, ModelKey } from '@opengpts/types'
+import type { ChatConfig, ModelKey, OpenGPTsConfig } from '@opengpts/types'
 
 
 const WEBSITE_URL = 'https://open-gpts.vercel.app'
+const SG_SEARCH_URL = 'https://sg.search.yahoo.com/search'
 
 
-const MODELS_DICT: Record<ModelKey, { value: string, desc: string }> = {
-    chatgpt35API: { value: 'gpt-3.5-turbo-16k', desc: 'ChatGPT 3.5 turbo(API)' },
-    chatgptFree35: { value: 'text-davinci-002-render-sha', desc: 'ChatGPT (Web)' },
-    chatgptPlus4Browsing: { value: 'gpt-4', desc: 'ChatGPT (Web, GPT-4, browsing, analysis, DALL·E)' },
-    chatgptPlus4: { value: 'gpt-4-gizmo', desc: 'ChatGPT (Web, GPT-4, ChatGPT Classic)' },
-}
-
-
-const DEFAULT_CONFIG: ChatConfig = {
+const CHATGPT_WEBAPPP_DEFAULT_CONFIG: ChatConfig = {
     token: '',
     customChatGptWebApiUrl: 'https://chat.openai.com',
     customChatGptWebApiPath: '/backend-api/conversation',
@@ -20,6 +13,18 @@ const DEFAULT_CONFIG: ChatConfig = {
     chatgptArkoseReqParams: 'cgb=vhwi',
     chatgptArkoseReqUrl: '',
 }
+
+
+const OpenGPTS_BASE_URL = 'http://127.0.0.1:1337/api/chat'
+const OPENAI_BASE_URL = 'https://api.openai.com/v1'
+
+const DEFAULT_CONFIG: OpenGPTsConfig = {
+    mode: 'ChatGPT webapp',
+    apiKey: '',
+    baseUrl: OPENAI_BASE_URL,
+    isProxy: false
+}
+
 
 const chatgptWebModelKeys = [
     'chatgptFree35',
@@ -29,7 +34,10 @@ const chatgptWebModelKeys = [
 
 export {
     chatgptWebModelKeys,
-    MODELS_DICT,
     DEFAULT_CONFIG,
-    WEBSITE_URL
+    CHATGPT_WEBAPPP_DEFAULT_CONFIG,
+    WEBSITE_URL,
+    SG_SEARCH_URL,
+    OPENAI_BASE_URL,
+    OpenGPTS_BASE_URL
 }

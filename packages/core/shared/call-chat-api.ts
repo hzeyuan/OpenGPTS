@@ -1,10 +1,9 @@
-import type { FunctionCall, IdGenerator, JSONValue, Message } from 'ai';
+import { StreamingTextResponse, type FunctionCall, type IdGenerator, type JSONValue, type Message, OpenAIStream } from 'ai';
 import { parseComplexResponse } from './parse-complex-response';
 import { COMPLEX_HEADER, createChunkDecoder } from './utils';
 import { OMessage } from '@opengpts/types';
 
 export async function callChatApi({
-  api,
   messages,
   body,
   credentials,
@@ -18,17 +17,16 @@ export async function callChatApi({
   generateId,
   messageConfig
 }: {
-  api: string;
   messages: Omit<Message, 'id'>[];
   body: Record<string, any>;
   credentials?: RequestCredentials;
   headers?: HeadersInit;
   abortController?: () => AbortController | null;
   restoreMessagesOnFailure: () => void;
-  appendMessage: (message: Message) => void;
+  appendMessage: (message: OMessage) => void;
   onResponse?: (response: Response) => Promise<void>;
-  onUpdate: (merged: Message[], data: JSONValue[] | undefined) => void;
-  onFinish?: (message: Message) => Promise<void>;
+  onUpdate: (merged: OMessage[], data: JSONValue[] | undefined) => void;
+  onFinish?: (message: OMessage) => Promise<void>;
   generateId: IdGenerator;
   messageConfig?: any
 }) {

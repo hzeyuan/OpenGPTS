@@ -8,7 +8,7 @@ import { useState, useEffect } from "react"
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 
 import { StyleProvider } from "@ant-design/cssinjs"
-import { ConfigProvider, Popover, theme as themeStyle } from "antd"
+import { ConfigProvider, Popover, Tag, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
@@ -48,6 +48,7 @@ function IndexSidePanel() {
 
     }, 'auto')
 
+
     const [language] = useStorage({
         key: "language",
         instance: new Storage({
@@ -82,7 +83,7 @@ function IndexSidePanel() {
             content: '你可以随时和我聊天',
             icon: GPTsTabIcon,
             panel: <GPTsPanel />
-        },{
+        }, {
             index: 2,
             title: 'chat',
             content: '你可以随时和我聊天',
@@ -97,7 +98,6 @@ function IndexSidePanel() {
     }
 
     useEffect(() => {
-
         if (theme === 'dark') {
             document.documentElement.setAttribute('data-gpts-theme', 'dark');
         } else if (theme === 'light') {
@@ -109,12 +109,10 @@ function IndexSidePanel() {
     }, [theme]);
 
     useEffect(() => {
-        console.log('language', language)
         i18n?.changeLanguage(language)
     }, [])
 
     useEffect(() => {
-        console.log("切换语言", language)
         i18n?.changeLanguage(language)
     }, [language])
 
@@ -216,7 +214,6 @@ function IndexSidePanel() {
                                                         style={{ cursor: 'pointer' }} src={settingIcon} />
                                                 </div>
                                             </div>
-
                                         </div>
                                     </div>
                                 </div>

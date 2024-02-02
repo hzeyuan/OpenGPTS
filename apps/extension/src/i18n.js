@@ -1,19 +1,10 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
-import { Storage } from "@plasmohq/storage";
 
-const storage = new Storage({
-    area: "local",
-})
-
-
-// the translations
-// (tip move them in a JSON file and import them,
-// or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const resources = {
     en: {
         translation: {
-            "General": "General",
+            "General": "General Config",
             "Theme": "Theme",
             "Auto": "Auto",
             "Light": "Light Mode",
@@ -76,6 +67,7 @@ const resources = {
             'NetworkUnstableRequestFailed': 'Network unstable, request failed',
             'DueToOpenAILimitation': 'Due to OpenAI limitations, you must keep your ChatGPT account logged in. Stability issues may require frequent refreshes.',
             'GPT4AndGPTsCallFailed': 'GPT4 and GPTs call failed',
+            'OpenAIRequestFailed': 'OpenAI request failed',
             'VisitChatOpenAIPage': 'Please visit https://chat.openai.com/, start a ChatGPT4 conversation, then try again',
             'ChatGPTPlusUsersCanTry': 'ChatGPT Plus users can try',
             'OpenAIRestrictedYourRequestFrequency': 'OpenAI restricted your request frequency',
@@ -93,11 +85,22 @@ const resources = {
             'zoomIn': 'Zoom In',
             'zoomOut': 'Zoom Out',
             'zoomReset': 'Zoom Reset',
+            'mode.title.opengpts': 'OpenGPTs',
+            'mode.desc.opengpts': 'OpenGPTs uses the official paid, stable API provided by ChatGPT. No settings required, providing everyone with a stable, fast service without the need for scientific internet access. To make AI accessible to everyone, we provide free daily query limits for everyone.',
+            'mode.title.web': 'ChatGPT Network Application',
+            'mode.desc.web': 'Due to OpenAI limitations, this method requires you to keep your ChatGPT account logged in at all times. Unstable, may require frequent refreshes.',
+            'mode.title.apikey': 'OpenAI API key',
+            'mode.desc.apikey': 'Official API key provided by OpenAI to software developers, stable, and requires payment to OpenAI. Get the API key according to the guide.',
+            'mode.useProxy': 'Use Your proxy URL',
+            'mode.apikeyPolicy': 'Your API key is stored locally in your browser and will never be sent anywhere else.',
+            'mode.useGPT4Tip': 'If you enter a GPT-4 API key, this extension will support GPT-4.',
+            'howToUse':'How to access ChatGPT and use it anywhere',
+
         }
     },
     zh: {
         translation: {
-            "General": "通用",
+            "General": "通用配置",
             "Theme": "主题",
             "Auto": "自动",
             "Light": "明亮模式",
@@ -157,6 +160,7 @@ const resources = {
             // gpt request error
             'NetworkApplication': 'ChatGPT 网络应用',
             'NetworkUnstableRequestFailed': '网络不稳定，请求失败',
+            'OpenAIRequestFailed': 'OpenAI 请求失败',
             'DueToOpenAILimitation': '由于 OpenAI 的限制，需时刻保持您的 ChatGPT 账户登录状态。稳定性问题可能需要频繁刷新。',
             'GPT4AndGPTsCallFailed': 'GPT4 和 GPTs 调用失败',
             'VisitChatOpenAIPage': '请访问 https://chat.openai.com/，开始一次 ChatGPT4 对话，然后重试',
@@ -177,6 +181,17 @@ const resources = {
             'zoomIn': '放大',
             'zoomOut': '缩小',
             'zoomReset': '重置',
+            'mode.title.opengpts': 'OpenGPTs',
+            'mode.desc.opengpts': 'OpenGPTs 通过接入 ChatGPT 官方提供的付费，稳定版API。无需任何设置，为大家提供无需科学上网，稳定，快速的服务。为了让任何人都能使用AI，我们为所有人提供了每天的免费查询额度。',
+            'mode.title.web': 'ChatGPT 网络应用',
+            'mode.desc.web': '由于OpenAI 的限制，这种方式需要时刻保持你的ChatGPT 账号处于登录状态。不稳定，可能需要经常刷新。',
+            'mode.title.apikey': 'OpenAI API key',
+            'mode.desc.apikey': 'penAI 给软件开发者的官方API 密钥，稳定，需付费给OpenAI。 按照指南获取 API 密钥。',
+            'mode.useProxy': '使用我自己的网址',
+            'mode.apikeyPolicy': '您的 API 密钥存储在您的浏览器本地，绝不会发送到其他任何地方。',
+            'mode.useGPT4Tip': '如果您输入 GPT-4 API 密钥，该扩展程序将支持 GPT-4。',
+            'howToUse':'如何访问 ChatGPT 并在任何地方使用它',
+
         }
     }
 };

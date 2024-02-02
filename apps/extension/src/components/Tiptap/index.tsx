@@ -79,7 +79,6 @@ const Tiptap = forwardRef<TiptapRef, TiptapProps>(({ chatId, onSubmit, onContent
   ]
 
   const handleKeyDown = useCallback((view, event) => {
-    console.log('handleKeyDown', event.key, mentionKey, view.state, mentionKey.getState(view.state))
     if (mentionKey.getState(view.state)?.active) return;
     if (commandKey.getState(view.state)?.active) return;
 

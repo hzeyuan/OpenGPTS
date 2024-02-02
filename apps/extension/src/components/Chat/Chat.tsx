@@ -11,7 +11,7 @@ import { webSearch, type SearchRequest } from "~src/contents/web-search";
 import { PauseCircleOutlined } from "@ant-design/icons";
 import { Button } from "antd";
 import type { ChatRequest, FunctionCallHandler } from "ai";
-import type { OMessage, Session } from "@opengpts/types";
+import type { OMessage, OpenGPTsConfig, Session } from "@opengpts/types";
 import { MessagesList } from "../Message/MessageList";
 import type { MessagesListMethods } from "../Message/MessageList";
 import { useChatStore } from "~src/store/useChatStore";
@@ -22,9 +22,10 @@ import useScreenCapture from "~src/store/useScreenCapture";
 import { useTranslation } from "react-i18next";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
-import { MODELS_DICT } from "~src/constant";
 import { OpenAI } from "@opengpts/core";
 import { useDebouncedCallback } from "use-debounce";
+import { OPENAI_BASE_URL, OpenGPTS_BASE_URL } from "@opengpts/core/constant";
+import { transformMessages } from "~src/utils";
 export type ChatProps = {
     ref: RefObject<any>;
     uiMessages?: any[];
@@ -68,6 +69,12 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 area: "local",
             }),
         });
+        const [opengptsConfig] = useStorage<OpenGPTsConfig>({
+            key: "opengptsConfig",
+            instance: new Storage({
+                area: "local",
+            }),
+        });
         const functionCallHandler: FunctionCallHandler = async (chatMessages, functionCall) => {
             console.log("正在调用插件", functionCall.name, "参数为：", functionCall.arguments);
             console.log("chatMessages", chatMessages);
@@ -102,7 +109,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                     body: JSON.stringify({ args: functionCall.arguments }),
                     timeout: 30000,
                 });
-                console.log("content", content);
                 message = {
                     id: functionCallMessage?.id || nanoid(),
                     name: functionCall.name,
@@ -130,7 +136,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
         };
 
         const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } = useChat({
-            initMode: "web",
+            initMode: opengptsConfig?.mode,
             api: "http://127.0.0.1:1337/api/chat",
             experimental_onFunctionCall: functionCallHandler,
             credentials: "omit",
@@ -209,6 +215,20 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                             </div>
                         ),
                     });
+                } else if (error.message === 'chatGPT404') {
+                    updateMessage({
+                        content: (
+                            <div className="label">
+                                <div className="radio-title">
+                                    {t("NetworkApplication")}
+                                    <span className="text-[12px] ml-1 text-[var(--opengpts-primary-color)]">
+                                        ({t("OpenAIRequestFailed")})
+                                    </span>
+                                </div>
+                                <div className="radio-desc">{t("DueToOpenAILimitation")}</div>
+                            </div>
+                        ),
+                    });
                 }
                 // setError(error.message)
             },
@@ -234,7 +254,8 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                     },
                     fileList: [],
                 };
-                if (mode === "web") {
+
+                if (mode === 'ChatGPT webapp') {
                     const newChatId = session.conversationId!;
                     if (!checkChatExist(chatId)) {
                         if (typeof chatMessages[0].content !== "string") return;
@@ -254,13 +275,15 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 }
             },
             body: {
-                modelName: model.key,
+                model: model.key,
             },
             sendExtraMessageFields: true,
             initialWebConfig: {
                 ...chatgptConfig,
             },
         });
+
+
 
         const handleSubmit = async ({ content }) => {
             if (!content) return;
@@ -286,7 +309,10 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 command,
                 ui: quoteMessage?.content,
             };
-            setMessages([...messages, message]);
+
+            const newMessages = [...messages, message]
+
+            setMessages(newMessages);
             if (webAccess) {
                 try {
                     const searchRequest: SearchRequest = {
@@ -315,36 +341,83 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             addChatMessage(chatId, message);
             setFileList([]);
 
-            const options = {};
-
-            function handleGPTsOptions(mention) {
-                const gizmoId = _.get(mention, "key", "");
-                if (!gizmoId) throw new Error("gizmo_id is required");
-                return { gizmoId, ...webConfig };
-            }
-
-            // Helper function to handle web mode options
-            function handleWebModeOptions(chatId) {
-                return checkChatExist(chatId) ? { conversationId: chatId } : {};
-            }
-
-            // Helper function to handle default options
-            function handleDefaultOptions(modelKey, capturedImage) {
-                const modelName = MODELS_DICT[modelKey].value;
-                return { model: modelName, imgUrl: capturedImage };
-            }
+            const chatRequestOptions = { body: {}, headers: {} };
+            const chatRequestData = {};
             let bodyOptions = {};
 
-            if (mention && mentionType === "GPTs") {
-                bodyOptions = handleGPTsOptions(mention);
-            } else {
-                bodyOptions =
-                    model.mode === "web"
-                        ? handleWebModeOptions(chatId)
-                        : handleDefaultOptions(model.key, useScreenCapture.getState().capturedImage);
-            }
+            console.log("messages", messages)
 
-            options["body"] = { modelName: modelKey, ...bodyOptions };
+            switch (opengptsConfig.mode) {
+                case 'OpenAI API':
+                    chatRequestOptions.headers['Authorization'] = `Bearer ${opengptsConfig.apiKey}`;
+                    chatRequestOptions['body'] = transformMessages({
+                        model: modelKey,
+                        messages: [
+                            {
+                                id: nanoid(),
+                                role: 'system',
+                                content: '你好有什么我可以帮助你的么？',
+                            },
+                            ...newMessages
+                        ],
+                        args: {
+                            stream: true,
+                        }
+                    })
+                    chatRequestData['apiKey'] = opengptsConfig.apiKey;
+                    chatRequestData['baseUrl'] = `${opengptsConfig?.isProxy ? opengptsConfig.baseUrl : OPENAI_BASE_URL}/chat/completions`;
+                    console.log('options', chatRequestOptions['body'])
+                    break;
+                case 'OpenGPTs':
+                    chatRequestOptions["body"] = { model: 'gpt-3.5-turbo-16k', ...bodyOptions };
+                    // 设置OpenGPTs特定的头部，如果有的话
+                    break;
+                case 'ChatGPT webapp':
+                    chatRequestOptions['body'] = {
+                        model: modelKey,
+                        // gizmoId: mention?.key,
+                        ...webConfig
+                    }
+                    // function handleWebModeOptions(chatId) {
+                    //     return checkChatExist(chatId) ? { conversationId: chatId } : {};
+                    // }
+
+                    // function handleDefaultOptions(modelKey, capturedImage) {
+                    //     return { model: modelKey, imgUrl: capturedImage };
+                    // }
+
+                    // function handleGPTsOptions(mention) {
+                    //     if (!mention || !mention.key) throw new Error("gizmo_id is required");
+                    //     return { gizmoId: mention.key, ...webConfig };
+                    // }
+
+                    // 如果是ChatGPT webapp模式，同时mention
+
+                    // if (mention && mentionType === "GPTs") {
+                    //     bodyOptions = handleGPTsOptions(mention);
+                    // } else {
+                    //     bodyOptions =
+                    //         model.modes.indexOf("ChatGPT webapp") !== -1
+                    //             ? handleWebModeOptions(chatId)
+                    //             : handleDefaultOptions(model.key, useScreenCapture.getState().capturedImage);
+                    // }
+
+                    // if (!mention || !mention.key) throw new Error("gizmo_id is required");
+                    // options['body'] = {
+                    //     model: modelKey,
+                    //     gizmoId: mention?.key,
+                    //     ...webConfig
+                    // }
+                    // options["body"] = {
+                    //     model: modelKey,
+                    //     gizmoId: mention?.key,
+                    //     ...webConfig
+                    // };
+                    // 设置ChatGPT webapp特定的头部，如果有的话
+                    break;
+                default:
+                // 处理默认或未知模式
+            }
 
             append(
                 {
@@ -353,15 +426,8 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 ${webSearchPrompt}
 ${content}`.trim(),
                 },
-                {
-                    options,
-                },
-                {
-                    mention: mention ?? {
-                        name: model.name,
-                        icon: model.icon,
-                    },
-                }
+                { options: chatRequestOptions, data: chatRequestData },
+                { mention: mention ?? { name: model.name, icon: model.icon }, }
             );
 
             setContent("");
@@ -403,12 +469,20 @@ ${content}`.trim(),
             }
         }, [messages]);
 
+        // useEffect(() => {
+        //     console.log('change', opengptsConfig?.mode)
+        //     if (opengptsConfig?.mode === 'OpenGPTs') {
+        //         setRequestApi(OpenGPTS_BASE_URL)
+        //     } else if (opengptsConfig?.mode === 'OpenAI API') {
+        //         console.log('opengptsConfig', opengptsConfig)
+        //         setRequestApi(`${opengptsConfig.baseUrl || OPENAI_BASE_URL}/chat/completions`)
+        //     }
+        // }, [opengptsConfig?.mode, opengptsConfig?.baseUrl])
+
+
         useEffect(() => {
-            console.debug("设置模型为", model?.key);
-            if (model) {
-                setMode(model.mode);
-            }
-        }, [model]);
+            setMode(opengptsConfig?.mode)
+        }, [opengptsConfig?.mode]);
 
         useEffect(() => {
             const messages = getChatMessages(chatId);

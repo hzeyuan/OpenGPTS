@@ -1,8 +1,8 @@
+import { SG_SEARCH_URL } from '@opengpts/core/constant'
 import { sendToBackground, type MessagesMetadata } from '@plasmohq/messaging'
 import cheerio from 'cheerio'
 import type { PlasmoCSConfig } from 'plasmo'
 import Browser from 'webextension-polyfill'
-import { SG_SEARCH_URL } from '~src/constant'
 
 export const config: PlasmoCSConfig = {
     matches: ["<all_urls>"],

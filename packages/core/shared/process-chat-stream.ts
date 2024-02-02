@@ -1,3 +1,4 @@
+import { OMessage } from "@opengpts/types";
 import type { Message, JSONValue, FunctionCall, ChatRequest } from "ai";
 
 export async function processChatStream({
@@ -7,7 +8,7 @@ export async function processChatStream({
   getCurrentMessages,
 }: {
   getStreamedResponse: () => Promise<
-    Message | { messages: Message[]; data: JSONValue[] }
+    OMessage | { messages: OMessage[]; data: JSONValue[] }
   >;
   experimental_onFunctionCall?: (
     chatMessages: Message[],

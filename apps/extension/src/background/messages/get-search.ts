@@ -1,7 +1,7 @@
 
 
+import { SG_SEARCH_URL } from "@opengpts/core/constant"
 import type { PlasmoMessaging } from "@plasmohq/messaging"
-import { SG_SEARCH_URL } from "~src/constant"
 
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {

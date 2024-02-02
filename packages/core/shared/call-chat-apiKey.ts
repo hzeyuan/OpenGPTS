@@ -1,9 +1,8 @@
 import type { ChatRequest, IdGenerator, JSONValue, Message } from 'ai';
-import { OpenAI, WebStreamEvent } from '../web/openai';
-import type { ChatConfig, OMessage, Session } from '@opengpts/types';
+import { OpenAI, APIkeyStreamEvent } from '../web/openai';
+import type { ChatConfig, OMessage } from '@opengpts/types';
 
-export async function callChatWeb({
-  callLLm,
+export async function callChatApiKey({
   messages,
   body,
   abortController,
@@ -16,7 +15,6 @@ export async function callChatWeb({
   webConfig,
   messageConfig
 }: {
-  callLLm: OpenAI['gpt']['call']; // The provided call function
   messages: Message[];
   body: Record<string, any>;
   abortController?: () => AbortController | null;
@@ -24,7 +22,7 @@ export async function callChatWeb({
   appendMessage: (message: Message) => void;
   onResponse?: (response: Response) => void | Promise<void>;
   onUpdate: (merged: Message[], data: JSONValue[] | undefined) => void;
-  onFinish?: (message: Message, session?: any, conversation?: OpenAI['conversation']) => void;
+  onFinish?: (message: Message) => void;
   generateId: IdGenerator;
   webConfig?: ChatConfig
   messageConfig?: any
@@ -44,38 +42,23 @@ export async function callChatWeb({
   };
 
 
-  // Convert messages and body to a suitable format for the call method
-  let session: Session = {
-    question: messages[messages.length - 1].content,
-    modelName: 'chatgptFree35',
-    parentMessageId: messages[messages.length - 1]?.id,
-    ...body,
-  };
-
-  console.log('session', session)
   appendMessage({ ...responseMessage });
 
   // Define event handlers based on the callChatApi structure
-  let event: WebStreamEvent = {
+  let event: APIkeyStreamEvent = {
     onStart: () => {
 
     },
-    onMessage: ({ text, imagePointers,done }: {
+    onMessage: ({ text, imagePointers, done }: {
       done: boolean,
-      session: Session,
       text: string
       imagePointers?: string[]
     }) => {
-      if(!done){
-        throw new Error('chatGPT404')
-      }
       responseMessage['content'] = text;
       appendMessage({ ...responseMessage });
-
     },
-    onFinish: ({ conversation }) => {
-      responseMessage['id'] = session.messageId!
-      onFinish && onFinish(responseMessage, session, conversation);
+    onFinish: () => {
+      onFinish && onFinish(responseMessage);
     },
     onError: (error: Error) => {
       // restoreMessagesOnFailure()
@@ -83,11 +66,23 @@ export async function callChatWeb({
     onAbort: () => { }
   };
 
+  const apiKey = body?.data?.apiKey;
+  const baseUrl = body?.data?.baseUrl;
 
-  await callLLm(session, event, webConfig, {
-    controller: abortController?.(),
+  await OpenAI.callWithApiKey({
+    event,
+    apiKey,
+    baseUrl,
+    request: {
+      controller: abortController?.(),
+      body: {
+        messages: body.messages,
+        model: body.model,
+        stream: true,
+      }
+    }
   }).catch(err => {
-    if(err.message === 'noChatGPTPlusArkoseToken') return;
+    if (err.message === 'noChatGPTPlusArkoseToken') return;
     restoreMessagesOnFailure();
     throw err;
   })

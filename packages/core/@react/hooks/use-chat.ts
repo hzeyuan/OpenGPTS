@@ -7,9 +7,10 @@ import { nanoid } from '../../shared/utils';
 
 import type { ChatRequest, ChatRequestOptions, CreateMessage, IdGenerator, JSONValue, ReactResponseRow, UseChatOptions, experimental_StreamingReactResponse } from 'ai';
 import type { Message } from 'ai';
-import type { ChatConfig, Mention, OChatRequest, OMessage } from '@opengpts/types';
+import type { ChatConfig, Mention, Mode, OChatRequest, OMessage } from '@opengpts/types';
 
 import { OpenAI } from '../../web/openai';
+import { callChatApiKey } from '~shared/call-chat-apiKey';
 export type { CreateMessage, Message, UseChatOptions };
 
 export type UseChatHelpers = {
@@ -83,10 +84,10 @@ const getStreamedResponse = async (
   messagesRef: React.MutableRefObject<OMessage[]>,
   abortControllerRef: React.MutableRefObject<AbortController | null>,
   generateId: IdGenerator,
-  onFinish?: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => void,
-  onResponse?: (response: Response) => void | Promise<void>,
+  onFinish: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => Promise<void>,
+  onResponse: (response: Response) => Promise<void>,
   sendExtraMessageFields?: boolean,
-  mode: "api" | "web" = "api",
+  mode?: Mode,
   webConfig?: ChatConfig,
   messageConfig: any = {}
 ) => {
@@ -158,78 +159,56 @@ const getStreamedResponse = async (
     return responseMessage;
   }
 
-
-  if (webConfig && !webConfig['token']) {
-    throw new Error('chatGPT403')
+  const callParams = {
+    messages: constructedMessagesPayload,
+    body: {
+      data: chatRequest.data,
+      ...extraMetadataRef.current.body,
+      ...chatRequest.options?.body,
+      ...(chatRequest.functions !== undefined && {
+        functions: chatRequest.functions,
+      }),
+      ...(chatRequest.function_call !== undefined && {
+        function_call: chatRequest.function_call,
+      }),
+    },
+    abortController: () => abortControllerRef.current,
+    appendMessage(message: OMessage) {
+      mutate([...chatRequest.messages, message], false);
+    },
+    restoreMessagesOnFailure() {
+      mutate(previousMessages, false);
+    },
+    onResponse,
+    onUpdate(merged: OMessage[], data: JSONValue[] | undefined) {
+      mutate([...chatRequest.messages, ...merged], false);
+      mutateStreamData([...(existingData || []), ...(data || [])], false);
+    },
+    onFinish,
+    generateId,
   }
 
-  const openai = new OpenAI({ token: webConfig!.token });
-  return mode === 'api' ? await callChatApi({
-    api,
-    messages: constructedMessagesPayload,
-    body: {
-      data: chatRequest.data,
-      ...extraMetadataRef.current.body,
-      ...chatRequest.options?.body,
-      ...(chatRequest.functions !== undefined && {
-        functions: chatRequest.functions,
-      }),
-      ...(chatRequest.function_call !== undefined && {
-        function_call: chatRequest.function_call,
-      }),
-    },
-    credentials: extraMetadataRef.current.credentials,
-    headers: {
-      ...extraMetadataRef.current.headers,
-      ...chatRequest.options?.headers,
-    },
-    abortController: () => abortControllerRef.current,
-    appendMessage(message) {
-      // console.log('appendMessage',...chatRequest.messages, message)
-      mutate([...chatRequest.messages, message], false);
-    },
-    restoreMessagesOnFailure() {
-      mutate(previousMessages, false);
-    },
-    onResponse,
-    onUpdate(merged, data) {
-      mutate([...chatRequest.messages, ...merged], false);
-      mutateStreamData([...(existingData || []), ...(data || [])], false);
-    },
-    onFinish,
-    generateId,
+  if (mode === 'ChatGPT webapp') {
+    const openai = new OpenAI({ token: webConfig?.token });
+    return callChatWeb({
+      callLLm: openai.gpt.call.bind(openai.gpt),
+      ...callParams,
+      webConfig,
+      messageConfig,
+    });
+  } else if (mode === 'OpenAI API') {
+    return callChatApiKey({
+      ...callParams,
+      messageConfig,
+    });
+  }
+  return callChatApi({
+    ...callParams,
     messageConfig,
-  }) : callChatWeb({
-    callLLm: openai.gpt.call.bind(openai.gpt),
-    messages: constructedMessagesPayload,
-    body: {
-      data: chatRequest.data,
-      ...extraMetadataRef.current.body,
-      ...chatRequest.options?.body,
-      ...(chatRequest.functions !== undefined && {
-        functions: chatRequest.functions,
-      }),
-      ...(chatRequest.function_call !== undefined && {
-        function_call: chatRequest.function_call,
-      }),
-    },
-    abortController: () => abortControllerRef.current,
-    appendMessage(message) {
-      mutate([...chatRequest.messages, message], false);
-    },
-    restoreMessagesOnFailure() {
-      mutate(previousMessages, false);
-    },
-    onResponse,
-    onUpdate(merged, data) {
-      mutate([...chatRequest.messages, ...merged], false);
-      mutateStreamData([...(existingData || []), ...(data || [])], false);
-    },
-    onFinish,
-    generateId,
-    webConfig,
-    messageConfig,
-  });
+  })
+
+
+
 };
 
 export function useChat({
@@ -246,19 +225,19 @@ export function useChat({
   headers,
   body,
   generateId = nanoid,
-  initMode = 'api',
+  initMode = 'ChatGPT webapp',
   initialWebConfig = {}
 }: Omit<UseChatOptions, 'api' | 'onFinish' | 'onError'> & {
   api?: string | StreamingReactResponseAction;
   key?: string;
-  initMode?: 'api' | 'web';
+  initMode?: Mode
   initialWebConfig?: any;
-  onFinish?: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => void;
+  onFinish?: (message: OMessage, session?: any, conversation?: OpenAI['conversation']) => Promise<void>;
   onError?: (error: Error, updateMessage: (messageInfo: Partial<OMessage>) => void) => void;
 } = {}): UseChatHelpers & {
-  mode: "api" | "web";
+  mode: Mode;
   webConfig: any;
-  setMode: React.Dispatch<React.SetStateAction<"api" | "web">>;
+  setMode: React.Dispatch<React.SetStateAction<Mode>>;
   setWebConfig: React.Dispatch<React.SetStateAction<string>>;
 
 
@@ -271,8 +250,9 @@ export function useChat({
   // Store a empty array as the initial messages
   // (instead of using a default parameter value that gets re-created each time)
   // to avoid re-renders:
+
   const [initialMessagesFallback] = useState([]);
-  const [mode, setMode] = useState<"api" | "web">(initMode)
+  const [mode, setMode] = useState<Mode>(initMode)
   const [webConfig, setWebConfig] = useState<any>(initialWebConfig)
   // Store the chat state in SWR, using the chatId as the key to share states.
   const { data: messages, mutate } = useSWR<OMessage[]>(
@@ -300,6 +280,7 @@ export function useChat({
   useEffect(() => {
     messagesRef.current = messages || [];
   }, [messages]);
+
 
   // Abort controller to cancel the current API call.
   const abortControllerRef = useRef<AbortController | null>(null);

@@ -6,10 +6,12 @@ import { useTranslation } from 'react-i18next';
 import '../i18n.js';
 import "./index.css"
 import '../base.css'
-import { ConfigProvider, Divider, Menu, Radio, Space, Typography, theme as themeStyle } from "antd"
+import { Card, ConfigProvider, Divider, Input, Menu, Radio, Space, Switch, Typography, message, theme as themeStyle } from "antd"
+import ModeSelector from "~src/components/ModeSelector.jsx";
 const { Title, Text } = Typography;
 function IndexOptions() {
     const { t, i18n } = useTranslation();
+
 
     const [theme, setTheme] = useStorage({
         key: "theme",
@@ -25,17 +27,17 @@ function IndexOptions() {
         })
     }, 'en')
 
-    const [activeKey, setActiveKey] = useState('1')
+    const [activeKey, setActiveKey] = useState('general')
     const menus = [{
-        key: '1',
+        key: 'general',
         label: t('General'),
     },
     ]
 
+   
 
 
     const handleChangeTheme = (e) => {
-        console.log('e.target.value', e.target.value)
         setTheme(e.target.value)
     }
 
@@ -44,6 +46,8 @@ function IndexOptions() {
         setLanguage(e.target.value)
     };
 
+ 
+
     useEffect(() => {
         i18n.changeLanguage(language);
     }, [])
@@ -51,11 +55,20 @@ function IndexOptions() {
 
     const renderArea = (key) => {
         switch (key) {
-            case '1':
+            case 'general':
                 return (
                     <div className="section">
-
                         <Title level={2}>{t('General')}</Title>
+                        <Divider />
+                        <div className="sub-section">
+                            <Title level={3}>{t('howToUse')}</Title>
+                            <div className='content-box'>
+                                <div className="option-box">
+                                    <ModeSelector />
+                                </div>
+                            </div>
+                        </div>
+
                         <Divider />
                         <div className="sub-section">
                             <Title level={3}>{t('Theme')}</Title>
@@ -127,7 +140,7 @@ function IndexOptions() {
                     className="inner-container flex h-full overflow-y-auto w-[1200px]  mt-12  mx-auto mb-0 "
                 >
                     <div className="menu-area card">
-                        <div className="flex items-center px-5">
+                        <div className="flex items-center px-5 py-2">
                             <img className="w-8 h-8 logo" src={logo.toString()} alt="" />
                             <div className="text-2xl font-semibold ms-2"><Text style={{
                                 fontSize: '20px',
