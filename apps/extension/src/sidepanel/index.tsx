@@ -15,6 +15,7 @@ import { Storage } from "@plasmohq/storage";
 
 import { useTranslation } from 'react-i18next';
 import GPTsPanel from '~src/components/Panel/GPTsPanel';
+import pintuIcon from '~assets/pintu.svg';
 import settingIcon from '~assets/settings.svg';
 import QQIcon from '~assets/qq.svg';
 import GPTsTabIcon from '~assets/gpts.svg';
@@ -25,6 +26,7 @@ import enUS from 'antd/locale/en_US';
 import twitterIcon from '~assets/twitter.svg';
 import type { ThemeMode } from '@opengpts/types';
 import DynamicSplitChatPanel from '~src/components/Panel/DynamicSplitChatPanel';
+import { ToolsPanel } from '~src/components/Panel/ToolsPanel';
 
 const shakeAnimation = {
     scale: 0.85,
@@ -89,6 +91,13 @@ function IndexSidePanel() {
             content: '你可以随时和我聊天',
             icon: chatTabIcon,
             panel: <DynamicSplitChatPanel />
+        },
+        {
+            index: 3,
+            title: 'Tools',
+            content: '工具',
+            icon: pintuIcon,
+            panel: <ToolsPanel />
         }
     ])
 

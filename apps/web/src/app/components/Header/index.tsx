@@ -42,7 +42,7 @@ export default () => {
                 target="_blank"
                 className="hover:text-[#2752f4]"
               >
-                GPTs
+                GPTs Store
               </a>
             </li>
             <li className="mx-4">
