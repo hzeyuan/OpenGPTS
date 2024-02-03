@@ -207,9 +207,6 @@ const getStreamedResponse = async (
     ...callParams,
     messageConfig,
   })
-
-
-
 };
 
 export function useChat({

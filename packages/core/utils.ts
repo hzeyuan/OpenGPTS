@@ -1,4 +1,5 @@
 import type { OMessage } from "@opengpts/types";
+import _ from "lodash";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 
@@ -28,10 +29,15 @@ function transformMessages({ model, messages, args }: {
     messages: OMessage[],
     args?: Record<string, any>
 }): ChatAPIRequest {
-    const transformedMessages = messages.map(message => ({
-        role: message.role,
-        content: message.content
-    }));
+    const transformedMessages = messages.map(message => {
+        if (message.role == 'function') {
+            return _.pick(message, ['name', 'role', 'content'])
+        }
+        return {
+            role: message.role,
+            content: message.content
+        };
+    });
 
     const request: ChatAPIRequest = {
         model,
