@@ -1,12 +1,10 @@
 import type { OMessage } from "@opengpts/types";
+import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 
 
 interface ChatAPIRequest {
     model: string;
-    messages: Array<{
-        role: string;
-        content: string;
-    }>;
+    messages: Array<ChatCompletionMessageParam>;
     frequency_penalty?: number;
     logit_bias?: { [token: string]: number };
     logprobs?: boolean;
@@ -32,7 +30,7 @@ function transformMessages({ model, messages, args }: {
 }): ChatAPIRequest {
     const transformedMessages = messages.map(message => ({
         role: message.role,
-        content: typeof message.content === 'string' ? message.content : 'Complex content cannot be displayed'
+        content: message.content
     }));
 
     const request: ChatAPIRequest = {

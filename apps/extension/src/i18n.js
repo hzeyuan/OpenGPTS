@@ -94,7 +94,14 @@ const resources = {
             'mode.useProxy': 'Use Your proxy URL',
             'mode.apikeyPolicy': 'Your API key is stored locally in your browser and will never be sent anywhere else.',
             'mode.useGPT4Tip': 'If you enter a GPT-4 API key, this extension will support GPT-4.',
-            'howToUse':'How to access ChatGPT and use it anywhere',
+            'howToUse': 'How to access ChatGPT and use it anywhere',
+
+            'BaseURLErrorTip': 'The BaseURL you provided cannot be requested, please check if your BaseURL is correct',
+            'BaseURLErrorDesc': 'Please go to the settings page to check if your BaseURL is correct',
+            'APIKeyInvalidTip': 'The API Key you provided is invalid, please check if your API Key is correct',
+            'APIKeyInvalidDesc': 'Please go to the settings page to check if your API Key is correct',
+            'APIKeyInvalidTitle': 'API Key Invalid',
+            'BaseURLErrorTitle': 'BaseURL Invalid',
 
         }
     },
@@ -190,7 +197,13 @@ const resources = {
             'mode.useProxy': '使用我自己的网址',
             'mode.apikeyPolicy': '您的 API 密钥存储在您的浏览器本地，绝不会发送到其他任何地方。',
             'mode.useGPT4Tip': '如果您输入 GPT-4 API 密钥，该扩展程序将支持 GPT-4。',
-            'howToUse':'如何访问 ChatGPT 并在任何地方使用它',
+            'howToUse': '如何访问 ChatGPT 并在任何地方使用它',
+            'BaseURLErrorTip': '你提供的BaseURL无法请求，请检查你的BaseURL是否正确',
+            'BaseURLErrorDesc': '请到设置页面检查你的BaseURL是否正确',
+            'APIKeyInvalidTip': '你提供的API Key无效，请检查你的API Key是否正确',
+            'APIKeyInvalidDesc': '请到设置页面检查你的API Key是否正确',
+            'APIKeyInvalidTitle': 'API Key 无效',
+            'BaseURLErrorTitle': 'BaseURL 无效',
 
         }
     }

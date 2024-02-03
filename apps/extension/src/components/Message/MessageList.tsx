@@ -55,15 +55,9 @@ export const MessagesList = React.forwardRef<MessagesListMethods, MessagesListPr
         };
 
         const updateMessages = (newMessages) => {
-            //newMessages中相同id的项进行合并，使用lodash
             let reversedMessages = _.reverse([...newMessages]);
-
-            // 使用 _.uniqBy 去除重复的 ID，保留第一个出现的（实际上是最后出现的，因为数组被反转了）
             let uniqueMessages = _.uniqBy(reversedMessages, 'id');
-
-            // 再次反转数组，恢复原始的顺序
             let updatedMessages = _.reverse(uniqueMessages);
-
             setDisplayedMessages(updatedMessages);
         };
 

@@ -195,17 +195,17 @@ class OpenAI {
                         reject(resp)
                         return
                     }
-                    console.debug('resp.status', resp.status, resp.ok)
+                   
                     if (resp.status === 404) {
-                        reject(new Error('chatGPT404'))
+                        reject(new Error('baseUrl404'))
                         return;
                     }
-                    if (resp.status === 403) {
-                        reject(new Error('chatGPT403'))
+                    if (resp.status === 401) {
+                        reject(new Error('APIKeyInvalid'))
                         return;
                     }
                     if (resp.status === 429) {
-                        reject(new Error('chatGPT429'))
+                        reject(new Error('APIKey429'))
                         return;
                     } if (resp.status === 404) {
 
@@ -217,7 +217,7 @@ class OpenAI {
         }).catch(error => {
             console.log('fetch-sse', error)
             if (error.message === 'Failed to fetch') {
-                throw new Error('chatGPT404')
+                throw new Error('APIKey404')
             }
             throw error
         });

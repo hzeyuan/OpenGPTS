@@ -4,6 +4,7 @@ import { COMPLEX_HEADER, createChunkDecoder } from './utils';
 import { OMessage } from '@opengpts/types';
 
 export async function callChatApi({
+  api,
   messages,
   body,
   credentials,
@@ -17,6 +18,7 @@ export async function callChatApi({
   generateId,
   messageConfig
 }: {
+  api: string,
   messages: Omit<Message, 'id'>[];
   body: Record<string, any>;
   credentials?: RequestCredentials;
@@ -123,7 +125,6 @@ export async function callChatApi({
     // TODO-STREAMDATA: Remove this once Stream Data is not experimental
     while (true) {
       const { done, value } = await reader.read();
-      console.log('value', value)
       if (done) {
         break;
       }

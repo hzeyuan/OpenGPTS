@@ -100,7 +100,7 @@ type Mode = 'ChatGPT webapp' | 'OpenAI API' | "OpenGPTs"
 type ModelKey = 'gpt-3.5-turbo-0301' | 'gpt-3.5-turbo-0125' | 'gpt-3.5-turbo-16k-0613' | 'gpt-3.5-turbo-16k' | 'gpt-3.5'
 	| 'gpt-3.5-0613' | 'gpt-3.5-turbo-1106' | 'gpt-3.5-turbo-instruct' | 'gpt-3.5-turbo-instruct-0914'
 	| 'gpt-4-0125-preview' | 'gpt-4-1106-preview' | 'gpt-4' | 'gpt-4-0613' | 'gpt-4-32k' | 'gpt-4-32k-0613'
-	| 'ChatGPT3.5 Turbo' | 'chatgpt4API'  //opengpts
+	| 'ChatGPT3.5 Turbo' | 'ChatGPT4 Turbo'  //opengpts
 	| 'chatgptFree35' | 'chatgptPlus4Browsing' | 'chatgptPlus4' // web 
 
 

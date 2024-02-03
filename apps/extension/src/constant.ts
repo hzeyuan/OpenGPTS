@@ -121,7 +121,7 @@ const MODEL_OPTIONS: ModelOptions[] =
             icon: chatgpt3_5Svg
         },
         {
-            key: 'chatgpt4API',
+            key: 'ChatGPT4 Turbo',
             name: 'ChatGPT4 Turbo',
             description: 'ChatGPT 3.5-turbo (API)',
             modes: ['OpenGPTs'],

@@ -25,7 +25,7 @@ import { Storage } from "@plasmohq/storage";
 import { OpenAI } from "@opengpts/core";
 import { useDebouncedCallback } from "use-debounce";
 import { OPENAI_BASE_URL, OpenGPTS_BASE_URL } from "@opengpts/core/constant";
-import { transformMessages } from "~src/utils";
+import { transformMessages } from "@opengpts/core/utils";
 export type ChatProps = {
     ref: RefObject<any>;
     uiMessages?: any[];
@@ -137,7 +137,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 
         const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } = useChat({
             initMode: opengptsConfig?.mode,
-            api: "http://127.0.0.1:1337/api/chat",
+            api: "http://127.0.0.1:3000/api/chat",
             experimental_onFunctionCall: functionCallHandler,
             credentials: "omit",
             initialMessages: [],
@@ -229,6 +229,34 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                             </div>
                         ),
                     });
+                } else if (error.message === 'APIKeyInvalid') {
+                    updateMessage({
+                        content: (
+                            <div className="label">
+                                <div className="radio-title">
+                                    {t("APIKeyInvalidTitle")}
+                                    <span className="text-[12px] ml-1 text-[var(--opengpts-primary-color)]">
+                                        ({t("APIKeyInvalidTip")})
+                                    </span>
+                                </div>
+                                <div className="radio-desc">{t("APIKeyInvalidDesc")}</div>
+                            </div>
+                        ),
+                    });
+                } else if (error.message === 'baseUrl404') {
+                    updateMessage({
+                        content: (
+                            <div className="label">
+                                <div className="radio-title">
+                                    {t("BaseURLErrorTitle")}
+                                    <span className="text-[12px] ml-1 text-[var(--opengpts-primary-color)]">
+                                        ({t("BaseURLErrorTip")})
+                                    </span>
+                                </div>
+                                <div className="radio-desc">{t("BaseURLErrorDesc")}</div>
+                            </div>
+                        ),
+                    });
                 }
                 // setError(error.message)
             },
@@ -238,24 +266,24 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             onFinish: async (message: OMessage, session?: Session, conversation?: OpenAI["conversation"]) => {
                 // clear mentions
                 setMention(undefined);
-                if (!session) return;
                 const chatMessages = getChatMessages(chatId);
-                const chat = {
-                    chatId: session.conversationId,
-                    title: chatMessages[0].content,
-                    latestReply: message.content,
-                    created_at: new Date().getTime(),
-                    updated_at: new Date().getTime(),
-                    latestRecord: {
-                        message: {
-                            // id: session.messageId,
-                            ...message,
-                        },
-                    },
-                    fileList: [],
-                };
 
                 if (mode === 'ChatGPT webapp') {
+                    if (!session) return;
+                    const chat = {
+                        chatId: session.conversationId,
+                        title: chatMessages[0].content,
+                        latestReply: message.content,
+                        created_at: new Date().getTime(),
+                        updated_at: new Date().getTime(),
+                        latestRecord: {
+                            message: {
+                                // id: session.messageId,
+                                ...message,
+                            },
+                        },
+                        fileList: [],
+                    };
                     const newChatId = session.conversationId!;
                     if (!checkChatExist(chatId)) {
                         if (typeof chatMessages[0].content !== "string") return;
@@ -270,6 +298,17 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                         addChatMessage(newChatId, message);
                     }
                 } else {
+                    const chat = {
+                        chatId,
+                        title: chatMessages[0].content,
+                        latestReply: message.content,
+                        created_at: new Date().getTime(),
+                        updated_at: new Date().getTime(),
+                        latestRecord: {
+                            message: { ...message, },
+                        },
+                        fileList: [],
+                    };
                     addChatIfNotExist(chat);
                     addChatMessage(chatId, message);
                 }
@@ -311,8 +350,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             };
 
             const newMessages = [...messages, message]
-
-            setMessages(newMessages);
             if (webAccess) {
                 try {
                     const searchRequest: SearchRequest = {
@@ -345,8 +382,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             const chatRequestData = {};
             let bodyOptions = {};
 
-            console.log("messages", messages)
-
             switch (opengptsConfig.mode) {
                 case 'OpenAI API':
                     chatRequestOptions.headers['Authorization'] = `Bearer ${opengptsConfig.apiKey}`;
@@ -369,8 +404,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                     console.log('options', chatRequestOptions['body'])
                     break;
                 case 'OpenGPTs':
-                    chatRequestOptions["body"] = { model: 'gpt-3.5-turbo-16k', ...bodyOptions };
-                    // 设置OpenGPTs特定的头部，如果有的话
+                    chatRequestOptions["body"] = { model: modelKey, messages: newMessages };
                     break;
                 case 'ChatGPT webapp':
                     chatRequestOptions['body'] = {
@@ -422,9 +456,8 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             append(
                 {
                     ...message,
-                    content: `${selection}
-${webSearchPrompt}
-${content}`.trim(),
+                    // ${selection}
+                    content: `${webSearchPrompt}/n${content}`.trim(),
                 },
                 { options: chatRequestOptions, data: chatRequestData },
                 { mention: mention ?? { name: model.name, icon: model.icon }, }

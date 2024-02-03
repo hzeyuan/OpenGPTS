@@ -160,6 +160,7 @@ const getStreamedResponse = async (
   }
 
   const callParams = {
+    api,
     messages: constructedMessagesPayload,
     body: {
       data: chatRequest.data,
@@ -227,8 +228,7 @@ export function useChat({
   generateId = nanoid,
   initMode = 'ChatGPT webapp',
   initialWebConfig = {}
-}: Omit<UseChatOptions, 'api' | 'onFinish' | 'onError'> & {
-  api?: string | StreamingReactResponseAction;
+}: Omit<UseChatOptions, 'onFinish' | 'onError'> & {
   key?: string;
   initMode?: Mode
   initialWebConfig?: any;
@@ -409,8 +409,8 @@ export function useChat({
 
       // Append the  user message to the list of messages.
       const newMessages = [...messagesRef.current, message as OMessage];
-      setMessages(newMessages)
-      // mutate(newMessages, false);
+      // setMessages(newMessages)
+      mutate(newMessages, false);
 
       const chatRequest: OChatRequest = {
         messages: newMessages,
