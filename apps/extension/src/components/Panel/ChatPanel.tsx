@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { DEFAULT_MODEL, MODEL_OPTIONS } from "~src/constant";
 import { Storage } from "@plasmohq/storage"
 import { PlusOutlined } from "@ant-design/icons";
-import type { Mention, ModelOptions, OCommand, OpenGPTsConfig } from "@opengpts/types";
+import type { Mention, ModelOptions, OCommand, OpenGPTsConfig, ToolRow } from "@opengpts/types";
 import { ChatHistoryDrawer } from "../Chat/ChatHistoryDrawer";
 import { useStorage } from "@plasmohq/storage/hook";
 import { DEFAULT_CONFIG } from '@opengpts/core/constant';
@@ -29,6 +29,8 @@ interface ChatContextType {
     setCommand: (command?: OCommand) => void;
     setMention: (mention?: Mention) => void;
     mention?: Mention;
+    useTools: ToolRow[];
+    setUseTools: (useTools: ToolRow[]) => void;
 }
 
 
@@ -43,6 +45,8 @@ const defaultContextValue: ChatContextType = {
     setFileList: (fileList: any[]) => { },
     setCommand: (command?: OCommand) => { },
     setMention: (mention?: Mention) => { },
+    useTools: [],
+    setUseTools: (useTools: ToolRow[]) => { },
 };
 
 
@@ -68,6 +72,7 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
     const [webAccess, setWebAccess] = useState<boolean>(false);
     const [command, setCommand] = useState<OCommand>()
     const [mention, setMention] = useState<Mention>()
+    const [useTools, setUseTools] = useState<ToolRow[]>([])
     const [fileList, setFileList] = useState<any[]>([])
     const chatRef = useRef<any>();
     const { t } = useTranslation();
@@ -115,7 +120,8 @@ const ChatPanel = forwardRef<ChatPanelRef, ChatPanelProps>(({ chatId: initialCha
             webAccess, setWebAccess,
             fileList, setFileList,
             command, setCommand,
-            setMention, mention
+            setMention, mention,
+            useTools, setUseTools
         }}>
             <motion.div
                 className="h-full"

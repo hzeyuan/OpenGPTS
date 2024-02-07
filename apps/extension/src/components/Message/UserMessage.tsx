@@ -16,7 +16,7 @@ export const UserMessage = ({ message, chatId }: { message: OMessage, chatId: st
                         <img className="w-4 h-4" src={message?.display?.icon}></img>
                     </div>
                 </div>
-                <div className="role-title font-semibold  text-[14px]">{message?.display?.name}</div>
+                <div className="role-title font-semibold  text-[14px] text-[var(--opengpts-primary-title-color)]">{message?.display?.name}</div>
             </div>
             <div className="flex flex-row-reverse items-end gap-1 mt-2">
                 <div

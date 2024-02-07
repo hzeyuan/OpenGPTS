@@ -3,13 +3,18 @@ import type { OMessage } from "@opengpts/types";
 import copy from "copy-to-clipboard";
 import { Actions } from "./Actions";
 import _ from "lodash";
-export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessage; error?: string }) => {
-  return (
 
+
+export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessage; error?: string }) => {
+
+
+
+  return (
     <div className="relative overflow-hidden text-sm ">
       <div className="flex items-center ">
         <div className="role-icon-box mr-[6px] rounded-full">
-          <div className="flex items-center justify-center rounded-full "
+          <div
+            className="flex items-center justify-center rounded-full "
             style={{
               width: "20px",
               height: "20px",
@@ -18,7 +23,7 @@ export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessa
             <img className="w-4 h-4" src={message?.display?.icon}></img>
           </div>
         </div>
-        <div className="role-title font-semibold  text-[14px]">{message?.display?.name}</div>
+        <div className="role-title font-semibold  text-[14px] text-[var(--opengpts-primary-title-color)] ">{message?.display?.name}</div>
       </div>
       <div className="flex items-end gap-1 mt-2">
         <div className="flex flex-col overflow-auto ">
@@ -28,11 +33,11 @@ export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessa
           >
             <div className={`leading-relaxed break-words break-all  `}>
               {message.content ? (
-                 _.isString(message.content)? <Markdown>
-                  {message.content}
-                  </Markdown>
-                  : message.content
-
+                _.isString(message.content) ? (
+                  <Markdown>{message.content}</Markdown>
+                ) : (
+                  message.content
+                )
               ) : (
                 <div className="flex justify-center">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">

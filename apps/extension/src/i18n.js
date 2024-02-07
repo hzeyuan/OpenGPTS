@@ -103,6 +103,19 @@ const resources = {
             'APIKeyInvalidTitle': 'API Key Invalid',
             'BaseURLErrorTitle': 'BaseURL Invalid',
 
+            //tools
+            'NetworkAccess': 'Network Access',
+            tools: {
+                searchWhatToolToUse: '🔍 Search for tools',
+                title: 'Tool Bar',
+                builtins: {
+                    groupName: 'Built-in',
+                },
+                plugins: {
+                    groupName: 'Plugins',
+                },
+            }
+
         }
     },
     zh: {
@@ -204,6 +217,20 @@ const resources = {
             'APIKeyInvalidDesc': '请到设置页面检查你的API Key是否正确',
             'APIKeyInvalidTitle': 'API Key 无效',
             'BaseURLErrorTitle': 'BaseURL 无效',
+
+            //tools:
+            'NetworkAccess': '网络访问',
+            tools: {
+                searchWhatToolToUse: '🔍 搜索工具中',
+                title: '插件栏',
+                builtins: {
+                    groupName: '内置工具',
+                },
+                plugins: {
+                    groupName: '插件',
+                },
+            }
+
 
         }
     }

@@ -1,7 +1,6 @@
-import type { ModelOptions } from "@opengpts/types"
+import type { ModelOptions, ToolRow } from "@opengpts/types"
 import chatgpt3_5Svg from '~assets/chatgpt3.5.svg'
 import chatgpt4Svg from '~assets/chatgpt4.svg'
-
 
 
 
@@ -72,42 +71,42 @@ const MODEL_OPTIONS: ModelOptions[] =
         },
         {
             key: 'gpt-4-0125-preview',
-            name:  'gpt-4-0125-preview',
+            name: 'gpt-4-0125-preview',
             description: 'ChatGPT 4-turbo (API)',
             modes: ['OpenAI API'],
             icon: chatgpt3_5Svg
         },
         {
             key: 'gpt-4-1106-preview',
-            name:  'gpt-4-preview',
+            name: 'gpt-4-preview',
             description: 'ChatGPT 4-turbo (API)',
             modes: ['OpenAI API'],
             icon: chatgpt3_5Svg
         },
         {
             key: 'gpt-4',
-            name:  'gpt-4',
+            name: 'gpt-4',
             description: 'ChatGPT 4-turbo (API)',
             modes: ['OpenAI API'],
             icon: chatgpt3_5Svg
         },
         {
             key: 'gpt-4-0613',
-            name:  'gpt-4-0613',
+            name: 'gpt-4-0613',
             description: 'ChatGPT 4-turbo (API)',
             modes: ['OpenAI API'],
             icon: chatgpt3_5Svg
         },
         {
             key: 'gpt-4-32k',
-            name:  'gpt-4-preview',
+            name: 'gpt-4-preview',
             description: 'ChatGPT 4-turbo (API)',
             modes: ['OpenAI API'],
             icon: chatgpt3_5Svg
         },
         {
             key: 'gpt-4-32k-0613',
-            name:  'gpt-4-32k-0613',
+            name: 'gpt-4-32k-0613',
             description: 'ChatGPT 4-turbo (API)',
             modes: ['OpenAI API'],
             icon: chatgpt3_5Svg

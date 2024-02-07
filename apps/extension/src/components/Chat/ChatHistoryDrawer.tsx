@@ -106,7 +106,7 @@ const ChatHistoryItem = ({ chat, onClick }: {
         <div>
             <div onClick={handleGetChatMessage} className="chat-history-item p-3 relative rounded-xl cursor-pointer hover:bg-[var(--opengpts-sidebar-icon-bg-color)]">
                 <div className="flex justify-between">
-                    <div className="overflow-hidden text-sm font-bold title text-ellipsis whitespace-nowrap">
+                    <div className="overflow-hidden text-[var(--opengpts-primary-content-text-color)] text-sm font-bold  text-ellipsis whitespace-nowrap">
                         {chat.title}
                     </div>
                     <div className="time text-xs whitespace-nowrap ml-2 text-[var(--opengpts-secondary-text-color)]">
@@ -120,12 +120,12 @@ const ChatHistoryItem = ({ chat, onClick }: {
                     <div className="flex items-center gap-1">
                         <span onClickCapture={handleUpdateChatTitle}>
                             <div className="remove-btn rounded-md h-[22px] flex justify-center items-center min-w-[22px] w-[22px] opacity-60 hover:bg-[#e4eaf6] hover:opacity-100">
-                                <EditOutlined />
+                                <EditOutlined className=" text-[var(--opengpts-secondary-text-color)]" />
                             </div>
                         </span>
                         <span onClickCapture={handleDeleteChat}>
                             <div className="remove-btn rounded-md h-[22px] flex justify-center items-center min-w-[22px] w-[22px] opacity-60 hover:bg-[#e4eaf6] hover:text-[#ff4d4f] hover:opacity-100">
-                                <DeleteOutlined />
+                                <DeleteOutlined className=" text-[var(--opengpts-secondary-text-color)]" />
                             </div>
                         </span>
                     </div>
@@ -214,7 +214,7 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
             getContainer={false}
             placement="bottom"
             closable={false}
-            mask={false}
+            mask={true}
             onClose={handleClose}
             open={isChatDrawerVisible} >
             <div className="px-4 py-3 search-area">

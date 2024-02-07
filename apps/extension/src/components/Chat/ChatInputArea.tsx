@@ -18,6 +18,7 @@ import ReferenceMessage from "./ReferenceMessage"
 import { useTranslation } from "react-i18next"
 import { useChatPanelContext } from "../Panel/ChatPanel"
 import { UploadButton } from "../Button/UploadButton"
+import ToolSelectButton from "../Tools"
 type ChatInputAreaRef = {
   submit: () => void
   setContent: (value: string) => void
@@ -51,7 +52,7 @@ const AtIcon: React.FC<{
 export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
   ({ chatId, onSubmit, onInputChange, content }, ref) => {
     const tiptapRef = useRef<TiptapRef>(null)
-    const { mention, setMention, command, model, setModel, webAccess, setWebAccess, fileList, setCommand } = useChatPanelContext()
+    const { mention, setMention, command, useTools, setUseTools, model, setModel, webAccess, setWebAccess, fileList, setCommand } = useChatPanelContext()
     const { t } = useTranslation()
     const showChatDrawer = useChatDrawerStore((state) => state.showChatDrawer)
     const showFileDrawer = useFileDrawerStore((state) => state.showFileDrawer)
@@ -85,6 +86,7 @@ export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
         <div className="text-black">
           <div className="gap-2 h-[36px] flex justify-start items-center">
             <ModelSelectButton model={model} onChange={setModel} />
+            <ToolSelectButton ></ToolSelectButton>
             <div className="flex gap-2 min-w-[90px] max-w-[calc(100%_-_40px)]">
               <div className="overflow-hidden text-xs"></div>
               <div className="flex items-center hidden text-xs origin-left chatgpt-plugin-capsule">
@@ -230,8 +232,7 @@ export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
                     onClose={() => setCommand(undefined)}
                     label={command.name}
                     icon={command.icon}
-                    chatId={chatId}>
-                  </CloseTag>}
+                    chatId={chatId} />}
 
                   {mention && <CloseTag
                     prefix={<AtIcon className='w-3 h-3 '></AtIcon>}
@@ -239,8 +240,8 @@ export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
                     onClose={() => setMention(undefined)}
                     label={mention.name}
                     icon={<img className="w-4 h-4" src={mention.icon}></img>}
-                    chatId={chatId}>
-                  </CloseTag>}
+                    chatId={chatId} />
+                  }
                 </div>
                 <InputImgs fileList={fileList}></InputImgs>
                 <div

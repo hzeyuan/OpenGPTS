@@ -97,8 +97,6 @@
   --opengpts-compose-opts-btn-bg-color: #424242;
   --opengpts-translate-resultbox-bg-color: #212123;
   --opengpts-translate-resultbox-border-color: #2b2b2e;
-  --opengpts-OCR-box-bg-color: #222;
-  --opengpts-OCR-border-color: #353535;
   --opengpts-enchance-bg-color: #000;
   --opengpts-quick-action-bg-color: #000;
   --opengpts-quick-action-bg-color-2: #333;
@@ -117,6 +115,10 @@
   --opengpts-upgrade-modal-title-bg-color: linear-gradient(152.9deg, #3e2e5b 0%, #28282b 44.24%),
     linear-gradient(95.96deg, #8a57ea 8.04%, #3771e0 57.11%);
   --opengpts-upgrade-modal-rockets-bg: linear-gradient(90deg, rgba(197, 171, 245, 0.3) 0%, rgba(197, 171, 245, 0) 100%);
+
+  --opengpts-function-border-color: #4e5052;
+  --opengpts-sidebar-tools-btn-bg-color: #1f1f1f;
+  --opengpts-sidebar-tools-btn-color: rgba(var(--opengpts-fg-rgb), 0.45);
 }
 
 :root,
@@ -222,9 +224,6 @@
   --opengpts-translate-customization-tips-color: rgba(var(--opengpts-fg-rgb), 0.4);
   --opengpts-translate-resultbox-bg-color: #f0f1f5;
   --opengpts-translate-resultbox-border-color: #e9e9ef;
-  --opengpts-OCR-box-bg-color: #f0f1f5;
-  --opengpts-OCR-border-color: #ededf4;
-  --opengpts-OCR-drop-bg-color: rgba(232, 221, 251, 0.4);
   --opengpts-enchance-bg-color: #fff;
   --opengpts-quick-action-bg-color: #fff;
   --opengpts-quick-action-bg-color-2: #f7f7f8;
@@ -243,6 +242,13 @@
   --opengpts-upgrade-modal-title-bg: linear-gradient(0deg, rgba(50, 197, 255, 1), rgba(182, 32, 224, 1));
   --opengpts-upgrade-modal-title-bg-color: linear-gradient(153deg, #e7effe 0%, #f0eafc 0%, #fff 44.24%), #c4c4c4;
   --opengpts-upgrade-modal-rockets-bg: linear-gradient(90deg, rgba(197, 171, 245, 0.3) 0%, rgba(197, 171, 245, 0) 100%);
+  
+ 
+  
+  --opengpts-function-border-color: rgb(77, 77, 77);
+  --opengpts-sidebar-tools-btn-bg-color: #f7f7f8;
+  --opengpts-sidebar-tools-btn-color: rgba(var(--opengpts-fg-rgb), 0.45);
+
 }
 
 :root[data-gpts-theme="dark"] .markdown-body {

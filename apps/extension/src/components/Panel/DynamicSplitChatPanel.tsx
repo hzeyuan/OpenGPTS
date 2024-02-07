@@ -100,9 +100,7 @@ const DynamicSplitChatPanel = () => {
                     <CommandCenter
                         setAllChatPanelInputArea={setAllChatPanelInputArea}
                         onAllSubmit={handleAllSubmit}
-                        onInputChange={handleAllInputChange}>
-
-                    </CommandCenter>
+                        onInputChange={handleAllInputChange} />
                 </div>
             </div>
         </div>

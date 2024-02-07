@@ -25,12 +25,12 @@ import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import twitterIcon from '~assets/twitter.svg';
 import type { ThemeMode } from '@opengpts/types';
-import DynamicSplitChatPanel from '~src/components/Panel/DynamicSplitChatPanel';
 import { ToolsPanel } from '~src/components/Panel/ToolsPanel';
+import DynamicSplitChatPanel from '~src/components/Panel/DynamicSplitChatPanel';
 
 const shakeAnimation = {
     scale: 0.85,
-    rotate: [0, 5, -5, 5, -5, 0], // 这里的数值可以根据需要调整以实现不同程度的抖动
+    rotate: [0, 5, -5, 5, -5, 0],
     transition: {
         duration: 0.2
     }

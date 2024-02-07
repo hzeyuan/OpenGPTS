@@ -10,12 +10,11 @@ import _ from "lodash";
 import { webSearch, type SearchRequest } from "~src/contents/web-search";
 import { PauseCircleOutlined } from "@ant-design/icons";
 import { Button } from "antd";
-import type { ChatRequest, FunctionCallHandler } from "ai";
-import type { OMessage, OpenGPTsConfig, Session } from "@opengpts/types";
+import type { ChatRequest, FunctionCallHandler, Message } from "ai";
+import type { OFunctionCallHandler, OMessage, OpenGPTsConfig, Session } from "@opengpts/types";
 import { MessagesList } from "../Message/MessageList";
 import type { MessagesListMethods } from "../Message/MessageList";
 import { useChatStore } from "~src/store/useChatStore";
-import { ofetch } from "ofetch";
 import useChatQuoteStore from "~src/store/useChatQuoteStore";
 import { useChatPanelContext } from "../Panel/ChatPanel";
 import useScreenCapture from "~src/store/useScreenCapture";
@@ -25,7 +24,8 @@ import { Storage } from "@plasmohq/storage";
 import { OpenAI } from "@opengpts/core";
 import { useDebouncedCallback } from "use-debounce";
 import { OPENAI_BASE_URL, OpenGPTS_BASE_URL } from "@opengpts/core/constant";
-import { transformMessages } from "@opengpts/core/utils";
+import { convertToolToApiDescription, sendHttpRequest, transformMessages } from "@opengpts/core/utils";
+import { callTool, getTool } from "~src/app/services/tools";
 export type ChatProps = {
     ref: RefObject<any>;
     uiMessages?: any[];
@@ -36,19 +36,11 @@ export type ChatProps = {
 
 export type ChatRef = {};
 
-const apiMapping = {
-    get_current_weather: {
-        url: "http://localhost:1337/api/fn-api/get_current_weather",
-    },
-    dalle3: {
-        url: "http://localhost:1337/api/fn-api/dalle3",
-    },
-};
 
 export const Chat = forwardRef<ChatRef, ChatProps>(
     ({ uiMessages = [], systemMessage = "你好有什么我可以帮助你的么？", children = "", className = "" }, ref) => {
         const [content, setContent] = useState<string>("");
-        const { mention, setMention, command, setCommand, setModel, chatId, setChatId, model, webAccess, setFileList } =
+        const { mention, setMention, useTools, setUseTools, command, setCommand, setModel, chatId, setChatId, model, webAccess, setFileList } =
             useChatPanelContext();
         const [hideInputArea, setHideInputArea] = useState(false);
         const messagesListRef = useRef<MessagesListMethods>(null);
@@ -75,69 +67,90 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 area: "local",
             }),
         });
+
+        /**
+         * Creates a function call message.
+         * @param previousMessage The previous message.
+         * @param functionCall The function call.
+         * @param toolInfo The tool information.
+         * @param status The status of the function call.
+         * @param content The content of the message.
+         * @returns The created message.
+         */
+        function createFunctionCallMessage(previousMessage, functionCall, toolInfo, status, content = ''): OMessage {
+            return {
+                id: previousMessage?.id || nanoid(),
+                name: functionCall.name,
+                role: "function",
+                content: content,
+                data: {
+                    ...toolInfo,
+                    requestPayload: functionCall.arguments,
+                    requestResponse: content,
+                    status: status
+                },
+            };
+        }
+
+
+        /**
+         * Creates an error message for a function call.
+         * @param previousMessage The previous message.
+         * @param functionCall The function call.
+         * @param error The error object.
+         * @returns The error message.
+         */
+        function createErrorFunctionCallMessage(previousMessage, functionCall, error): OMessage {
+            return {
+                id: previousMessage?.id || nanoid(),
+                name: functionCall.name,
+                role: "function",
+                isError: true,
+                content: JSON.stringify({ error: error.message }),
+                data: {
+                    status: 'error'
+                },
+            };
+        }
         const functionCallHandler: FunctionCallHandler = async (chatMessages, functionCall) => {
+            if (!functionCall.name) throw new Error('functionCall.name is required')
+
             console.log("正在调用插件", functionCall.name, "参数为：", functionCall.arguments);
             console.log("chatMessages", chatMessages);
-            // according to functionCall.name to call api
-            // TODO:fetch apiMapping from server
-            const apiInfo = apiMapping[functionCall.name as string];
-            let message: OMessage;
-            const functionCallMessage = chatMessages.find((message) => {
-                const fnCall = message.function_call;
-                return typeof fnCall === "object" && fnCall && fnCall.name! === functionCall.name;
-            });
 
-            if (!apiInfo) {
-                return {
-                    messages: [
-                        ...chatMessages,
-                        {
-                            id: functionCallMessage?.id || nanoid(),
-                            name: functionCall.name,
-                            role: "function" as const,
-                            isError: true,
-                            content: JSON.stringify({
-                                error: "未找到该函数",
-                            }),
-                        },
-                    ],
-                };
+            /**
+             * tips:here need to find the last function call message  
+             * because the chatMessages maybe has more than one function call message,we need to find the last one
+             */
+            const functionCallMessage = _.findLast(chatMessages, message => _.get(message, 'function_call.name') === functionCall.name);
+            // get tool info from server
+            const toolInfo = await getTool(functionCall.name);
+            let newMessage = createFunctionCallMessage(functionCallMessage, functionCall, toolInfo, 'running');
+
+
+            if (functionCallMessage) {
+                setMessages(chatMessages.map(message => message.id === newMessage.id ? newMessage : message));
+                addChatMessage(chatId, newMessage);
             }
+
             try {
-                const content = await ofetch(apiInfo.url, {
-                    method: "POST",
-                    body: JSON.stringify({ args: functionCall.arguments }),
-                    timeout: 30000,
-                });
-                message = {
-                    id: functionCallMessage?.id || nanoid(),
-                    name: functionCall.name,
-                    role: "function" as const,
-                    content: content,
-                };
+                const content = await callTool(functionCall.name, JSON.parse(functionCall?.arguments || '{}'))
+                console.debug('call tool get result', content)
+
+                newMessage = createFunctionCallMessage(newMessage, functionCall, toolInfo, 'finished', content);
+                addChatMessage(chatId, newMessage)
             } catch (error) {
                 console.error("Error processing API request:", error);
-                // return handleApiFunctionError(functionCall, error);
-                message = {
-                    id: functionCallMessage?.id || nanoid(),
-                    name: functionCall.name,
-                    role: "function" as const,
-                    isError: true,
-                    content: JSON.stringify({
-                        error: error.message,
-                    }),
-                };
+                newMessage = createErrorFunctionCallMessage(newMessage, functionCall, error);
             }
-            const functionResponse: ChatRequest = {
-                messages: [...chatMessages, message],
-            };
-            console.log("functionResponse", functionResponse);
-            return functionResponse;
+            const functionResponse = { messages: [...chatMessages, newMessage], };
+            console.debug("functionResponse", functionResponse);
+            return functionResponse as { messages: Message[] };
         };
 
         const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } = useChat({
             initMode: opengptsConfig?.mode,
-            api: "http://127.0.0.1:3000/api/chat",
+            api: "http://127.0.0.1:1947/api/chat",
             experimental_onFunctionCall: functionCallHandler,
             credentials: "omit",
             initialMessages: [],
@@ -322,8 +335,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             },
         });
 
-
-
         const handleSubmit = async ({ content }) => {
             if (!content) return;
             let webSearchPrompt = "";
@@ -385,26 +396,49 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             switch (opengptsConfig.mode) {
                 case 'OpenAI API':
                     chatRequestOptions.headers['Authorization'] = `Bearer ${opengptsConfig.apiKey}`;
-                    chatRequestOptions['body'] = transformMessages({
+                    chatRequestOptions['body'] = {
                         model: modelKey,
-                        messages: [
+                        messages: transformMessages([
                             {
                                 id: nanoid(),
                                 role: 'system',
                                 content: '你好有什么我可以帮助你的么？',
                             },
                             ...newMessages
-                        ],
-                        args: {
-                            stream: true,
-                        }
-                    })
+                        ]),
+                        stream: true,
+                    }
                     chatRequestData['apiKey'] = opengptsConfig.apiKey;
                     chatRequestData['baseUrl'] = `${opengptsConfig?.isProxy ? opengptsConfig.baseUrl : OPENAI_BASE_URL}/chat/completions`;
                     console.log('options', chatRequestOptions['body'])
                     break;
                 case 'OpenGPTs':
-                    chatRequestOptions["body"] = { model: modelKey, messages: newMessages };
+                    // : ChatCompletioCreateParams.Function[]
+                    // const functions = [
+                    //     {
+                    //         name: 'get_current_weather',
+                    //         description: 'Get the current weather',
+                    //         parameters: {
+                    //             type: 'object',
+                    //             properties: {
+                    //                 location: {
+                    //                     type: 'string',
+                    //                     description: 'The city and state, e.g. San Francisco, CA',
+                    //                 },
+                    //                 format: {
+                    //                     type: 'string',
+                    //                     enum: ['celsius', 'fahrenheit'],
+                    //                     description:
+                    //                         'The temperature unit to use. Infer this from the users location.',
+                    //                 },
+                    //             },
+                    //             required: ['location', 'format'],
+                    //         },
+                    //     },
+                    // ];
+                    // convertToolToApiDescription(useTools);
+                    const functions = useTools.map((tool) => convertToolToApiDescription(tool))
+                    chatRequestOptions["body"] = { model: modelKey, messages: newMessages, functions };
                     break;
                 case 'ChatGPT webapp':
                     chatRequestOptions['body'] = {
@@ -596,3 +630,5 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
         );
     }
 );
+
+

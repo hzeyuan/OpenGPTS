@@ -43,6 +43,12 @@ export const MessagesList = React.forwardRef<MessagesListMethods, MessagesListPr
         }, [messages]);
 
 
+        /**
+* filter function messages  
+* query call  condition: message.role ==='assistant'  && message.function_call 
+* result condition: message.role ==='function'
+*/
+
         useImperativeHandle(
             ref,
             (): MessagesListMethods => ({
@@ -57,7 +63,10 @@ export const MessagesList = React.forwardRef<MessagesListMethods, MessagesListPr
         const updateMessages = (newMessages) => {
             let reversedMessages = _.reverse([...newMessages]);
             let uniqueMessages = _.uniqBy(reversedMessages, 'id');
+
             let updatedMessages = _.reverse(uniqueMessages);
+            // console.log('newMessages', newMessages)
+            // console.log('uniqueMessages', uniqueMessages, updatedMessages)
             setDisplayedMessages(updatedMessages);
         };
 
@@ -73,6 +82,7 @@ export const MessagesList = React.forwardRef<MessagesListMethods, MessagesListPr
                         exit="exit"
                     >
                         <div>
+                            {/* {JSON.stringify(message)} */}
                             {message.role === "system" && (
                                 <AIMessage
                                     chatId={chatId}

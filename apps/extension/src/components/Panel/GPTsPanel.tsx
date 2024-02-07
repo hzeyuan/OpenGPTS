@@ -39,14 +39,13 @@ const GPTsPanel = () => {
     selectedRowKeys,
     onChange: (keys: Key[]) => setSelectedRowKeys(keys),
   };
-  // const [dataSource, setDataSource] = useState<any[]>([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [notificationApi, notificationContextHolder] = notification.useNotification();
   const [modal, modalContextHolder] = Modal.useModal();
   const gptsList = useGPTStore(state => state.gptsList)
   const setGPTsList = useGPTStore(state => state.setGPTsList)
   const updateGPTs = useGPTStore(state => state.updateGPTs)
-
+  const [searchValue, setSearchValue] = useState('')
 
 
   const handleFavoriteGPTs = async (gizmo: Gizmo) => {
@@ -55,7 +54,7 @@ const GPTsPanel = () => {
     updateGPTs(gizmo)
   }
 
-  const dataSource = useMemo((searchValue: string = '') => {
+  const dataSource = useMemo(() => {
     console.log('重新渲染')
     // setSpinning(true)
     const sortGizmos = (gizmos: Gizmo[], sortType: string, sortOrder: string) => {
@@ -306,7 +305,6 @@ const GPTsPanel = () => {
 
   storage.watch({
     "gizmos": (c) => {
-      console.log("更新")
       setGPTsList(c.newValue)
     },
   })
@@ -568,7 +566,7 @@ const GPTsPanel = () => {
                   <DownOutlined />
                 </div>
               </Dropdown>,
-              <Search onSearch={(value) => { handleGetGPTsList(value) }} placeholder="input search text" allowClear />,
+              <Search onSearch={(value) => { setSearchValue(value) }} placeholder="input search text" allowClear />,
               <Button onClick={handleReset} type="primary" key="primary">
                 {t('Reset')}
               </Button>,

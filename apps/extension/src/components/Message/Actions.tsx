@@ -13,7 +13,7 @@ const Actions: React.FC<{
     const [messageApi, contextHolder] = msgComp.useMessage();
     const setQuote = useChatQuoteStore(state => state.setQuote);
     const handleCopy = () => {
-        copy(message.content);
+        copy(message.content.toString());
         messageApi.success('Copy Success');
     };
 
@@ -22,7 +22,7 @@ const Actions: React.FC<{
             ...message,
             chatId: chatId,
         }
-        console.log('chatId',chatId,quoteMessage)
+        console.log('chatId', chatId, quoteMessage)
         setQuote(chatId, quoteMessage);
     }
 

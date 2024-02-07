@@ -54,7 +54,7 @@ const ModelSelectButton = ({ model, onChange }) => {
         }} placement="bottom">
         <div
             style={{ color: 'var(--opengpts-sidebar-model-btn-color)' }}
-            className=' box-border bg-[var(--opengpts-sidebar-model-btn-bg-color)] model-btn   flex justify-center items-center cursor-pointer pl-[6px] pr-[5px] py-[6px] leading-4 rounded-3xl gap-[2px]'>
+            className=' box-border bg-[var(--opengpts-sidebar-model-btn-bg-color)]   flex justify-center items-center cursor-pointer pl-[6px] pr-[5px] py-[6px] leading-4 rounded-3xl gap-[2px]'>
             <div className="icon flex justify-center items-center rounded-full h-4 w-4 ml-[1px] mr-[2px]">
                 <div
                     style={{ width: '14px', height: '14px' }}
