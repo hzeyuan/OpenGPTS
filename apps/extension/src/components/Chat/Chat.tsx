@@ -147,7 +147,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 
         const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } = useChat({
             initMode: opengptsConfig?.mode,
-            api: "http://localhost:1947/api/chat",
+            api: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat`,
             experimental_onFunctionCall: functionCallHandler,
             credentials: "omit",
             initialMessages: [],
