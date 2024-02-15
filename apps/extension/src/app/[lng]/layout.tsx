@@ -3,7 +3,6 @@ import '../index.css'
 import { initI18next } from '../i18n'
 import { dir } from 'i18next'
 import { defaultNS } from '../i18n/settings'
-import { AntdRegistry } from '@ant-design/nextjs-registry';
 export const metadata = {
   title: 'OpenGPTs',
   description: 'OpenGPTs',
@@ -27,12 +26,9 @@ export default function RootLayout(
   initI18next(lng, defaultNS)
   return (
     <html lang={lng} dir={dir(lng)}>
-      <AntdRegistry>
         <body>
           {children}
         </body>
-      </AntdRegistry>
-
     </html>
   )
 }

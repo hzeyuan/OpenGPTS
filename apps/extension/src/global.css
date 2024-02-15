@@ -115,6 +115,7 @@ select {
   --opengpts-chat-user-bubble-color: rgba(var(--opengpts-fg-rgb), 0.9);
   --opengpts-chat-user-bubble-prompt-color: rgba(var(--opengpts-fg-rgb), 0.5);
   --opengpts-chat-primary-color: #784dca;
+  --opengpts-chat-quota-color: #8a57ea;
   --opengpts-chat-primary-opacity-color: rgba(121, 77, 202, 0.75);
   --opengpts-chat-primary-bg-color: #1f1f1f;
   --opengpts-chat-error-color: #f44336;
@@ -239,8 +240,9 @@ select {
   --opengpts-chat-user-bubble-color: rgba(var(--opengpts-bg-rgb), 0.9);
   --opengpts-chat-user-bubble-prompt-color: rgba(var(--opengpts-bg-rgb), 0.5);
   --opengpts-chat-primary-color: #784dca;
+  --opengpts-chat-quota-color: #8a57ea;
   --opengpts-chat-primary-opacity-color: rgba(139, 87, 234, 0.75);
-  --opengpts-chat-primary-bg-color: #e8ddfb;
+  --opengpts-chat-primary-bg-color: #139f9ae0;
   --opengpts-chat-func-bg-color: #fff7ea;
   --opengpts-chat-error-color: #f44336;
   --opengpts-chat-wel-bg-color: rgba(138, 87, 234, 0.05);

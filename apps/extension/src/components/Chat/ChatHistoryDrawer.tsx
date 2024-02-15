@@ -1,6 +1,6 @@
 import { CloseOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons"
 import { Drawer, Input, Modal } from "antd"
-import { useCallback, useEffect, useMemo, useState } from "react"
+import {  useEffect, useMemo, useState } from "react"
 import type { Chat } from "@opengpts/types"
 import { useTimeAgo } from "~src/hooks/useTimeago"
 import { nanoid } from '~shared/utils';
@@ -25,7 +25,6 @@ const TitleInput: React.FC<{
 
     return (
         <Input showCount defaultValue={title} value={title} onChange={(e) => {
-            console.log('v', e.target.value)
             setTitle(e.target.value)
             onChange && onChange(e.target.value)
         }} />
@@ -121,12 +120,12 @@ const ChatHistoryItem = ({ chat, onClick }: {
                     </div>
                     <div className="flex items-center gap-1">
                         <span onClickCapture={handleUpdateChatTitle}>
-                            <div className="remove-btn rounded-md h-[22px] flex justify-center items-center min-w-[22px] w-[22px] opacity-60 hover:bg-[#e4eaf6] hover:opacity-100">
+                            <div className=" rounded-md h-[22px] flex justify-center items-center min-w-[22px] w-[22px] opacity-60 hover:bg-[#e4eaf6] hover:opacity-100">
                                 <EditOutlined className=" text-[var(--opengpts-secondary-text-color)]" />
                             </div>
                         </span>
                         <span onClickCapture={handleDeleteChat}>
-                            <div className="remove-btn rounded-md h-[22px] flex justify-center items-center min-w-[22px] w-[22px] opacity-60 hover:bg-[#e4eaf6] hover:text-[#ff4d4f] hover:opacity-100">
+                            <div className=" rounded-md h-[22px] flex justify-center items-center min-w-[22px] w-[22px] opacity-60 hover:bg-[#e4eaf6] hover:text-[#ff4d4f] hover:opacity-100">
                                 <DeleteOutlined className=" text-[var(--opengpts-secondary-text-color)]" />
                             </div>
                         </span>
@@ -232,6 +231,11 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
                 <VirtualList
                     height={document.body.clientHeight * 0.7}
                     itemHeight={47}
+                    innerProps={{
+                        // @ts-ignore
+                        className:"bg-[var(--opengpts-option-card-bg-color)]"
+                    }}
+                    
                     data={filteredChatList}
                     onScroll={onScroll}
                     itemKey={(item) => item.chatId}

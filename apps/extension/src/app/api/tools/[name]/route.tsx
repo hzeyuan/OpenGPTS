@@ -8,7 +8,6 @@ export async function GET(req: Request, { params }: {
     }
 }) {
     try {
-        // 从 URL 参数中获取工具的ID
         const { name } = params
 
         if (!name) {
@@ -17,8 +16,6 @@ export async function GET(req: Request, { params }: {
                 message: 'Tool name is required'
             });
         }
-
-        // 使用工具的ID从数据库中检索工具的信息
         const { data: tool, error } = await supabase
             .from('tools')
             .select('*')

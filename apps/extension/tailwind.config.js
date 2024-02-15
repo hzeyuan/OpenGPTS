@@ -5,7 +5,7 @@ module.exports = {
   mode: "jit",
   darkMode: "class",
   content: ["./**/*.tsx",
-    './src/pages/**/*.tsx',
+    './src/app/**/*.tsx',
     './src/components/**/*.tsx'],
   corePlugins: {
     preflight: false

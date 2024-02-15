@@ -20,9 +20,9 @@ export const UserMessage = ({ message, chatId }: { message: OMessage, chatId: st
             </div>
             <div className="flex flex-row-reverse items-end gap-1 mt-1">
                 <div
-                    className="flex overflow-auto rounded-md text-[var(--opengpts-chat-user-bubble-color)] px-3 py-2 bg-[var(--opengpts-chat-primary-color)]  flex-col"
+                    className="flex overflow-auto rounded-md text-[var(--opengpts-chat-user-bubble-color)] px-3 py-2 bg-[var(--opengpts-chat-primary-bg-color)]  flex-col"
                 >
-                    {message?.command && (<div className="prompt-label gap-1 flex items-center text-xs leading-5 text-[#8a57ea] mb-1">
+                    {message?.command && (<div className="prompt-label gap-1 flex items-center text-xs leading-5 text-[var(--opengpts-chat-quota-color)] mb-1">
                         {
                             message.command.icon && <span className="inline-flex shrink-0 ">
                                 {message.command.icon}
