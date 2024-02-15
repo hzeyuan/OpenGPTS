@@ -1,18 +1,22 @@
-import { useMemo, useState } from "react";
+import React,{ Suspense, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle2, ChevronDown, ChevronUp } from "lucide-react";
-import Markdown from "../Markdown";
-import _ from 'lodash';
-import { Spin, Tag } from "antd";
+import _ from 'lodash-es';
 import { useTranslation } from "react-i18next";
+import type { OMessage } from "@opengpts/types";
+import { Spin, Tag } from "antd";
 
-const FunctionMessage = ({ message }) => {
+
+const Markdown = React.lazy(() => import("../Markdown"));
+
+const FunctionMessage = ({ message }: {
+    message: OMessage
+}) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const toggleExpand = () => setIsExpanded(!isExpanded);
     const { t } = useTranslation();
 
-    const functionInfo = useMemo(() => {
-        console.log('message', message)
+    const functionInfo: any = useMemo(() => {
         return message['data']
     }, [message])
 
@@ -35,6 +39,7 @@ const FunctionMessage = ({ message }) => {
 
 
     const toolName = useMemo(() => {
+        if (_.isString(message.function_call)) return '';
         return functionInfo?.name || message?.function_call?.name
     }, [functionInfo, message])
 
@@ -100,14 +105,18 @@ const FunctionMessage = ({ message }) => {
                     >
                         <div className="py-2"> <Tag >Request</Tag></div>
                         <div className="px-4 py-1 text-sm rounded bg-[var(--opengpts-chat-ai-bubble-bg-color)] ">
-                            <Markdown
-                            >{functionInfo?.requestPayload}</Markdown>
+                            <Suspense >
+                                <Markdown
+                                >{functionInfo?.requestPayload}</Markdown>
+                            </Suspense>
                         </div>
                         <div className="py-2"> <Tag>Response</Tag></div>
                         <div className="px-4 py-1 text-sm rounded bg-[var(--opengpts-chat-ai-bubble-bg-color)] ">
-                            <Markdown>
-                                {message?.content || '请稍等...'}
-                            </Markdown>
+                            <Suspense >
+                                <Markdown>
+                                    {message?.content || '请稍等...'}
+                                </Markdown>
+                            </Suspense>
                         </div>
 
                     </motion.div>

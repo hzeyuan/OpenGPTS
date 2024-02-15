@@ -3,7 +3,11 @@ import { motion } from 'framer-motion';
 
 
 
-const ActionButton = ({ label, icon, onClick }) => {
+const ActionButton: React.FC<{
+    label: string;
+    icon: React.ReactNode;
+    onClick: () => void;
+}> = ({ label, icon, onClick }) => {
     return (
         <motion.div
             className="bg-[var(--opengpts-sidebar-image-action-btn-bg-color)] text-[var(--opengpts-primary-color)] py-[4px] pl-[8px] max-w-[100%] pr-[8px] cursor-pointer inline-flex items-center text-xs image-quick-action-btn rounded-[6px]"

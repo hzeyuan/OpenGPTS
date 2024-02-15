@@ -1,44 +1,44 @@
-import React, { useState, useEffect, useRef } from 'react';
-import mermaid from 'mermaid';
-import { SettingOutlined, EditOutlined, EllipsisOutlined, ExportOutlined, CopyOutlined, PlusOutlined, MinusOutlined, RestFilled } from '@ant-design/icons';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+// import mermaid from 'mermaid';
+import { ExportOutlined, CopyOutlined, PlusOutlined, MinusOutlined, RestFilled } from '@ant-design/icons';
 import { Button, Card, Input, Skeleton, Tabs, Tooltip, message } from 'antd';
 import copyToClipboard from 'copy-to-clipboard';
 import { useTranslation } from "react-i18next"
+import type { Mermaid } from 'mermaid';
 
+
+
+// const mermaid = React.lazy(() => import('mermaid'));
 // 初始化Mermaid的配置
-mermaid.initialize({
-  startOnLoad: false,
-  theme: 'default',
-  logLevel: 'fatal',
-  securityLevel: 'strict',
-  fontFamily: '"trebuchet MS", verdana, arial, sans-serif',
-  fontSize: 14,
-  arrowMarkerAbsolute: false,
-});
 
-const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan' }) => {
+
+const MermaidChartEditor: React.FC<{
+  initialChart: string
+  backgroundColor?: string
+}> = ({ initialChart, backgroundColor = 'lightcyan' }) => {
+  const [mermaid, setMermaid] = useState<Mermaid>();
   const [chart, setChart] = useState(initialChart);
   const [loading, setLoading] = useState(false);
   const mermaidRef = useRef<HTMLDivElement>(null);
   const [svgContent, setSvgContent] = useState('');
   const { t } = useTranslation()
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(3);
   const [dragging, setDragging] = useState(false);
   const [lastClientX, setLastClientX] = useState(0);
   const [lastClientY, setLastClientY] = useState(0);
   const [translateX, setTranslateX] = useState(0);
   const [translateY, setTranslateY] = useState(0);
 
-  const startDrag = (e) => {
+  const startDrag = (e: React.MouseEvent<HTMLDivElement>) => {
     setLastClientX(e.clientX);
     setLastClientY(e.clientY);
     setDragging(true);
   };
 
-  const onDrag = (e) => {
+  const onDrag = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!dragging) return;
-    const dx = e.clientX - lastClientX;
-    const dy = e.clientY - lastClientY;
+    const dx = (e.clientX - lastClientX) / scale;
+    const dy = (e.clientY - lastClientY) / scale;
     setTranslateX(translateX + dx);
     setTranslateY(translateY + dy);
     setLastClientX(e.clientX);
@@ -50,31 +50,55 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
   };
 
   useEffect(() => {
+    import('mermaid').then((mermaidModule) => {
+      setMermaid(mermaidModule.default);
+      mermaidModule.default.initialize({
+        startOnLoad: false,
+        theme: 'default',
+        logLevel: 'fatal',
+        securityLevel: 'strict',
+        fontFamily: '"trebuchet MS", verdana, arial, sans-serif',
+        fontSize: 14,
+        arrowMarkerAbsolute: false,
+      });
+    });
+  }, [])
+
+  useEffect(() => {
     if (dragging) {
+      const onDrag = (e: any) => {
+        if (!dragging) return;
+        const dx = (e.clientX - lastClientX) / scale;
+        const dy = (e.clientY - lastClientY) / scale;
+        setTranslateX(translateX + dx);
+        setTranslateY(translateY + dy);
+        setLastClientX(e.clientX);
+        setLastClientY(e.clientY);
+      };
+
+      const stopDrag = () => {
+        setDragging(false);
+      };
+
       window.addEventListener('mousemove', onDrag);
       window.addEventListener('mouseup', stopDrag);
     }
 
     return () => {
-      window.removeEventListener('mousemove', onDrag);
+      window.removeEventListener('mousemove', () => onDrag);
       window.removeEventListener('mouseup', stopDrag);
     };
-  }, [dragging, onDrag, stopDrag]);
+  }, [dragging, lastClientX, lastClientY, scale, translateX, translateY]);
+  const zoomOut = () => setScale(scale => Math.max(scale - 0.5, 0.5));
+  const zoomIn = () => setScale(scale => Math.min(scale + 0.5, 5));
 
+  const handleWheelZoom = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const scaleChange = e.deltaY * -0.01;
+    const newScale = Math.max(0.1, Math.min(scale + scaleChange, 10));
+    requestAnimationFrame(() => setScale(newScale));
 
-
-  const zoomIn = () => setScale(scale => scale + 0.1);
-  const zoomOut = () => setScale(scale => Math.max(scale - 0.1, 0.1));
-
-
-  const handleWheelZoom = (e) => {
-
-    e.preventDefault(); // 阻止默认的滚轮行为，即页面滚动
-    const scaleChange = e.deltaY * -0.01; // 根据滚轮方向调整缩放变化量
-    const newScale = Math.max(0.1, Math.min(scale + scaleChange, 5)); // 限制缩放级别在0.1到5之间
-    setScale(newScale);
-
-  };
+  }, [scale]);
 
 
   useEffect(() => {
@@ -83,12 +107,14 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
       // 渲染Mermaid图表
       (async () => {
         try {
-          const { svg, bindFunctions } = await mermaid.render('graphDiv', chart);
-          setSvgContent(svg);
+          if (mermaid) {
+            const { svg, bindFunctions } = await mermaid.render('graphDiv', chart);
+            setSvgContent(svg);
 
-          setLoading(false);
-          if (bindFunctions && mermaidRef.current) {
-            bindFunctions(mermaidRef.current);
+            setLoading(false);
+            if (bindFunctions && mermaidRef.current) {
+              bindFunctions(mermaidRef.current);
+            }
           }
         } catch (error) {
           console.error('Mermaid rendering error:', error);
@@ -97,9 +123,13 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
         }
       })();
     }
-  }, [chart]);
+  }, [chart, mermaid]);
 
-  const handleCodeChange = (event) => {
+  useEffect(() => {
+    setChart(initialChart)
+  }, [initialChart])
+
+  const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setChart(event.target.value);
   };
 
@@ -153,7 +183,8 @@ const MermaidChartEditor = ({ chart: initialChart, backgroundColor = 'lightcyan'
       <Skeleton loading={loading} active>
         <Tabs defaultActiveKey="1" tabBarExtraContent={extra}>
           <Tabs.TabPane tab={t('Preview')} key="1">
-            <div onWheel={handleWheelZoom} style={{ overflow: 'auto', padding: '10px' }}>
+            <div className="overflow-auto p-2 min-w-[50vw] min-h-[360px]  flex items-center justify-center"
+              onWheel={handleWheelZoom}>
               <div
                 ref={mermaidRef}
                 dangerouslySetInnerHTML={{ __html: svgContent }}

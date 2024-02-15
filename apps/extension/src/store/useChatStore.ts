@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from "lodash-es";
 import { create } from "zustand";
 import { persist } from 'zustand/middleware'
 import type { Chat, OMessage } from "@opengpts/types";
@@ -6,7 +6,7 @@ interface ChatState {
     curChatId: string;
     chatList: Chat[];
 
-    chatListMessages: any;
+    chatListMessages: Record<string, OMessage[]>;
 
 }
 

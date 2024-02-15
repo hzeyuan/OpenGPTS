@@ -1,30 +1,24 @@
 import React, { useEffect, useState } from "react"
-import logo from "~assets/icon.png"
-import { Storage } from "@plasmohq/storage"
+// import logo from "data-base64:~assets/icon.png"
 import { useStorage } from "@plasmohq/storage/hook"
 import { useTranslation } from 'react-i18next';
 import '../i18n.js';
 import "./index.css"
-import '../base.css'
-import { Card, ConfigProvider, Divider, Input, Menu, Radio, Space, Switch, Typography, message, theme as themeStyle } from "antd"
+import '../global.css'
+import { opengptsStorage } from '~src/store';
+import { ConfigProvider, theme as themeStyle, type RadioChangeEvent, Divider, Typography, Radio, Space, Menu } from "antd"
 import ModeSelector from "~src/components/ModeSelector.jsx";
+import useColorMode from "~src/hooks/useColorMode.jsx";
 const { Title, Text } = Typography;
 function IndexOptions() {
     const { t, i18n } = useTranslation();
 
 
-    const [theme, setTheme] = useStorage({
-        key: "theme",
-        instance: new Storage({
-            area: "local"
-        }),
-    }, 'light')
+    const { theme, setTheme } = useColorMode();
 
     const [language, setLanguage] = useStorage({
-        key: "language",
-        instance: new Storage({
-            area: "local"
-        })
+        key: "opengpts-language",
+        instance: opengptsStorage,
     }, 'en')
 
     const [activeKey, setActiveKey] = useState('general')
@@ -34,26 +28,26 @@ function IndexOptions() {
     },
     ]
 
-   
 
 
-    const handleChangeTheme = (e) => {
+
+    const handleChangeTheme = (e: RadioChangeEvent) => {
         setTheme(e.target.value)
     }
 
-    const handleChangeLanguage = (e) => {
+    const handleChangeLanguage = (e: RadioChangeEvent) => {
         i18n.changeLanguage(e.target.value);
         setLanguage(e.target.value)
     };
 
- 
+
 
     useEffect(() => {
         i18n.changeLanguage(language);
     }, [])
 
 
-    const renderArea = (key) => {
+    const renderArea = (key: string) => {
         switch (key) {
             case 'general':
                 return (
@@ -141,7 +135,7 @@ function IndexOptions() {
                 >
                     <div className="menu-area card">
                         <div className="flex items-center px-5 py-2">
-                            <img className="w-8 h-8 logo" src={logo.toString()} alt="" />
+                            {/* <img className="w-8 h-8 logo" src={logo.toString()} alt="" /> */}
                             <div className="text-2xl font-semibold ms-2"><Text style={{
                                 fontSize: '20px',
                             }}>OpenGPTS</Text></div>

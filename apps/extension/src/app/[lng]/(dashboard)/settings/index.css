@@ -1,0 +1,54 @@
+.option-page {
+  background-color: var(--opengpts-html-bg-color);
+  padding:16px;
+  height:100%;
+}
+.option-page .inner-container .menu-area {
+  position: fixed;
+  width: 240px;
+  padding: 8px;
+}
+
+.option-page .option-area {
+  margin-inline-start: 280px;
+  margin-bottom: 50px;
+  padding: 30px 40px;
+  flex: 1;
+  min-height: 800px;
+}
+
+.option-page .inner-container .card {
+  border-radius: var(--opengpts-border-radius-lg);
+  background-color: var(--opengpts-option-card-bg-color);
+  border: var(--opengpts-option-card-border);
+}
+
+.option-area .section .section-title {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.option-area .section .sub-section .sub-section-title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.option-area .section .sub-section .sub-section-desc {
+  color: var(--opengpts-secondary-text-color);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.option-area .section .sub-section .content-box {
+  margin-top: 20px;
+}
+.option-area .section .sub-section .content-box .option-box {
+  padding: 24px;
+  border-radius: var(--opengpts-border-radius-lg);
+  background-color: var(--opengpts-option-box-bg-color);
+  border: var(--opengpts-option-box-border);
+}
+
+.option-area .section .sub-section {
+  margin-bottom: 40px;
+}

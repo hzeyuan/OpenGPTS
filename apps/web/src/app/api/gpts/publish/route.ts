@@ -1,5 +1,5 @@
 import { Gizmo } from "@opengpts/types";
-import { insertRow, findByUuid } from "../../../models/gpts";
+import { insertRow, findByUuid } from "../../../(header)/models/gpts";
 export async function POST(req: Request) {
     try {
         const { gizmo }: {

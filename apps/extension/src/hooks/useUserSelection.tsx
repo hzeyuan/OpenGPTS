@@ -12,7 +12,7 @@ const useUserSelection = () => {
             }
         };
 
-        const handleCopy = (e) => {
+        const handleCopy = (e: any) => {
             setCopiedText(e.clipboardData.getData('text/plain'));
         };
 

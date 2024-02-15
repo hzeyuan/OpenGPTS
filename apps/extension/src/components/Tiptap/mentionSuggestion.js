@@ -2,8 +2,8 @@ import { ReactRenderer } from '@tiptap/react'
 import tippy from 'tippy.js'
 import { PluginKey } from '@tiptap/pm/state';
 import MentionList from './MentionList'
-import chatgpt3_5Svg from "data-base64:~assets/chatgpt3.5.svg"
-import chatgpt4Svg from "data-base64:~assets/chatgpt4.svg"
+import chatgpt3_5Svg from "~assets/chatgpt3.5.svg"
+import chatgpt4Svg from "~assets/chatgpt4.svg"
 
 
 export default {

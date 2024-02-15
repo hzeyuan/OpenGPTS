@@ -2,7 +2,7 @@ import { t } from 'i18next';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import type { OCommand } from '@opengpts/types';
 import { useTranslation } from 'react-i18next';
-import { useChatPanelContext } from '../Panel/ChatPanel';
+import { useChatPanelContext } from '../Panels/ChatPanel';
 
 interface CommandListProps {
   items: OCommand[];
@@ -21,7 +21,7 @@ const CommandList = forwardRef<CommandListRef, CommandListProps>((props, ref) =>
   const { setCommand } = useChatPanelContext();
   const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const { t } = useTranslation();
-  const selectItem = index => {
+  const selectItem = (index:number) => {
     const item = props.items[index];
 
     if (item) {

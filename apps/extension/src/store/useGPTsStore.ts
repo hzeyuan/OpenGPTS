@@ -1,7 +1,6 @@
 import type { Gizmo } from "@opengpts/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import _ from "lodash";
 
 interface GPTsStore {
     gptsList: Gizmo[];

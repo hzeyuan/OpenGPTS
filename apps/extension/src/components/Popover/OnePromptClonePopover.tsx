@@ -1,18 +1,18 @@
 import { sendToBackground } from "@plasmohq/messaging";
-import Button from "antd/es/button";
-import TextArea from "antd/es/input/TextArea";
-import Popover from "antd/es/popover";
+import { Popover, Input, Button } from "antd";
 import { useState } from "react";
-import _ from "lodash";
+import _ from "lodash-es";
 import { Alert, Select, Space, message } from "antd";
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { useTranslation } from "react-i18next";
 import type { Gizmo } from "@opengpts/types";
 
-const PromptTextArea = ({ onChange }) => {
+const PromptTextArea: React.FC<{
+    onChange: (value: string) => void
+}> = ({ onChange }) => {
     return (
         <div className="w-full">
-            <TextArea
+            <Input.TextArea
                 onChange={(e) => onChange(e.target.value)}
                 placeholder="Controlled autosize"
                 autoSize={{ minRows: 3, maxRows: 5 }}
@@ -24,7 +24,7 @@ const PromptTextArea = ({ onChange }) => {
 
 const OnePromptClonePopover: React.FC<{
     gizmo?: Gizmo,
-    children
+    children: React.ReactNode,
     notificationApi: NotificationInstance
 }> = ({ gizmo, children, notificationApi }) => {
 
@@ -112,7 +112,7 @@ const OnePromptClonePopover: React.FC<{
         return desc
     }
 
-    const handleGenerateStarters = async (title, desc) => {
+    const handleGenerateStarters = async (title: string, desc: string) => {
         // const prefix = gizmo ? `参考信息name:${gizmo.display.name}
         // |desc:${gizmo.display.description}\n` : ''
         const result = await sendToBackground({
@@ -151,7 +151,7 @@ const OnePromptClonePopover: React.FC<{
 
     }
 
-    const handleGenerateInstructions = async (name, desc) => {
+    const handleGenerateInstructions = async (name: string, desc: string) => {
         // const prefix = gizmo ? `参考信息name:${gizmo.display.name}
         // |desc:${gizmo.display.description}\n` : ''
         const result = await sendToBackground({
@@ -207,7 +207,7 @@ const OnePromptClonePopover: React.FC<{
                 profilePicId: ''
             }
         }
-        const imagePointers = _.get(result, 'data.imagePointers', []).map(item => item.replace('file-service://', ''))
+        const imagePointers = _.get(result, 'data.imagePointers', []).map((item: string) => item.replace('file-service://', ''))
         const imagePointer = _.get(imagePointers, '[0]', '')
         if (!imagePointer) {
             return {

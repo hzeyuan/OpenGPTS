@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Radio, Space, Card, Input, Switch, message } from 'antd';
-import { Storage } from "@plasmohq/storage"
+import { Radio, Space, Card, Input, Switch, type RadioChangeEvent } from 'antd';
 import { useStorage } from '@plasmohq/storage/hook';
 import { useTranslation } from 'react-i18next';
 import { useDebouncedCallback } from "use-debounce";
-import { DEFAULT_CONFIG } from '@opengpts/core/constant';
+import { DEFAULT_CONFIG } from '~src/constant';
+import { opengptsStorage } from '~src/store';
 
 
 const ModeSelector = () => {
@@ -12,10 +12,8 @@ const ModeSelector = () => {
 
   const [generalConfig, setGeneralConfig] = useStorage({
     key: "opengptsConfig",
-    instance: new Storage({
-      area: "local"
-    }),
-  }, DEFAULT_CONFIG)
+    instance: opengptsStorage,
+  }, (v) => v || DEFAULT_CONFIG)
 
   const checkApiKey = useDebouncedCallback((e) => {
     const key = e.target.value;
@@ -25,18 +23,18 @@ const ModeSelector = () => {
     })
   })
 
-  const [showApiKey, setShowApiKey] = useState(generalConfig.isProxy);
+  const [showApiKey, setShowApiKey] = useState(generalConfig?.isProxy);
 
 
 
-  const handleChangeBaseUrl = (e) => {
+  const handleChangeBaseUrl = (e: React.ChangeEvent<HTMLInputElement>) => {
     setGeneralConfig({
       ...generalConfig,
       baseUrl: e.target.value
     })
   }
 
-  const handleChangeMode = (e) => {
+  const handleChangeMode = (e: RadioChangeEvent) => {
     setGeneralConfig(
       {
         ...generalConfig,
@@ -47,7 +45,7 @@ const ModeSelector = () => {
 
 
   // 处理 Switch 状态变化
-  const handleSwitchChange = (checked) => {
+  const handleSwitchChange = (checked: boolean) => {
     setShowApiKey(checked);
     setGeneralConfig({
       ...generalConfig,

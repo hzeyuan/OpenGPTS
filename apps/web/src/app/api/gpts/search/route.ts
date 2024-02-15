@@ -1,6 +1,6 @@
 import { respData, respErr } from "../../../utils/resp";
 
-import { getRowsByName } from "../../../models/gpts";
+import { getRowsByName } from "../../../(header)/models/gpts";
 import { searchGpts } from "../../../services/gpts";
 
 export async function POST(req: Request) {

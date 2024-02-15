@@ -1,4 +1,4 @@
-import { SG_SEARCH_URL } from '@opengpts/core/constant'
+import { SG_SEARCH_URL } from '~src/constant'
 import { sendToBackground, type MessagesMetadata } from '@plasmohq/messaging'
 import cheerio from 'cheerio'
 import type { PlasmoCSConfig } from 'plasmo'

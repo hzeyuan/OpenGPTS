@@ -4,7 +4,7 @@ import { Actions } from "./Actions"
 
 export const UserMessage = ({ message, chatId }: { message: OMessage, chatId: string }) => {
     return (
-        <div className="overflow-hidden text-sm">
+        <div className="my-1 overflow-hidden text-sm">
             <div className="flex items-center justify-end">
                 <div className="role-icon-box mr-[6px] rounded-full">
                     <div className="flex items-center justify-center rounded-full "
@@ -18,7 +18,7 @@ export const UserMessage = ({ message, chatId }: { message: OMessage, chatId: st
                 </div>
                 <div className="role-title font-semibold  text-[14px] text-[var(--opengpts-primary-title-color)]">{message?.display?.name}</div>
             </div>
-            <div className="flex flex-row-reverse items-end gap-1 mt-2">
+            <div className="flex flex-row-reverse items-end gap-1 mt-1">
                 <div
                     className="flex overflow-auto rounded-md text-[var(--opengpts-chat-user-bubble-color)] px-3 py-2 bg-[var(--opengpts-chat-primary-color)]  flex-col"
                 >

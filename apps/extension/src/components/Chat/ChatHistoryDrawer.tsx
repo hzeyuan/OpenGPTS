@@ -3,21 +3,24 @@ import { Drawer, Input, Modal } from "antd"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import type { Chat } from "@opengpts/types"
 import { useTimeAgo } from "~src/hooks/useTimeago"
-import { nanoid } from '@opengpts/core/shared/utils';
+import { nanoid } from '~shared/utils';
 import { useChatStore } from "~src/store/useChatStore"
 import { useDebouncedCallback } from 'use-debounce';
 import useChatDrawerStore from "~src/store/useChatDrawerStore"
 import VirtualList from 'rc-virtual-list';
-import { useChatPanelContext } from "../Panel/ChatPanel"
+import { useChatPanelContext } from "../Panels/ChatPanel"
 import { useTranslation } from 'react-i18next';
-import _ from 'lodash';
+import _ from 'lodash-es';
 
 interface ChatHistoryDrawerProps {
     chatId: string;
 }
 
 
-const TitleInput = ({ defaultValue, onChange }) => {
+const TitleInput: React.FC<{
+    defaultValue?: string,
+    onChange?: (v: string) => void
+}> = ({ defaultValue, onChange }) => {
     const [title, setTitle] = useState(defaultValue)
 
     return (
@@ -28,7 +31,6 @@ const TitleInput = ({ defaultValue, onChange }) => {
         }} />
     )
 }
-
 
 const ChatHistoryItem = ({ chat, onClick }: {
     chat: Chat,
@@ -43,7 +45,7 @@ const ChatHistoryItem = ({ chat, onClick }: {
     const updateChat = useChatStore(state => state.updateSome);
     const timeago = useTimeAgo(chat.created_at);
 
-    const handleUpdateChatTitle = (e) => {
+    const handleUpdateChatTitle = (e: React.MouseEvent<HTMLSpanElement>) => {
         e.stopPropagation()
         e.preventDefault();
         setIsModalOpen(true);
@@ -68,7 +70,7 @@ const ChatHistoryItem = ({ chat, onClick }: {
         });
     }
 
-    const handleDeleteChat = (e) => {
+    const handleDeleteChat = (e: React.MouseEvent<HTMLSpanElement>) => {
         e.stopPropagation()
         e.preventDefault();
         setIsModalOpen(true);
@@ -91,7 +93,7 @@ const ChatHistoryItem = ({ chat, onClick }: {
         });
     }
 
-    const handleGetChatMessage = (e) => {
+    const handleGetChatMessage = (e: React.MouseEvent<HTMLDivElement>) => {
         if (isModalOpen) {
             // 如果模态框是打开的，不执行任何操作
             return;
@@ -155,7 +157,7 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
         hideChatDrawer(clickedChatId)
     }
 
-    const handleSearchChange = (e) => {
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value);
     };
 
@@ -165,7 +167,7 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
 
     const handleProcessChatList = () => {
         let newChatList = [...chatList]
-        let sortedChatList = []
+        let sortedChatList: Chat[] = []
         if (chatList.length) {
             const searchTermLower = searchTerm.toLowerCase(); // 小写化搜索词
             if (searchTerm !== '') {
@@ -226,7 +228,7 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
                     prefix={<SearchOutlined size={24} />
                     }></Input>
             </div>
-            <div className="flex flex-col flex-1 px-4 pb-3 overflow-y-auto chat-history-box custom-scrollbar">
+            <div className="flex flex-col flex-1 px-4 pb-3 overflow-y-auto chat-history-box custom-scrollbar bg-[var(--opengpts-option-card-bg-color)]">
                 <VirtualList
                     height={document.body.clientHeight * 0.7}
                     itemHeight={47}

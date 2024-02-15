@@ -5,7 +5,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 // 添加 relativeTime 插件
 dayjs.extend(relativeTime);
 
-export const useTimeAgo = (timestamp) => {
+export const useTimeAgo = (timestamp: string | number | Date | dayjs.Dayjs | null | undefined) => {
     const [timeago, setTimeago] = useState(dayjs(timestamp).fromNow());
 
     useEffect(() => {

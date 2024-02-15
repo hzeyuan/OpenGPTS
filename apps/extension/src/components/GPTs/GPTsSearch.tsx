@@ -1,10 +1,10 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { Select, Spin } from 'antd';
 import type { SelectProps } from 'antd';
-import debounce from 'lodash/debounce';
+import debounce from 'lodash-es/debounce';
 import useGPTStore from '~src/store/useGPTsStore';
 import type { Gizmo, Gpts } from '@opengpts/types';
-import { WEBSITE_URL } from '@opengpts/core/constant'
+import { WEBSITE_URL } from '~src/constant'
 
 export interface GPTsSearchProps
     extends Omit<SelectProps<Gizmo | Gizmo[]>, 'options' | 'children'> { }

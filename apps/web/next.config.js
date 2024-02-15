@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
 module.exports = {
   reactStrictMode: true,
-  transpilePackages: ["@opengpts/ui"],
+  transpilePackages: ["@opengpts/ui",'antd'],
 };

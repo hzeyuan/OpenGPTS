@@ -1,21 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Row, Col, message, Spin } from 'antd';
 import { sendToBackground } from '@plasmohq/messaging';
-import _ from 'lodash';
+import _ from 'lodash-es';
 import { useTranslation } from 'react-i18next';
 import type { Gizmo } from '@opengpts/types';
 const GPTForm: React.FC<{
     gizmo?: Gizmo
-    onFinish?: (gizmo, values) => void
+    onFinish?: (gizmo: Gizmo, values: any) => void
 }> = ({ gizmo, onFinish }) => {
 
-    console.log('gizmo', gizmo)
 
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false)
     const [messageApi, contextHolder] = message.useMessage();
     const { t } = useTranslation();
-    const handleFinish = async (values) => {
+    const handleFinish = async (values: any) => {
         setLoading(true)
         console.log('Received values of form: ', values);
         if (!gizmo) return;
@@ -44,7 +43,7 @@ const GPTForm: React.FC<{
     };
 
     useEffect(() => {
-        console.log('gizmo',gizmo)
+        console.log('gizmo', gizmo)
         if (!gizmo) return;
         form.setFieldsValue({
             name: gizmo?.display.name,

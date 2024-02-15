@@ -1,4 +1,4 @@
-import Switch from "antd/es/switch"
+import {Switch} from "antd"
 import {
   forwardRef,
   useImperativeHandle,
@@ -9,16 +9,16 @@ import useChatDrawerStore from "~src/store/useChatDrawerStore"
 import useChatQuoteStore from "~src/store/useChatQuoteStore"
 
 import { useFileDrawerStore } from "../FileDrawer"
-import ModelSelectButton from "../ModelSelectButton"
-// import ScreenCaptureComponent from "../ScreenCapture"
+import ModelSelectButton from "../ModelSelector"
 import Tiptap, { type TiptapRef } from "../Tiptap"
 import InputImgs from "./InputImgs"
 import CloseTag from "./CloseTag"
 import ReferenceMessage from "./ReferenceMessage"
 import { useTranslation } from "react-i18next"
-import { useChatPanelContext } from "../Panel/ChatPanel"
-import { UploadButton } from "../Button/UploadButton"
-import ToolSelectButton from "../Tools"
+// import ScreenCaptureComponent from "../ScreenCapture"
+// import { UploadButton } from "../Button/UploadButton"
+import ToolSelectButton from "../ToolsSelector"
+import { useChatPanelContext } from "../Panels/ChatPanel"
 type ChatInputAreaRef = {
   submit: () => void
   setContent: (value: string) => void
@@ -69,10 +69,11 @@ export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
       setCommand(undefined)
       setQuoteMessage(chatId, undefined)
     }
-    const handleInputChange = (v: string) => {
+    const handleInputChange = (v?: string) => {
+      if (!v) return
       onInputChange && onInputChange(v)
     }
-    const handleSetContent = (value) => {
+    const handleSetContent = (value: string) => {
       tiptapRef.current?.setContent(value)
     }
 
@@ -239,7 +240,8 @@ export const ChatInputArea = forwardRef<ChatInputAreaRef, ChatInputAreaProps>(
                     color='cyan'
                     onClose={() => setMention(undefined)}
                     label={mention.name}
-                    icon={<img className="w-4 h-4" src={mention.icon}></img>}
+                    //@ts-ignore
+                    icon={<img className="w-4 h-4" src={mention.icon?.src  || mention.icon}></img>}
                     chatId={chatId} />
                   }
                 </div>

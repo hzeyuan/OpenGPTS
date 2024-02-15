@@ -4,7 +4,7 @@ import {
   getRandRows,
   getRecommendedRows,
   getTotalCount,
-} from "../../../models/gpts";
+} from "../../../(header)/models/gpts";
 import { respData, respErr } from "../../../utils/resp";
 
 export async function POST(req: Request) {

@@ -1,20 +1,20 @@
-import '~/src/i18n.js';
+import '~/src/i18n';
 import "./index.css"
-import '../base.css'
-import logo from "data-base64:~assets/icon.png"
+import '../global.css'
+import logo from "~assets/icon.png"
 import chatTabIcon from '~assets/chat-tab.svg'
 import { motion } from 'framer-motion';
 import { useState, useEffect } from "react"
 import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 
 import { StyleProvider } from "@ant-design/cssinjs"
-import { ConfigProvider, Popover, Tag, theme as themeStyle } from "antd"
+import { ConfigProvider, Popover, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { Storage } from "@plasmohq/storage";
 
 import { useTranslation } from 'react-i18next';
-import GPTsPanel from '~src/components/Panel/GPTsPanel';
+import GPTsPanel from '~src/components/Panels/GPTsPanel';
 import pintuIcon from '~assets/pintu.svg';
 import settingIcon from '~assets/settings.svg';
 import QQIcon from '~assets/qq.svg';
@@ -25,9 +25,9 @@ import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import twitterIcon from '~assets/twitter.svg';
 import type { ThemeMode } from '@opengpts/types';
-import { ToolsPanel } from '~src/components/Panel/ToolsPanel';
-import DynamicSplitChatPanel from '~src/components/Panel/DynamicSplitChatPanel';
-
+import { ToolsPanel } from '~src/components/Panels/ToolsPanel';
+import DynamicSplitChatPanel from '~src/components/Panels/DynamicSplitChatPanel';
+import { opengptsStorage } from '~src/store';
 const shakeAnimation = {
     scale: 0.85,
     rotate: [0, 5, -5, 5, -5, 0],
@@ -43,19 +43,14 @@ function IndexSidePanel() {
 
 
     const [theme] = useStorage<ThemeMode>({
-        key: "theme",
-        instance: new Storage({
-            area: "local"
-        }),
-
+        key: "opengpts-theme",
+        instance:opengptsStorage
     }, 'auto')
 
 
     const [language] = useStorage({
-        key: "language",
-        instance: new Storage({
-            area: "local"
-        })
+        key: "opengpts-language",
+        instance: opengptsStorage
     }, 'en')
 
 
@@ -154,7 +149,8 @@ function IndexSidePanel() {
                                     <div className="opengpts-sidebarr-wrapper">
                                         <div className="opengpts-sidebarr-header-content">
                                             <div className="opengpts-sidebarr-logo">
-                                                <img src={logo}></img>
+                                                {/* @ts-ignore */}
+                                                <img src={logo?.src || logo}></img>
                                             </div>
                                             <div className="opengpts-sidebarr-widgets-list-wrapper">
 

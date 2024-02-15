@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import useGPTStore from '~src/store/useGPTsStore';
-import { useChatPanelContext } from '../Panel/ChatPanel';
+import { useChatPanelContext } from '../Panels/ChatPanel';
 import type { Mention } from '@opengpts/types';
 import GPTsSearch from '../GPTs/GPTsSearch';
 
@@ -46,7 +46,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
     props.onSelect && props.onSelect();
   };
 
-  const selectItem = index => {
+  const selectItem = (index: number) => {
     const item = mentionList[index];
     setMention({
       key: item.key,
@@ -132,7 +132,8 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
               key={item.key}
               className={`flex items-center w-full p-1 text-sm text-[var(--opengpts-primary-text-color)] rounded-sm hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)] ${index === selectedIndex ? 'bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)]' : ''}`}>
               <div className='flex items-center justify-center gap-x-2'>
-                {item.icon && <img className="w-5 h-5 rounded-full" src={item.icon} />}
+                {/* @ts-ignore */}
+                {item.icon && <img className="w-5 h-5 rounded-full" src={item.icon?.src || item.icon} />}
                 {item.name}
               </div>
             </div>
@@ -152,7 +153,8 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
                   className={`flex items-center w-full p-1 text-sm text-[var(--opengpts-primary-text-color)] rounded-sm hover:bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)]
                ${(languageModelList?.length || 0) + index === selectedIndex ? 'bg-[var(--opengpts-sidebar-model-btn-hover-bg-color)]' : ''}`}>
                   <div className='flex items-center justify-center gap-x-2'>
-                    {item.icon && <img className="w-5 h-5 rounded-full" src={item.icon} />}
+                    {/* @ts-ignore */}
+                    {item.icon && <img className="w-5 h-5 rounded-full" src={item.icon?.src || item.icon} />}
                     {item.name}
                   </div>
                 </div>

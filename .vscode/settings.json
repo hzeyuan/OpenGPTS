@@ -1,7 +1,24 @@
 {
   "eslint.workingDirectories": [
     {
-      "mode": "auto"
+      "mode": "auto",
     }
-  ]
+  ],
+ 
+  "background.fullscreen": {
+    "images": ["/Users/hzy/Downloads/findCat.png"],
+    "opacity": 0.91,
+    "size": "cover",
+    "position": "center",
+    "interval": 0
+  },
+  "background.style": {
+    "image": " /Users/hzy/Downloads/findCat.png",
+    "background-position": "100% 100%",
+    "background-size": "auto",
+    "opacity": 1
+  },
+
+
+ 
 }

@@ -1,4 +1,4 @@
-import { getRandRows } from "../../../models/gpts";
+import { getRandRows } from "../../../(header)/models/gpts";
 export async function GET() {
   try {
     const data = await getRandRows(0, 50);

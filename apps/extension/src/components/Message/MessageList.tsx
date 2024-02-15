@@ -5,7 +5,7 @@ import type { OMessage } from "@opengpts/types";
 import { AIMessage } from "./AIMessage";
 import { UserMessage } from "./UserMessage";
 import FunctionMessage from "./Function";
-import _ from "lodash";
+import _ from "lodash-es";
 
 const messageAnimation = {
     initial: { opacity: 0, y: 20 },
@@ -60,7 +60,7 @@ export const MessagesList = React.forwardRef<MessagesListMethods, MessagesListPr
             bottomRef.current?.scrollIntoView({ behavior: "smooth" });
         };
 
-        const updateMessages = (newMessages) => {
+        const updateMessages = (newMessages: OMessage[]) => {
             let reversedMessages = _.reverse([...newMessages]);
             let uniqueMessages = _.uniqBy(reversedMessages, 'id');
 

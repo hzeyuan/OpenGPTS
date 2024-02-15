@@ -2,7 +2,11 @@
 import supabase from "~src/utils/supabase";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: Request, { params }) {
+export async function GET(req: Request, { params }: {
+    params: {
+        name: string
+    }
+}) {
     try {
         // 从 URL 参数中获取工具的ID
         const { name } = params

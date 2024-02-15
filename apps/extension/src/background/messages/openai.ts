@@ -1,9 +1,9 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 import { Storage } from "@plasmohq/storage";
-import _ from 'lodash'
+import _ from 'lodash-es';
 import { ofetch } from 'ofetch'
 import type { ChatConfig, Gizmo } from '@opengpts/types'
-import { OpenAI } from '@opengpts/core'
+import { OpenAI } from "~src/utils/web";
 
 const storage = new Storage({
     area: "local",
@@ -12,18 +12,18 @@ const storage = new Storage({
 
 
 
-const createGPTs = async (newItem) => {
+const createGPTs = async (newItem: Partial<Gizmo>) => {
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     console.log('newItem', newItem)
     await storage.setItem('gizmos', [newItem, ...items]);
 };
 
-const getGPTsById = async (id) => {
+const getGPTsById = async (id: string) => {
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     return items.find(item => item.id === id);
 };
 
-const updateGPTs = async (id, updatedFields) => {
+const updateGPTs = async (id: string, updatedFields: Partial<Gizmo>) => {
     let updatedItem;
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     const newItems = items.map(item => {
@@ -38,7 +38,7 @@ const updateGPTs = async (id, updatedFields) => {
     return updatedItem;
 };
 
-const deleteGPTs = async (id) => {
+const deleteGPTs = async (id:string) => {
     const items = await storage.getItem<Gizmo[]>('gizmos') || [];
     const newItems = items.filter(item => item.id !== id);
     await storage.setItem('gizmos', newItems);
@@ -99,7 +99,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                         cursor,
                     },
                 })
-            } catch (error) {
+            } catch (error: any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -112,7 +112,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                 res.send({
                     ok: true
                 })
-            } catch (error) {
+            } catch (error: any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -150,7 +150,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     ok: true,
                     data: gizmo
                 })
-            } catch (error) {
+            } catch (error:any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -165,7 +165,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     tags: ['public']
                 })
                 res.send({ ok: true, data: '' })
-            } catch (error) {
+            } catch (error:any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -182,7 +182,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     ok: true,
                     data: newGizmo
                 })
-            } catch (error) {
+            } catch (error:any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -220,7 +220,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     error: '',
                     data: downloadUrl
                 })
-            } catch (error) {
+            } catch (error:any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -233,7 +233,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     ok: true,
                     error: '',
                 })
-            } catch (error) {
+            } catch (error:any) {
                 res.send({
                     ok: false,
                     error: error.message
@@ -248,14 +248,14 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
                     error: '',
                     data: downloadUrl
                 })
-            } catch (error) {
+            } catch (error:any) {
                 res.send({
                     ok: false,
                     error: error.message
                 })
             }
         }
-    } catch (error) {
+    } catch (error:any) {
         console.error('error', error)
         res.send({
             ok: false,

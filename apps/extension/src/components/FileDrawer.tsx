@@ -1,5 +1,5 @@
-import { CloseOutlined, DeleteOutlined, EditOutlined, InboxOutlined, SearchOutlined } from "@ant-design/icons"
-import { Drawer, Input, Modal, message, type UploadProps, type UploadFile } from "antd"
+import { CloseOutlined, InboxOutlined, SearchOutlined } from "@ant-design/icons"
+import { Drawer, Input, message, type UploadProps, type UploadFile } from "antd"
 import { useEffect, useState } from "react"
 import Dragger from "antd/es/upload/Dragger"
 import { useChatStore } from "~src/store/useChatStore"

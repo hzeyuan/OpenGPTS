@@ -1,4 +1,4 @@
-import { sendHttpRequest } from "@opengpts/core/utils";
+import { sendHttpRequest } from "~src/utils";
 import supabase from "~src/utils/supabase";
 
 export async function POST(req: Request) {
@@ -25,7 +25,7 @@ export async function POST(req: Request) {
             message: "success",
             data: content
         })
-    } catch (error) {
+    } catch (error: any) {
         console.log('error', error.message)
         return Response.json({
             code: -1,

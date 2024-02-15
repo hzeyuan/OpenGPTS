@@ -1,18 +1,11 @@
-import type { PlasmoMessaging } from "@plasmohq/messaging"
-import { Storage } from '@plasmohq/storage'
-
 export type RequestBody = {
 }
 
 export type RequestResponse = number
 
-const storage = new Storage({
-    area: 'local',
-    allCopied: true,
-});
 
 
-const handler = async (req, res) => {
+const handler = async (req: { body: { url: string } }, res: { send: (arg0: { tabId: number | undefined }) => void }) => {
     const { url, }: {
         url: string,
     } = req.body

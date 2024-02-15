@@ -1,31 +1,30 @@
-import { useChat } from "@opengpts/core/@react";
-import React, { useEffect, useImperativeHandle, useMemo, useRef, useState, type RefObject, forwardRef } from "react";
-import { ChatInputArea } from "./ChatInputArea";
-import logoIcon from "data-base64:~assets/icon.png"
-import { nanoid } from "@opengpts/core/shared/utils";
+import { useChat } from "~src/hooks/use-chat";
+import React, { useEffect, useImperativeHandle, useRef,Suspense, useState, type RefObject, forwardRef } from "react";
+import Logo from "~assets/icon.png"
+import { nanoid } from "~shared/utils";
 import { motion } from "framer-motion";
 import useUserSelection from "~src/hooks/useUserSelection";
-import _ from "lodash";
+import _ from 'lodash-es';
 // import InteractivePanel from "../InteractivePanel"
-import { webSearch, type SearchRequest } from "~src/contents/web-search";
+// import { webSearch, type SearchRequest } from "~src/contents/web-search";
 import { PauseCircleOutlined } from "@ant-design/icons";
-import { Button } from "antd";
-import type { ChatRequest, FunctionCallHandler, Message } from "ai";
-import type { OFunctionCallHandler, OMessage, OpenGPTsConfig, Session } from "@opengpts/types";
+import type { FunctionCall, FunctionCallHandler, Message } from "ai";
+import type { OMessage, OpenGPTsConfig, Session } from "@opengpts/types";
 import { MessagesList } from "../Message/MessageList";
 import type { MessagesListMethods } from "../Message/MessageList";
 import { useChatStore } from "~src/store/useChatStore";
 import useChatQuoteStore from "~src/store/useChatQuoteStore";
-import { useChatPanelContext } from "../Panel/ChatPanel";
+import { useChatPanelContext } from "../Panels/ChatPanel";
 import useScreenCapture from "~src/store/useScreenCapture";
 import { useTranslation } from "react-i18next";
 import { useStorage } from "@plasmohq/storage/hook";
-import { Storage } from "@plasmohq/storage";
-import { OpenAI } from "@opengpts/core";
 import { useDebouncedCallback } from "use-debounce";
-import { OPENAI_BASE_URL, OpenGPTS_BASE_URL } from "@opengpts/core/constant";
-import { convertToolToApiDescription, sendHttpRequest, transformMessages } from "@opengpts/core/utils";
+import { DEFAULT_CONFIG, CHATGPT_WEBAPPP_DEFAULT_CONFIG, OPENAI_BASE_URL, OpenGPTS_BASE_URL } from "~src/constant";
+import { convertToolToApiDescription, sendHttpRequest, transformMessages } from "~/src/utils";
 import { callTool, getTool } from "~src/app/services/tools";
+import type { OpenAI } from "~src/utils/web/openai";
+import { Button } from "antd";
+import { opengptsStorage } from '~src/store';
 export type ChatProps = {
     ref: RefObject<any>;
     uiMessages?: any[];
@@ -36,6 +35,7 @@ export type ChatProps = {
 
 export type ChatRef = {};
 
+const ChatInputArea = React.lazy(() => import('./ChatInputArea').then((module) => ({ default: module.ChatInputArea })));
 
 export const Chat = forwardRef<ChatRef, ChatProps>(
     ({ uiMessages = [], systemMessage = "你好有什么我可以帮助你的么？", children = "", className = "" }, ref) => {
@@ -57,16 +57,13 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
         const addChatIfNotExist = useChatStore((state) => state.addChatIfNotExist);
         const [chatgptConfig] = useStorage({
             key: "chatgpt-config",
-            instance: new Storage({
-                area: "local",
-            }),
-        });
+            instance: opengptsStorage,
+        }, v => v || CHATGPT_WEBAPPP_DEFAULT_CONFIG);
         const [opengptsConfig] = useStorage<OpenGPTsConfig>({
             key: "opengptsConfig",
-            instance: new Storage({
-                area: "local",
-            }),
-        });
+            instance: opengptsStorage,
+        }, (v) => v || DEFAULT_CONFIG);
+
 
         /**
          * Creates a function call message.
@@ -77,7 +74,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
          * @param content The content of the message.
          * @returns The created message.
          */
-        function createFunctionCallMessage(previousMessage, functionCall, toolInfo, status, content = ''): OMessage {
+        function createFunctionCallMessage(previousMessage: OMessage, functionCall: FunctionCall, toolInfo: any, status: string, content = ''): OMessage {
             return {
                 id: previousMessage?.id || nanoid(),
                 name: functionCall.name,
@@ -100,7 +97,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
          * @param error The error object.
          * @returns The error message.
          */
-        function createErrorFunctionCallMessage(previousMessage, functionCall, error): OMessage {
+        function createErrorFunctionCallMessage(previousMessage: OMessage, functionCall: FunctionCall, error: any): OMessage {
             return {
                 id: previousMessage?.id || nanoid(),
                 name: functionCall.name,
@@ -122,7 +119,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
              * tips:here need to find the last function call message  
              * because the chatMessages maybe has more than one function call message,we need to find the last one
              */
-            const functionCallMessage = _.findLast(chatMessages, message => _.get(message, 'function_call.name') === functionCall.name);
+            const functionCallMessage = _.findLast(chatMessages, message => _.get(message, 'function_call.name') === functionCall.name) as OMessage;
             // get tool info from server
             const toolInfo = await getTool(functionCall.name);
             let newMessage = createFunctionCallMessage(functionCallMessage, functionCall, toolInfo, 'running');
@@ -150,7 +147,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 
         const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } = useChat({
             initMode: opengptsConfig?.mode,
-            api: "http://127.0.0.1:1947/api/chat",
+            api: "http://localhost:1947/api/chat",
             experimental_onFunctionCall: functionCallHandler,
             credentials: "omit",
             initialMessages: [],
@@ -335,7 +332,9 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             },
         });
 
-        const handleSubmit = async ({ content }) => {
+        const handleSubmit = async ({ content }: {
+            content: string
+        }) => {
             if (!content) return;
             let webSearchPrompt = "";
             //TODO: use model that was mentioned last, if not exist, use default model, temporarily
@@ -352,7 +351,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 role: "user",
                 display: {
                     name: "Me",
-                    icon: "",
+                    icon: Logo.src || Logo,
                 },
                 quoteMessage: quoteMessage,
                 images: capturedImage ? [capturedImage] : [],
@@ -361,36 +360,39 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             };
 
             const newMessages = [...messages, message]
-            if (webAccess) {
-                try {
-                    const searchRequest: SearchRequest = {
-                        query: content,
-                        timerange: "",
-                        region: "",
-                    };
-                    const webSearchResults = await webSearch(searchRequest, 3);
+            // if (webAccess) {
+            //     try {
+            //         const searchRequest: SearchRequest = {
+            //             query: content,
+            //             timerange: "",
+            //             region: "",
+            //         };
+            //         const webSearchResults = await webSearch(searchRequest, 3);
 
-                    //merge webSearchResults
-                    console.log("webSearchResults", webSearchResults);
-                    webSearchPrompt =
-                        "# 搜索到一些相关的内容:" +
-                        webSearchResults.map((result) => {
-                            return `
-                        ### ${result.title}
-                        > ${result.body}
-                        [查看更多](${result.url}) 
-                    `;
-                        });
-                } catch (error) {
-                    console.error(`webSearch error:${error}`);
-                }
-            }
+            //         //merge webSearchResults
+            //         console.log("webSearchResults", webSearchResults);
+            //         webSearchPrompt =
+            //             "# 搜索到一些相关的内容:" +
+            //             webSearchResults.map((result) => {
+            //                 return `
+            //             ### ${result.title}
+            //             > ${result.body}
+            //             [查看更多](${result.url}) 
+            //         `;
+            //             });
+            //     } catch (error) {
+            //         console.error(`webSearch error:${error}`);
+            //     }
+            // }
 
             addChatMessage(chatId, message);
             setFileList([]);
 
-            const chatRequestOptions = { body: {}, headers: {} };
-            const chatRequestData = {};
+            const chatRequestOptions: { headers: { Authorization?: string }, body: any } = { body: {}, headers: {} };
+            const chatRequestData: {
+                apiKey?: string,
+                baseUrl?: string,
+            } = {};
             let bodyOptions = {};
 
             switch (opengptsConfig.mode) {
@@ -413,31 +415,34 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                     console.log('options', chatRequestOptions['body'])
                     break;
                 case 'OpenGPTs':
-                    // : ChatCompletioCreateParams.Function[]
-                    // const functions = [
-                    //     {
-                    //         name: 'get_current_weather',
-                    //         description: 'Get the current weather',
-                    //         parameters: {
-                    //             type: 'object',
-                    //             properties: {
-                    //                 location: {
-                    //                     type: 'string',
-                    //                     description: 'The city and state, e.g. San Francisco, CA',
-                    //                 },
-                    //                 format: {
-                    //                     type: 'string',
-                    //                     enum: ['celsius', 'fahrenheit'],
-                    //                     description:
-                    //                         'The temperature unit to use. Infer this from the users location.',
-                    //                 },
-                    //             },
-                    //             required: ['location', 'format'],
-                    //         },
-                    //     },
-                    // ];
-                    // convertToolToApiDescription(useTools);
+                    /**
+                     * const functions = [
+                        {
+                            name: 'get_current_weather',
+                            description: 'Get the current weather',
+                            parameters: {
+                                type: 'object',
+                                properties: {
+                                    location: {
+                                        type: 'string',
+                                        description: 'The city and state, e.g. San Francisco, CA',
+                                    },
+                                    format: {
+                                        type: 'string',
+                                        enum: ['celsius', 'fahrenheit'],
+                                        description:
+                                            'The temperature unit to use. Infer this from the users location.',
+                                    },
+                                },
+                                required: ['location', 'format'],
+                            },
+                        },
+                    ];
+                     */
                     const functions = useTools.map((tool) => convertToolToApiDescription(tool))
+                    if (webAccess) {
+
+                    }
                     chatRequestOptions["body"] = { model: modelKey, messages: newMessages, functions };
                     break;
                 case 'ChatGPT webapp':
@@ -491,7 +496,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                 {
                     ...message,
                     // ${selection}
-                    content: `${webSearchPrompt}/n${content}`.trim(),
+                    content: `${content}`.trim(),
                 },
                 { options: chatRequestOptions, data: chatRequestData },
                 { mention: mention ?? { name: model.name, icon: model.icon }, }
@@ -557,7 +562,6 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
         }, [chatId]);
 
         useEffect(() => {
-            console.log("chatgptConfig", chatgptConfig);
             setWebConfig({ ...chatgptConfig });
         }, [chatgptConfig]);
 
@@ -583,7 +587,8 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                                     <div className="flex flex-col items-center">
                                         <div className="flex justify-center items-center size-[60px] rounded-full bg-[white] shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
                                             <img
-                                                src={logoIcon}
+                                                //@ts-ignore
+                                                src={Logo?.src || Logo!}
                                                 className=" size-[40px]"
                                             />
                                         </div>
@@ -617,6 +622,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                         }}
                         transition={{ duration: 0.5 }}
                     >
+                        <Suspense fallback={<div>Loading...</div>}>
                         <ChatInputArea
                             chatId={chatId}
                             ref={inputRef}
@@ -624,6 +630,9 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                             onInputChange={onInputChange}
                             content={content}
                         />
+
+                        </Suspense>
+                       
                     </motion.div>
                 </div>
             </>

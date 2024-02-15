@@ -30,7 +30,7 @@ export function PreCode(props: { children: any }) {
   return (
     <>
       {mermaidCode.length > 0 && (
-        <Mermaid chart={mermaidCode} />
+        <Mermaid initialChart={mermaidCode} />
       )}
       <pre ref={ref}>
         {props.children}
@@ -41,7 +41,9 @@ export function PreCode(props: { children: any }) {
 
 
 
-const Markdown = ({ children }) => {
+const Markdown: React.FC<{
+  children: ReactNode
+}> = ({ children }) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkMath, remarkBreaks, remarkGfm]}
@@ -53,8 +55,8 @@ const Markdown = ({ children }) => {
       linkTarget="_blank"
       components={{
         pre: PreCode,
-        p: (pProps) => <p {...pProps} dir="auto" />,
-        a: (aProps) => {
+        p: (pProps: any) => <p {...pProps} dir="auto" />,
+        a: (aProps: any) => {
           const href = aProps.href || "";
           const isInternal = /^\/#/i.test(href);
           const target = isInternal ? "_self" : aProps.target ?? "_blank";

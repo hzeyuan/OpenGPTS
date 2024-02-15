@@ -5,12 +5,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import ActionButton from '../Button/ActionButton';
 
-const InputImgs = ({ fileList }) => {
+const InputImgs: React.FC<{
+    fileList: any[]
+}> = ({ fileList }) => {
     const [show, setShow] = useState(false);
 
 
     const handleClose = () => { setShow(false) }
-    
+
     useEffect(() => {
         setShow(fileList.length > 0);
     }, [fileList]);

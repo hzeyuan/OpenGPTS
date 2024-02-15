@@ -1,0 +1,59 @@
+.header {
+  display: flex;
+  position: relative;
+  padding: 0 16px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--opengpts-sidebar-border-color);
+}
+
+.resize-gutter {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: var(--opengpts-gutter-bg-color);
+    position: relative;
+    cursor: ew-resize;
+  }
+  
+  .gutter-col::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 50px;
+    display: block;
+    border-radius: 4px;
+    background: var(--opengpts-gutter-handle-bg-color);
+    transform: translate(-50%, -50%);
+  }
+  
+  .gutter-row::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 4px;
+    display: block;
+    border-radius: 4px;
+    background: var(--opengpts-gutter-handle-bg-color);
+    transform: translate(-50%, -50%);
+  }
+  .resize-gutter:active {
+    cursor: col-resize;
+  }
+  
+  .gutter-col {
+    grid-row: 1/-1;
+    cursor: col-resize;
+    background-repeat: no-repeat;
+  }
+  
+  .gutter-row {
+    grid-column: 1/-1;
+    cursor: row-resize;
+    grid-column: 1/-1;
+    cursor: row-resize;
+  }

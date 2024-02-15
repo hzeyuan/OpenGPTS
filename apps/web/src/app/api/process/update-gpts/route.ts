@@ -1,4 +1,4 @@
-import { getUuids, insertRow } from "../../../models/gpts";
+import { getUuids, insertRow } from "../../../(header)/models/gpts";
 
 import { getGptsFromFile } from "../../../services/gpts";
 

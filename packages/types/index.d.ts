@@ -124,9 +124,13 @@ interface ModelOptions {
 
 
 
+
+
 export * from './gizmo';
 export * from './ui';
 export * from './chat';
+export * from './database';
+export * from './tools';
 export {
 	Log,
 	GPTInfo,

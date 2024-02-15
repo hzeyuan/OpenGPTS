@@ -10,8 +10,9 @@ import { MentionPluginKey, Mention } from '@tiptap/extension-mention'
 import mentionSuggestion from './mentionSuggestion'
 import commandSuggestion from './commandSuggestion'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react'
-import { useChatPanelContext } from '../Panel/ChatPanel';
+import { useChatPanelContext } from '../Panels/ChatPanel';
 import React from 'react';
+import type { EditorView } from '@tiptap/pm/view';
 
 
 export interface TiptapProps {
@@ -78,7 +79,7 @@ const Tiptap = forwardRef<TiptapRef, TiptapProps>(({ chatId, onSubmit, onContent
     command,
   ]
 
-  const handleKeyDown = useCallback((view, event) => {
+  const handleKeyDown = useCallback((view: EditorView, event: KeyboardEvent) => {
     if (mentionKey.getState(view.state)?.active) return;
     if (commandKey.getState(view.state)?.active) return;
 
@@ -109,8 +110,7 @@ const Tiptap = forwardRef<TiptapRef, TiptapProps>(({ chatId, onSubmit, onContent
     },
   }, [])
 
-  const triggerMention = (char: '@' | '/') => {
-    console.log('triggerMention',)
+  const triggerMention = (char: string) => {
     if (!editor) return;
 
     const { state, dispatch } = editor.view;

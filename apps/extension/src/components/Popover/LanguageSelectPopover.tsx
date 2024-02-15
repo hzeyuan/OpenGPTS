@@ -1,12 +1,16 @@
 import { sendToBackground } from "@plasmohq/messaging";
-import { Button, Popover, Select, Space, Switch } from "antd"
+
 import type { NotificationInstance } from "antd/es/notification/interface";
 import { useState } from "react";
-import _ from 'lodash'
+import _ from 'lodash-es'
 import { useTranslation } from "react-i18next";
 import type { Gizmo } from "@opengpts/types";
+import { Button, Popover, Select, Space } from "antd";
 
-const LanguageSelect = ({ onChange }) => {
+
+const LanguageSelect: React.FC<{
+    onChange: (value: string) => void
+}> = ({ onChange }) => {
     const languages = [
         { label: '中文', value: 'zh' },
         { label: 'English', value: 'en' },
@@ -168,7 +172,7 @@ const LanguageSelectPopover: React.FC<{
             .toLowerCase()
             .trim();
 
-        const extractWithRegex = (text, startPattern, endPattern) => {
+        const extractWithRegex = (text:string, startPattern:string, endPattern:string) => {
             const pattern = new RegExp(`${startPattern}(.*?)${endPattern}`, 'is');
             const match = text.match(pattern);
             return match ? match[1].trim() : '';

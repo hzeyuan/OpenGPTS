@@ -1,8 +1,7 @@
 import OpenAI from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
-import { transformMessages } from '@opengpts/core/utils';
-import { type ChatCompletionCreateParams } from 'openai/resources';
-import _ from 'lodash';
+import _ from 'lodash-es';
+import { transformMessages } from '~src/utils';
 export const runtime = 'edge';
 
 const openai = new OpenAI({

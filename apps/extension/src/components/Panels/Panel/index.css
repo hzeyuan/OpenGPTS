@@ -1,0 +1,8 @@
+.panel-header {
+  display: flex;
+  position: relative;
+  padding: 0 16px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--opengpts-sidebar-border-color);
+}

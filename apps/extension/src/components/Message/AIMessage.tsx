@@ -1,16 +1,20 @@
-import Markdown from "../Markdown";
+// import Markdown from "../Markdown";
 import type { OMessage } from "@opengpts/types";
 import copy from "copy-to-clipboard";
 import { Actions } from "./Actions";
-import _ from "lodash";
+import _ from "lodash-es";
+import { Suspense } from "react";
+import React from "react";
 
+
+const Markdown = React.lazy(() => import("../Markdown"));
 
 export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessage; error?: string }) => {
 
 
 
   return (
-    <div className="relative overflow-hidden text-sm ">
+    <div className="relative my-1 overflow-hidden text-sm ">
       <div className="flex items-center ">
         <div className="role-icon-box mr-[6px] rounded-full">
           <div
@@ -34,7 +38,9 @@ export const AIMessage = ({ message, chatId }: { chatId: string; message: OMessa
             <div className={`leading-relaxed break-words break-all  `}>
               {message.content ? (
                 _.isString(message.content) ? (
-                  <Markdown>{message.content}</Markdown>
+                  <Suspense >
+                    <Markdown>{message.content}</Markdown>
+                  </Suspense>
                 ) : (
                   message.content
                 )
