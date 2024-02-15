@@ -138,7 +138,7 @@ class OpenAI {
             return fetchSSE(`${baseUrl}`, {
                 method: 'POST',
                 signal: request?.controller?.signal,
-                credentials: 'include',
+                credentials: 'omit',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${apiKey}`,

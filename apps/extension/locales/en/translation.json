@@ -104,5 +104,6 @@
         "plugins": {
             "groupName": "Plugins"
         }
-    }
+    },
+    "DefaultBotWelcomeMessage":"How Can I help you today?"
 }

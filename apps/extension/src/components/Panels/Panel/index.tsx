@@ -9,7 +9,7 @@ const Panel = ({ children, title, action }: {
         <div className={`flex-shrink panel-header`} style={{ height: "48px" }}>
             <div className="flex items-center logo ">
                 {/* <img className="w-5 h-5 mr-2" src="chrome-extension://difoiogjjojoaoomphldepapgpbgkhkb/./assets/logo-OYJ34ERC.png" alt="sider logo" /> */}
-                <span className="text-[20px] title-font">{title}</span>
+                <span className="text-[20px] text-dark dark:text-white title-font">{title}</span>
             </div>
             <div className="flex items-center gap-2 ml-auto ">
                 {action}

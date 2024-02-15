@@ -1,5 +1,5 @@
 import { useChat } from "~src/hooks/use-chat";
-import React, { useEffect, useImperativeHandle, useRef,Suspense, useState, type RefObject, forwardRef } from "react";
+import React, { useEffect, useImperativeHandle, useRef, Suspense, useState, type RefObject, forwardRef } from "react";
 import Logo from "~assets/icon.png"
 import { nanoid } from "~shared/utils";
 import { motion } from "framer-motion";
@@ -388,7 +388,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
             addChatMessage(chatId, message);
             setFileList([]);
 
-            const chatRequestOptions: { headers: { Authorization?: string }, body: any } = { body: {}, headers: {} };
+            const chatRequestOptions: { headers: Record<string, string>, body: any } = { body: {}, headers: {} };
             const chatRequestData: {
                 apiKey?: string,
                 baseUrl?: string,
@@ -397,6 +397,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 
             switch (opengptsConfig.mode) {
                 case 'OpenAI API':
+                    // credentials omit
                     chatRequestOptions.headers['Authorization'] = `Bearer ${opengptsConfig.apiKey}`;
                     chatRequestOptions['body'] = {
                         model: modelKey,
@@ -410,6 +411,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                         ]),
                         stream: true,
                     }
+                    console.log('opengptsConfig', opengptsConfig)
                     chatRequestData['apiKey'] = opengptsConfig.apiKey;
                     chatRequestData['baseUrl'] = `${opengptsConfig?.isProxy ? opengptsConfig.baseUrl : OPENAI_BASE_URL}/chat/completions`;
                     console.log('options', chatRequestOptions['body'])
@@ -592,7 +594,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                                                 className=" size-[40px]"
                                             />
                                         </div>
-                                        <div className="mt-[12px] font-semibold text-[18px]">我今天能帮你什么？</div>
+                                        <div className="mt-[12px] text-black dark:text-white font-semibold text-[18px]">{t('DefaultBotWelcomeMessage')}</div>
                                     </div>
                                 </div>
                             </div>
@@ -623,16 +625,16 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
                         transition={{ duration: 0.5 }}
                     >
                         <Suspense fallback={<div>Loading...</div>}>
-                        <ChatInputArea
-                            chatId={chatId}
-                            ref={inputRef}
-                            onSubmit={handleSubmit}
-                            onInputChange={onInputChange}
-                            content={content}
-                        />
+                            <ChatInputArea
+                                chatId={chatId}
+                                ref={inputRef}
+                                onSubmit={handleSubmit}
+                                onInputChange={onInputChange}
+                                content={content}
+                            />
 
                         </Suspense>
-                       
+
                     </motion.div>
                 </div>
             </>

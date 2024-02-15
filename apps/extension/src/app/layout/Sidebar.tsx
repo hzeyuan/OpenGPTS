@@ -3,7 +3,7 @@ import Logo from "~assets/icon.png"
 import Link from 'next/link';
 // import SidebarLinkGroup from './SidebarLinkGroup';
 import { useAuth } from '~src/hooks/useAuth';
-import { MoreHorizontal, MessageCircleMore, LibraryBig, MousePointerSquare } from 'lucide-react'
+import { MoreHorizontal, MessageCircleMore, LibraryBig, MousePointerSquare, LogOut, Settings2 } from 'lucide-react'
 import { motion } from 'framer-motion';
 import QQIcon from '~assets/qq.svg';
 import githubIcon from '~assets/github.svg';
@@ -182,17 +182,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
                   {
                     key: 'logout',
                     label: (
-                      <span>
-                        {t("Log Out")}
-                      </span>
+                      <div className='flex items-center'>
+                         <LogOut className='w-4 h-4 mr-1' />
+                        <span>
+                          {t("Log Out")}
+                        </span>
+                       
+                      </div>
                     ),
                   },
                   {
                     key: 'settings',
                     label: (
-                      <span>
-                        {t('Settings')}
-                      </span>
+                      <div  className='flex items-center'>
+                          <Settings2 className='w-4 h-4 mr-1' />
+                        <span>
+                          {t('Settings')}
+
+                        </span>
+                      
+                      </div>
                     ),
                   },
                 ],

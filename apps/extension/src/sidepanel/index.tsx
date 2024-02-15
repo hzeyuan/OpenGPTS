@@ -103,8 +103,10 @@ function IndexSidePanel() {
 
     useEffect(() => {
         if (theme === 'dark') {
+            document.documentElement.classList.add('dark'); 
             document.documentElement.setAttribute('data-gpts-theme', 'dark');
         } else if (theme === 'light') {
+            document.documentElement.classList.remove('dark'); 
             document.documentElement.setAttribute('data-gpts-theme', 'light');
         } else {
             document.documentElement.removeAttribute('data-gpts-theme');

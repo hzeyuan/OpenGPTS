@@ -109,6 +109,6 @@
     "Discover":"探索",
     "Settings":"设置",
     "Log Out":"退出登录",
-    "AI Models":"AI 大模型"
-
+    "AI Models":"AI 大模型",
+    "DefaultBotWelcomeMessage": "今天我可以帮你什么？"
 }

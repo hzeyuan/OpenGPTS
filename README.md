@@ -45,17 +45,10 @@ There are not many open-source GPT browser plugins, but I think browser plugins 
 
 After using many AI plugins, such as Sider, Mocia, ChatALL, ChatGPTBox, GPTs Store, etc., I hope to write a plugin that can combine the strengths of various plugins and extract the essence. -ChatPaper team
 
-<<<<<<< HEAD
-- 下载: [插件链接]("https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.4/OpenGPTsv0.0.4.zip")
-- 问题： 有任何需求或者问题可以到[issues][github-issues-link]上提问，我们会积极处理并解决的。
-- 开发: 👏🏻欢迎任何小伙伴参与进来，关于开发可以查看 [这里](#开发指导)
-- 联系方式: 请加入我们的QQ群：860859251,邮箱:yixotieq@gmail.com
-=======
 - Download: [Plugin Link]("https://github.com/hzeyuan/OpenGPTS/releases/download/v0.0.1-beta/OpenGPTs.v0.0.3.zip")
 - Issues: If you have any requirements or questions, you can ask on [issues][github-issues-link], and we will actively deal with and solve them.
 - Development: 👏🏻 Welcome any friends to participate, you can check [here](#development-guide) for development information.
 - Contact: Please join our QQ group: 860859251, email: yixotieq@gmail.com
->>>>>>> b5ff9ff669e32944358ccba9e466b2c8d8c0b412
 
 **Ambition**: Our ultimate goal is to use this plugin as a platform 📈 and treat each GPT as an Agent 🤖 to automate various business processes, maximize everyone's productivity 🚀, and help everyone to "fish" better! Haha! 😄
 
