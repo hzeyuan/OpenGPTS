@@ -25,8 +25,8 @@ export default function RootLayout(
   console.log('params', lng)
   initI18next(lng, defaultNS)
   return (
-    <html lang={lng} dir={dir(lng)}>
-        <body>
+    <html lang={lng} dir={dir(lng)} className='w-full h-full'>
+        <body className="w-full h-full">
           {children}
         </body>
     </html>

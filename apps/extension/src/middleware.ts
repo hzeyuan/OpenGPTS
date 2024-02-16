@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import acceptLanguage from 'accept-language'
+import supabase from '~src/utils/supabase';
 import { fallbackLng, languages, cookieName } from './app/i18n/settings'
 
 acceptLanguage.languages(languages)
@@ -8,23 +9,27 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)']
 }
 
-export function middleware(req: NextRequest) {
+export  async function middleware(req: NextRequest) {
   const userCookie = req.cookies.get('opengpts-user');
   let lng
   if (req.cookies.has(cookieName)) lng = acceptLanguage.get(req.cookies.get(cookieName)?.value || '')
   if (!lng) lng = acceptLanguage.get(req.headers.get('Accept-Language'))
   if (!lng) lng = fallbackLng
 
+
+
   // check login
   const isLoggedIn = !!userCookie // 假设authCookieName是存储登录状态的cookie
   const isLoginRequired = ['/chat'].some(path => req.nextUrl.pathname.includes(path));
+
+  console.log('12312312',isLoginRequired, isLoggedIn, req.nextUrl.pathname, req.nextUrl.pathname.includes('/chat'))
 
   // if not login
   if (isLoginRequired && !isLoggedIn) {
     return NextResponse.redirect(new URL(`/login`, req.url));
   }
 
-  // Redirect if lng in path is not supported
+  // Redirect if lng in path is nrot supported
   if (
     !languages.some(loc => req.nextUrl.pathname.startsWith(`/${loc}`)) &&
     !req.nextUrl.pathname.startsWith('/_next')

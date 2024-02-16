@@ -180,18 +180,6 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
               menu={{
                 items: [
                   {
-                    key: 'logout',
-                    label: (
-                      <div className='flex items-center'>
-                         <LogOut className='w-4 h-4 mr-1' />
-                        <span>
-                          {t("Log Out")}
-                        </span>
-                       
-                      </div>
-                    ),
-                  },
-                  {
                     key: 'settings',
                     label: (
                       <div  className='flex items-center'>
@@ -201,6 +189,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
 
                         </span>
                       
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'logout',
+                    label: (
+                      <div className='flex items-center'>
+                         <LogOut className='w-4 h-4 mr-1' />
+                        <span>
+                          {t("Log Out")}
+                        </span>
+                       
                       </div>
                     ),
                   },

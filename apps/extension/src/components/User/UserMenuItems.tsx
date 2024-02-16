@@ -23,7 +23,7 @@ export const UserMenuItems = ({
       >
         <li>
           <Link
-            href='/chat'
+            href='chat'
             className='flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-yellow-500'
           >
             <LayoutGrid size={20} />

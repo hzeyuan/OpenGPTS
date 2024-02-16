@@ -1,10 +1,23 @@
 "use client"
-import React from 'react';
+import React,{ useEffect } from 'react';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import supabase from '~src/utils/supabase';
+import { useRouter } from "next/navigation";
+import { useAuth } from "~src/hooks/useAuth";
 
 const LoginPage = () => {
+
+  const supabase = createClientComponentClient();
+  const router = useRouter();
+  useAuth({
+    onSignIn:()=>{
+      router.refresh();
+      router.replace('/chat')
+    }
+   });
+
+
   return (
 
     <div className='flex flex-col justify-center min-h-full pt-10 sm:px-6 lg:px-8'>

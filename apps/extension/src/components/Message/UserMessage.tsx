@@ -23,11 +23,11 @@ export const UserMessage = ({ message, chatId }: { message: OMessage, chatId: st
                     className="flex overflow-auto rounded-md text-[var(--opengpts-chat-user-bubble-color)] px-3 py-2 bg-[var(--opengpts-chat-primary-bg-color)]  flex-col"
                 >
                     {message?.command && (<div className="prompt-label gap-1 flex items-center text-xs leading-5 text-[var(--opengpts-chat-quota-color)] mb-1">
-                        {
+                        {/* {
                             message.command.icon && <span className="inline-flex shrink-0 ">
                                 {message.command.icon}
                             </span>
-                        }
+                        } */}
                         <div className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap ">
                             {message.command.name}
                         </div>

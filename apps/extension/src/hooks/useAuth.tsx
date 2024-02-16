@@ -1,48 +1,43 @@
 // useAuth.tsx
 import { useEffect } from 'react';
-import supabase from '~src/utils/supabase';
 import { Storage } from "@plasmohq/storage"
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import type { User } from '@supabase/supabase-js';
 import { useStorage } from '@plasmohq/storage/hook';
-import {  useCookies } from 'react-cookie';
+import { useCookies } from 'react-cookie';
 
-export function useAuth() {
+export function useAuth(params?: {
+    onSignIn?: () => void,
+    onSignOut?: () => void
+}) {
+    const supabase = createClientComponentClient();
     const [user, setUser] = useStorage<User | undefined>({
         key: "opengpts-user",
         instance: new Storage({
-            area: "local",
+            area: "session",
             allCopied: true,
         })
-    })
+    }, v => v || undefined)
     const [cookies, setCookie, removeCookie] = useCookies(['opengpts-user']);
 
     // 登录状态检查
     useEffect(() => {
-        const init = async () => {
-            const { data, error } = await supabase.auth.getSession();
-            if (error) {
-                console.error('Error getting session:', error);
-                return;
-            }
-            const userData = data.session?.user;
-            setUser(userData);
-            setCookie('opengpts-user', JSON.stringify(userData), { path: '/', maxAge: 3600 * 24 * 7 }); // cookies有效期为7天
-        };
-
-        init();
-
-        // 设置认证状态变化的监听器
         const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
             const userData = session?.user;
-            setUser(userData);
-            if (userData) {
+
+            console.log("userData", userData, _event)
+            if (_event === "SIGNED_IN") {
+                setUser(userData);
                 setCookie('opengpts-user', JSON.stringify(userData), { path: '/', maxAge: 3600 * 24 * 7 });
-            } else {
-                removeCookie('opengpts-user', { path: '/' }); // 如果用户登出，清除cookies
+                params?.onSignIn && params.onSignIn();
+            } else if (_event === 'SIGNED_OUT') {
+                setUser(undefined);
+                removeCookie('opengpts-user', { path: '/' });
+                params?.onSignOut && params.onSignOut();
+
             }
         });
 
-        // 返回清理函数，用于在组件卸载时取消监听
         return () => {
             authListener.subscription.unsubscribe();
         };
