@@ -12,11 +12,9 @@ import { ConfigProvider, Popover, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { useTranslation } from 'react-i18next';
-import GPTsPanel from '~src/components/Panels/GPTsPanel';
 import pintuIcon from '~assets/pintu.svg';
 import settingIcon from '~assets/settings.svg';
 import QQIcon from '~assets/qq.svg';
-import GPTsTabIcon from '~assets/gpts.svg';
 import githubIcon from '~assets/github.svg';
 import EmailIcon from '~assets/email.svg';
 import zhCN from 'antd/locale/zh_CN';
@@ -82,13 +80,7 @@ function IndexSidePanel() {
         }
     })
     const [tabs, setTabs] = useState([
-        {
-            index: 0,
-            title: 'chatBot',
-            content: '你可以随时和我聊天',
-            icon: GPTsTabIcon,
-            panel: <GPTsPanel />
-        }, {
+       {
             index: 2,
             title: 'chat',
             content: '你可以随时和我聊天',

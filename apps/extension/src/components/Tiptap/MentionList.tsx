@@ -1,8 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import useGPTStore from '~src/store/useGPTsStore';
 import { useChatPanelContext } from '../Panels/ChatPanel';
 import type { Mention } from '@opengpts/types';
-import GPTsSearch from '../GPTs/GPTsSearch';
 
 interface MentionListProps {
   items: Mention[];
@@ -20,13 +18,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
   const { setMention } = useChatPanelContext();
   const [mentionList, setMentionObject] = useState<Mention[]>([
     ...props.items,
-    ...useGPTStore(state => state.getFavoriteGPTsList)().map(item => ({
-      key: item.id,
-      name: item.display.name,
-      icon: item.display.profile_picture_url,
-      type: 'GPTs',
-    } as Mention
-    ))
+    //TODO: GPTS STORE
   ]);
 
   const favoriteGPTsList = mentionList.filter(item => item.type === 'GPTs');
@@ -107,21 +99,7 @@ const MentionList = forwardRef<MentionListRef, MentionListProps>((props, ref) =>
         padding: '8px'
       }}
     >
-      <GPTsSearch
-        getPopupContainer={() => document.getElementById('opengpts-mentionsList')!}
-        showSearch={true}
-        placeholder="Search GPTs in OpenGPTs"
-        style={{ width: '100%' }}
-        onSelect={(value, options) => {
-          const selectedMention: Mention = {
-            key: options.id,
-            name: options.display.name,
-            icon: options.display.profile_picture_url,
-            type: 'GPTs'
-          };
-          handleSelect(selectedMention);
-        }}
-      ></GPTsSearch>
+    {/* TODO:GPTS Search */}
       <span className='w-full text-sm font-semibold '>Large Model</span>
       <div className="w-full h-px max-w-6xl mx-auto bg-[#ebebeb]"></div>
 
