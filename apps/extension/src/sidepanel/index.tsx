@@ -190,7 +190,7 @@ function IndexSidePanel() {
                                                                 <motion.img
                                                                     whileTap={shakeAnimation}
                                                                     className='cursor-pointer'
-                                                                    src={session?.user?.user_metadata?.avatar || `https://ui-avatars.com/api/?name=${session?.user?.email}`} />
+                                                                    src={session?.user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${session?.user?.email}`} />
                                                                 : <User className='cursor-pointer' />
                                                         }
 

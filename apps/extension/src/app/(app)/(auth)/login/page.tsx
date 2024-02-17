@@ -1,11 +1,30 @@
 "use client"
-import React from 'react';
+import React,{useEffect} from 'react';
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useRouter } from "next/navigation";
-import supabase from '~src/utils/supabase';
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+// import supabase from '~src/utils/supabase';
 
 const LoginPage = () => {
+  const supabase = createClientComponentClient()
+
+  // useEffect(() => {
+	// 	const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+	// 		if (session) {
+  //       console.log('跳转')
+	// 			window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+	// 		}
+	// 	})
+	// }, [])
+
+  useEffect(() => {
+		const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('session',session)
+			if (session) {
+				window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+			}
+		})
+	}, [])
 
   return (
 
@@ -17,10 +36,10 @@ const LoginPage = () => {
               <h2 className='text-2xl font-bold '>Log in to your account</h2>
             </div>
             <Auth
-
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
               providers={["google"]}
+              showLinks={true}
               theme="light"
             />
           </div>

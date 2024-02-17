@@ -2,9 +2,9 @@
 import type { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 import { SessionContext } from '../context/SessionContext';
-import supabase from '~src/utils/supabase';
 import { useRouter } from "next/navigation";
 import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
 
 
 export default function RootLayout({
@@ -14,8 +14,9 @@ export default function RootLayout({
 }) {
     const [session, setSession] = useState<Session | null>(null)
     const router = useRouter();
-
+    const supabase = createClientComponentClient()
     const logout = async () => {
+       
         const { error } = await supabase.auth.signOut();
         console.log('退出登录', error)
         // window.localStorage.removeItem('sb-refresh-token')
@@ -31,7 +32,6 @@ export default function RootLayout({
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(
             (event, session) => {
-                console.log('RootLayout', session, event)
                 if (event === 'SIGNED_OUT') {
                     setSession(null)
                     router.refresh();
@@ -39,6 +39,7 @@ export default function RootLayout({
                 } else if (session) {
                     console.log('session', session)
                     if (event === "SIGNED_IN") {
+                        console.log("登录",session)
                         router.refresh();
                         router.replace('/chat')
 
