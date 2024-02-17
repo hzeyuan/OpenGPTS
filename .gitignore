@@ -38,4 +38,4 @@ yarn-error.log*
 node_modules/
 
 .next
-.vscode/settings.json
+.vscode
