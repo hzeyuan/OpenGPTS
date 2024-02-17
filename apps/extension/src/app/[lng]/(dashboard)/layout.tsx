@@ -1,5 +1,5 @@
 import DefaultLayout from '~src/app/layout/DefaultLayout';
-export default function RootLayout({
+export default function DashboardLayout({
   children,
   params: {
     lng

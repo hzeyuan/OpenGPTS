@@ -1,7 +1,7 @@
 import { LayoutGrid, LogIn } from 'lucide-react'
 import Link from 'next/link';
-import { useAuth } from '~src/hooks/useAuth';
 import type { User } from '@supabase/supabase-js';
+import { useSessionContext } from '~src/app/context/SessionContext';
 
 export const UserMenuItems = ({
   setMobileMenuOpen,
@@ -10,7 +10,7 @@ export const UserMenuItems = ({
   setMobileMenuOpen?: any;
 }) => {
   const path = window.location.pathname;
-  const { logout } = useAuth()
+  const { logout } = useSessionContext()
   const handleMobileMenuClick = () => {
     if (setMobileMenuOpen) setMobileMenuOpen(false);
   }

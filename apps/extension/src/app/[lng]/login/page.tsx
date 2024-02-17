@@ -1,22 +1,11 @@
 "use client"
-import React,{ useEffect } from 'react';
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import React from 'react';
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useRouter } from "next/navigation";
-import { useAuth } from "~src/hooks/useAuth";
+import supabase from '~src/utils/supabase';
 
 const LoginPage = () => {
-
-  const supabase = createClientComponentClient();
-  const router = useRouter();
-  useAuth('web',{
-    onSignIn:()=>{
-      router.refresh();
-      router.replace('/chat')
-    }
-   });
-
 
   return (
 
@@ -28,6 +17,7 @@ const LoginPage = () => {
               <h2 className='text-2xl font-bold '>Log in to your account</h2>
             </div>
             <Auth
+
               supabaseClient={supabase}
               appearance={{ theme: ThemeSupa }}
               providers={["google"]}

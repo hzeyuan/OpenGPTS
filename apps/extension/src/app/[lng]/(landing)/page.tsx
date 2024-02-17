@@ -1,12 +1,12 @@
 'use client'
 import { useState } from 'react';
 import DarkModeSwitcher from '~src/components/common/DarkModeSwitcher';
-import { useAuth } from '~src/hooks/useAuth';
 import Link from 'next/link';
 import DropdownUser from '~src/components/User/DropdownUser';
 import { LogIn } from 'lucide-react';
 import logoIcon from "~assets/icon.png"
 import { faqs, features, footerNavigation, navigation, testimonials } from './constant';
+import { useSessionContext } from '~src/app/context/SessionContext';
 
 
 
@@ -15,9 +15,9 @@ export default function LandingPage({ params: { lng } }: {
     params: { lng: string };
 }) {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { user } = useAuth();
+    const { session } = useSessionContext()
 
-    console.log('user',user)
+    // console.log('user', user)
 
     const NavLogo = () => (
         <img className='w-8 h-8' src={logoIcon.src} alt='OpenGPTs' />
@@ -71,7 +71,7 @@ export default function LandingPage({ params: { lng } }: {
                             <ul className='flex items-center justify-center gap-2 2xsm:gap-4'>
                                 <DarkModeSwitcher />
                             </ul>
-                            {!user ? (
+                            {!session?.user ? (
                                 <Link href='/login'>
                                     <div className='flex items-center justify-end font-bold text-gray-900 duration-300 ease-in-out hover:text-yellow-500 dark:text-white'>
                                         Try the App <LogIn size="16" className='ml-1 ' />
@@ -79,7 +79,7 @@ export default function LandingPage({ params: { lng } }: {
                                 </Link>
                             )
                                 : (
-                                    <DropdownUser user={user} />
+                                    <DropdownUser user={session?.user} />
                                 )
                             }
                         </div>
@@ -175,8 +175,8 @@ export default function LandingPage({ params: { lng } }: {
                                     opengpts is a browser extension from automation. It allows you to
                                     automate your browser with simple chat commands.
                                 </p>
-                             
-                              <div className='flex items-center justify-center mt-10 gap-x-6'>
+
+                                <div className='flex items-center justify-center mt-10 gap-x-6'>
                                     <Link
                                         href={'chat'}
                                         className='rounded-md px-3.5 py-2.5 text-sm font-semibold text-gray-700 ring-1 ring-inset ring-gray-200 hover:ring-2 hover:ring-yellow-300 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:text-white'

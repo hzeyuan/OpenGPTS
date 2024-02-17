@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import acceptLanguage from 'accept-language'
-
 import { fallbackLng, languages, cookieName } from './app/i18n/settings'
 
 acceptLanguage.languages(languages)
@@ -11,7 +10,12 @@ export const config = {
 
 
 
-export  async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest) {
+  let response = NextResponse.next({
+    request: {
+      headers: req.headers,
+    },
+  })
   const userAuthKey = `sb-${process.env.SUSPABASE_ID}-auth-token`
 
 
@@ -27,7 +31,6 @@ export  async function middleware(req: NextRequest) {
   const isLoggedIn = !!userCookie // 假设authCookieName是存储登录状态的cookie
   const isLoginRequired = ['/chat'].some(path => req.nextUrl.pathname.includes(path));
 
-  console.debug('middleware',isLoginRequired, isLoggedIn, req.nextUrl.pathname, req.nextUrl.pathname.includes('/chat'))
 
   // if not login
   if (isLoginRequired && !isLoggedIn) {
@@ -46,7 +49,7 @@ export  async function middleware(req: NextRequest) {
     const refererHeaderValue = req.headers.get('referer');
     const refererUrl = refererHeaderValue ? new URL(refererHeaderValue) : null;
     const lngInReferer = languages.find((l) => refererUrl?.pathname.startsWith(`/${l}`))
-    const response = NextResponse.next()
+
     if (lngInReferer) response.cookies.set(cookieName, lngInReferer)
     return response
   }

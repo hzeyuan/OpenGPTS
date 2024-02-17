@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import Logo from "~assets/icon.png"
 import Link from 'next/link';
 // import SidebarLinkGroup from './SidebarLinkGroup';
-import { useAuth } from '~src/hooks/useAuth';
 import { MoreHorizontal, MessageCircleMore, LibraryBig, MousePointerSquare, LogOut, Settings2 } from 'lucide-react'
 import { motion } from 'framer-motion';
 import QQIcon from '~assets/qq.svg';
@@ -13,6 +12,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import type { MenuProps } from 'antd/es/menu';
 import { useTranslation } from '../i18n/client';
 import { Dropdown, Popover, message } from 'antd';
+import { useSessionContext } from '../context/SessionContext';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -33,7 +33,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
   const router = useRouter();
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
-  const { user, logout } = useAuth();
+  const { session,logout } = useSessionContext()
   const { t } = useTranslation(lng);
   // const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -208,7 +208,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
                 onClick: handleMenuClick,
               }}>
               <div className="flex  items-center justify-between  bg-[var(--opengpts-option-card-bg-color)] rounded-lg  text-sm px-4 py-3">
-                <span className='w-full mr-2'>{user?.email || '未登录'}</span>
+                <span className='w-full mr-2'>{session?.user?.email || '未登录'}</span>
                 <MoreHorizontal className="w-4 h-4" />
               </div>
             </Dropdown>

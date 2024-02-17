@@ -26,7 +26,7 @@ import type { ThemeMode } from '@opengpts/types';
 import { ToolsPanel } from '~src/components/Panels/ToolsPanel';
 import DynamicSplitChatPanel from '~src/components/Panels/DynamicSplitChatPanel';
 import { opengptsStorage } from '~src/store';
-import { useAuth } from '~src/hooks/useAuth';
+import { User } from 'lucide-react';
 const shakeAnimation = {
     scale: 0.85,
     rotate: [0, 5, -5, 5, -5, 0],
@@ -39,8 +39,6 @@ function IndexSidePanel() {
 
     const [tabIndex, setTabIndex] = useState(0);
     const { i18n } = useTranslation();
-    const { user } = useAuth('ext');
-    console.log('ext',user)
     const [theme] = useStorage<ThemeMode>({
         key: "opengpts-theme",
         instance: opengptsStorage
@@ -52,6 +50,17 @@ function IndexSidePanel() {
         instance: opengptsStorage
     }, 'en')
 
+
+    const [session, setSession] = useStorage({
+        key: "opengpts-user",
+        instance: opengptsStorage
+    })
+
+    opengptsStorage.watch({
+        'opengpts-user': (value) => {
+            setSession(value)
+        }
+    })
 
 
     useMessage<string, string>(async (req, res) => {
@@ -169,15 +178,23 @@ function IndexSidePanel() {
                                                 )}
                                             </div>
                                         </div>
-                                       
+
                                         <div className="opengpts-sidebarr-footer">
                                             <Popover title='My Email:yixotieq@gmail.com'
                                                 content="if you have an idea or any question, you can contact me by email"
                                             >
                                                 <div className="opengpts-sidebarr-widgets-list-wrapper">
                                                     <div onClick={handleSetting} className='opengpts-sidebarr-tab'>
-                                                        <motion.img whileTap={shakeAnimation}
-                                                            style={{ cursor: 'pointer' }} src={user?.user_metadata?.avatar || `https://ui-avatars.com/api/?name=${user?.email}`} />
+                                                        {
+                                                            session?.user ?
+                                                                <motion.img
+                                                                    whileTap={shakeAnimation}
+                                                                    className='cursor-pointer'
+                                                                    src={session?.user?.user_metadata?.avatar || `https://ui-avatars.com/api/?name=${session?.user?.email}`} />
+                                                                : <User className='cursor-pointer' />
+                                                        }
+
+
                                                     </div>
                                                 </div>
 
