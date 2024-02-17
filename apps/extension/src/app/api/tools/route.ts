@@ -4,7 +4,7 @@ import supabase from "~src/utils/supabase";
 export async function GET(req: Request) {
     try {
         let { data: tools, error } = await supabase.from('tools').select('*')
-        console.log('data',tools)
+        console.log('tools',tools)
         if (error) {
             return Response.json({
                 code: -1,

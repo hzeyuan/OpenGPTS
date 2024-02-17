@@ -9,3 +9,9 @@ CREATE TABLE IF NOT EXISTS tools (
   CHECK(tool_type in ('API', 'DOM'))
 );
 
+
+
+# policies
+CREATE POLICY "anno_read_tools" ON tools FOR
+SELECT
+  TO anon USING (TRUE);

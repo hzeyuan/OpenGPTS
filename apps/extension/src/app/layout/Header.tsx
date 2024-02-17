@@ -8,7 +8,7 @@ import { useTranslation } from '../i18n/client';
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
-  user?: Partial<User>;
+  user?: User;
   lng: string
 }) => {
 

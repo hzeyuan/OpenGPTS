@@ -5,6 +5,7 @@ import { Storage } from "@plasmohq/storage";
 import type { ChatConfig } from "@opengpts/types";
 import Browser from "webextension-polyfill";
 import { CHATGPT_WEBAPPP_DEFAULT_CONFIG } from "~src/constant";
+// import { sendToBackgroundViaRelay } from "@plasmohq/messaging";
 
 const storage = new Storage({
     area: "local",
@@ -97,9 +98,37 @@ storage.getItem<ChatConfig>('config').then((config) => {
 })
 
 
-chrome.sidePanel
-    .setPanelBehavior({ openPanelOnActionClick: true })
-    .catch((error) => console.error(error));
+chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
+
+
+
+// chrome.cookies.set({
+//     url: "http://localhost:1947",
+//     name: "testCookie",
+//     value: "testValue"
+// }, function (cookie) {
+//     console.log('Cookie set: ', cookie);
+// });
+
+console.log('添加监听器')
+// Browser.cookies.onChanged.addListener((changeInfo) => {
+//     if (!changeInfo.cookie.domain.includes('localhost')) return;
+//     console.log('Cookie changed: ', changeInfo);
+//     Browser.cookies.get({
+//         url: "http://localhost:1947",
+//         name: changeInfo.cookie.name
+//     }).then((cookie) => {
+//         if (!cookie || cookie.value !== changeInfo.cookie.value) return
+//         console.log('cookie', cookie)
+//         Browser.cookies.set({
+//             url: "http://localhost:1947",
+//             name: changeInfo.cookie.name,
+//             value: changeInfo.cookie.value
+//         });
+//     })
+// });
+
+
 
 
 // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

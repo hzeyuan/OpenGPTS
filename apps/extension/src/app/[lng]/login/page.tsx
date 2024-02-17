@@ -10,7 +10,7 @@ const LoginPage = () => {
 
   const supabase = createClientComponentClient();
   const router = useRouter();
-  useAuth({
+  useAuth('web',{
     onSignIn:()=>{
       router.refresh();
       router.replace('/chat')

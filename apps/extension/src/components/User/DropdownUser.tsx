@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { UserMenuItems } from './UserMenuItems';
 import type { User } from '@supabase/supabase-js';
 
-const DropdownUser = ({ user } : { user: Partial<User> }) => {
+const DropdownUser = ({ user } : { user?: User }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);

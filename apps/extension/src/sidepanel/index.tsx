@@ -11,8 +11,6 @@ import { StyleProvider } from "@ant-design/cssinjs"
 import { ConfigProvider, Popover, theme as themeStyle } from "antd"
 import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
-import { Storage } from "@plasmohq/storage";
-
 import { useTranslation } from 'react-i18next';
 import GPTsPanel from '~src/components/Panels/GPTsPanel';
 import pintuIcon from '~assets/pintu.svg';
@@ -28,6 +26,7 @@ import type { ThemeMode } from '@opengpts/types';
 import { ToolsPanel } from '~src/components/Panels/ToolsPanel';
 import DynamicSplitChatPanel from '~src/components/Panels/DynamicSplitChatPanel';
 import { opengptsStorage } from '~src/store';
+import { useAuth } from '~src/hooks/useAuth';
 const shakeAnimation = {
     scale: 0.85,
     rotate: [0, 5, -5, 5, -5, 0],
@@ -40,11 +39,11 @@ function IndexSidePanel() {
 
     const [tabIndex, setTabIndex] = useState(0);
     const { i18n } = useTranslation();
-
-
+    const { user } = useAuth('ext');
+    console.log('ext',user)
     const [theme] = useStorage<ThemeMode>({
         key: "opengpts-theme",
-        instance:opengptsStorage
+        instance: opengptsStorage
     }, 'auto')
 
 
@@ -103,10 +102,10 @@ function IndexSidePanel() {
 
     useEffect(() => {
         if (theme === 'dark') {
-            document.documentElement.classList.add('dark'); 
+            document.documentElement.classList.add('dark');
             document.documentElement.setAttribute('data-gpts-theme', 'dark');
         } else if (theme === 'light') {
-            document.documentElement.classList.remove('dark'); 
+            document.documentElement.classList.remove('dark');
             document.documentElement.setAttribute('data-gpts-theme', 'light');
         } else {
             document.documentElement.removeAttribute('data-gpts-theme');
@@ -170,10 +169,18 @@ function IndexSidePanel() {
                                                 )}
                                             </div>
                                         </div>
+                                       
                                         <div className="opengpts-sidebarr-footer">
                                             <Popover title='My Email:yixotieq@gmail.com'
                                                 content="if you have an idea or any question, you can contact me by email"
                                             >
+                                                <div className="opengpts-sidebarr-widgets-list-wrapper">
+                                                    <div onClick={handleSetting} className='opengpts-sidebarr-tab'>
+                                                        <motion.img whileTap={shakeAnimation}
+                                                            style={{ cursor: 'pointer' }} src={user?.user_metadata?.avatar || `https://ui-avatars.com/api/?name=${user?.email}`} />
+                                                    </div>
+                                                </div>
+
                                                 <div className="opengpts-sidebarr-widgets-list-wrapper">
                                                     <div onClick={() => {
                                                         window.open('mailto:yixotieq@gmail.com')
@@ -221,6 +228,7 @@ function IndexSidePanel() {
                                                         style={{ cursor: 'pointer' }} src={settingIcon} />
                                                 </div>
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>

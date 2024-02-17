@@ -17,6 +17,8 @@ export default function LandingPage({ params: { lng } }: {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const { user } = useAuth();
 
+    console.log('user',user)
+
     const NavLogo = () => (
         <img className='w-8 h-8' src={logoIcon.src} alt='OpenGPTs' />
     );

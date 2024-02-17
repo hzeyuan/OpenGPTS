@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import acceptLanguage from 'accept-language'
-import supabase from '~src/utils/supabase';
+
 import { fallbackLng, languages, cookieName } from './app/i18n/settings'
 
 acceptLanguage.languages(languages)
@@ -9,8 +9,13 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)']
 }
 
+
+
 export  async function middleware(req: NextRequest) {
-  const userCookie = req.cookies.get('opengpts-user');
+  const userAuthKey = `sb-${process.env.SUSPABASE_ID}-auth-token`
+
+
+  const userCookie = req.cookies.get(userAuthKey);
   let lng
   if (req.cookies.has(cookieName)) lng = acceptLanguage.get(req.cookies.get(cookieName)?.value || '')
   if (!lng) lng = acceptLanguage.get(req.headers.get('Accept-Language'))
@@ -22,7 +27,7 @@ export  async function middleware(req: NextRequest) {
   const isLoggedIn = !!userCookie // 假设authCookieName是存储登录状态的cookie
   const isLoginRequired = ['/chat'].some(path => req.nextUrl.pathname.includes(path));
 
-  console.log('12312312',isLoginRequired, isLoggedIn, req.nextUrl.pathname, req.nextUrl.pathname.includes('/chat'))
+  console.debug('middleware',isLoginRequired, isLoggedIn, req.nextUrl.pathname, req.nextUrl.pathname.includes('/chat'))
 
   // if not login
   if (isLoginRequired && !isLoggedIn) {
