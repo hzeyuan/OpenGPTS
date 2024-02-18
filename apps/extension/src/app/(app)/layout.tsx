@@ -40,9 +40,8 @@ export default function RootLayout({
                     console.log('session', session)
                     if (event === "SIGNED_IN") {
                         console.log("登录",session)
-                        router.refresh();
-                        router.replace('/chat')
-
+                        // router.refresh();
+                        // router.replace('/chat')
                     };
 
                 }
