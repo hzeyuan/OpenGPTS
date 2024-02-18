@@ -17,6 +17,18 @@
         "!.next/cache/**"
       ]
     },
+    "build:next": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "inputs": [
+        "apps/extension/**"
+      ]
+    },
     "lint": {
       "cache": false
     },
