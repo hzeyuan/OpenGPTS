@@ -1,6 +1,6 @@
 import { CloseOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons"
 import { Drawer, Input, Modal } from "antd"
-import {  useEffect, useMemo, useState } from "react"
+import { Suspense, useEffect, useMemo, useState } from "react"
 import type { Chat } from "@opengpts/types"
 import { useTimeAgo } from "~src/hooks/useTimeago"
 import { nanoid } from '~shared/utils';
@@ -228,22 +228,24 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
                     }></Input>
             </div>
             <div className="flex flex-col flex-1 px-4 pb-3 overflow-y-auto chat-history-box custom-scrollbar bg-[var(--opengpts-option-card-bg-color)]">
-                <VirtualList
-                    height={document.body.clientHeight * 0.7}
-                    itemHeight={47}
-                    innerProps={{
-                        // @ts-ignore
-                        className:"bg-[var(--opengpts-option-card-bg-color)]"
-                    }}
-                    
-                    data={filteredChatList}
-                    onScroll={onScroll}
-                    itemKey={(item) => item.chatId}
-                >
-                    {(item) => (
-                        <ChatHistoryItem onClick={handleClick} key={item.chatId} chat={item}></ChatHistoryItem>)
-                    }
-                </VirtualList>
+                <Suspense >
+                    <VirtualList
+                        // height={document.body.clientHeight * 0.7}
+                        itemHeight={47}
+                        innerProps={{
+                            // @ts-ignore
+                            className: "bg-[var(--opengpts-option-card-bg-color)]"
+                        }}
+
+                        data={filteredChatList}
+                        onScroll={onScroll}
+                        itemKey={(item) => item.chatId}
+                    >
+                        {(item) => (
+                            <ChatHistoryItem onClick={handleClick} key={item.chatId} chat={item}></ChatHistoryItem>)
+                        }
+                    </VirtualList>
+                </Suspense>
 
             </div>
         </Drawer >
