@@ -21,7 +21,8 @@ const LoginPage = () => {
 		const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('session',session)
 			if (session) {
-				window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+				// window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
+        window.location.href = `${window.location.origin}/auth/callback`;
 			}
 		})
 	}, [])

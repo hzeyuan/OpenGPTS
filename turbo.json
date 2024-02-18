@@ -25,9 +25,7 @@
         ".next/**",
         "!.next/cache/**"
       ],
-      "inputs": [
-        "apps/extension/**"
-      ]
+      "inputs": []
     },
     "lint": {
       "cache": false
