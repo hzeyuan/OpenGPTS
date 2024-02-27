@@ -117,8 +117,6 @@
       "scripting",
       "activeTab",
       "debugger",
-      "webRequest",
-      "declarativeNetRequest",
       "http://localhost:1947/*",
       "<all_urls>",
       "https://*/*"

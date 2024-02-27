@@ -21,7 +21,6 @@ const InteractiveElementsList: React.FC<{
             console.error('Error fetching interactive elements:', error);
         }
     };
-
     const getBgColorClass = (tagType: string) => {
         switch (tagType.toLowerCase()) {
             case 'a': return 'bg-blue-200';

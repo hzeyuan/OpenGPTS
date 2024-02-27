@@ -35,7 +35,7 @@ export const fetchExtensionTools = async () => {
  */
 export const fetchBuiltinsTools = async () => {
     try {
-        const response = await fetch(`${base_url}/api/tools/builtins`);
+        const response = await fetch(`${BASE_URL}/api/tools/builtins`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
@@ -62,7 +62,7 @@ export const fetchBuiltinsTools = async () => {
  */
 export const callTool = async (tool_name: string, params: any) => {
     try {
-        const response = await fetch(`${base_url}/api/tools/call`, {
+        const response = await fetch(`${BASE_URL}/api/tools/call`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -93,7 +93,7 @@ export const callTool = async (tool_name: string, params: any) => {
 
 export const getTool = async (name: string) => {
     try {
-        const response = await fetch(`${base_url}/api/tools/${name}`);
+        const response = await fetch(`${BASE_URL}/api/tools/${name}`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
