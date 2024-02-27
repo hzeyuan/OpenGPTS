@@ -71,7 +71,5 @@ export const getBrowserEnv:GetBrowserEnv = (tabId: number) => {
                 })
             }
         )
-
     })
-
 }

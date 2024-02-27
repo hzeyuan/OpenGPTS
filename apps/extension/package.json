@@ -117,10 +117,7 @@
       "scripting",
       "activeTab",
       "debugger",
-      "http://localhost:1947/*",
-      "<all_urls>",
-      "https://*/*"
-      
+      "<all_urls>"
     ],
     "web_accessible_resources": [
       {
@@ -137,8 +134,7 @@
     ],
     "key": "$CRX_KEY",
     "host_permissions": [
-      "*://*/*",
-      "<all_urls>"
+      "sg.search.yahoo.com"
     ],
     "externally_connectable": {
       "matches": [
