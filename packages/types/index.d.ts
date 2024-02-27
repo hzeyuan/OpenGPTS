@@ -1,4 +1,7 @@
+import { SendToBackgroundViaRelayRequestBody, SendToBackgroundViaRelayResponseBody } from './rpa/rpa';
 
+
+export type ResponseBody = SendToBackgroundViaRelayResponseBody
 
 interface Session {
 	question: string;
@@ -122,7 +125,11 @@ interface ModelOptions {
 
 
 
-
+interface CommonResponse {
+	code: number;
+	message: string;
+	data?: Record<string, any>;
+}
 
 
 
@@ -131,6 +138,11 @@ export * from './ui';
 export * from './chat';
 export * from './database';
 export * from './tools';
+export * from './rpa/rpa';
+export * from './rpa/env';
+export * from './rpa/observe';
+export * from './rpa/thought';
+export * from './rpa/action';
 export {
 	Log,
 	GPTInfo,
@@ -142,5 +154,6 @@ export {
 	ModelOptions,
 	ModelKey,
 	Mode,
-	OpenGPTsConfig
+	OpenGPTsConfig,
+	CommonResponse
 }

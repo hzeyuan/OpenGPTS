@@ -1,7 +1,8 @@
 import type { ToolRow } from "@opengpts/types";
+import { BASE_URL } from "~src/constant";
 
 
-const base_url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.PLASMO_PUBLIC_API_BASE_URL
+
 
 
 /**
@@ -10,8 +11,8 @@ const base_url = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.PLASMO_PUBL
  */
 export const fetchExtensionTools = async () => {
     try {
-        console.log('baseurl', base_url)
-        const response = await fetch(`${base_url}/api/tools`);
+        console.log('baseurl', BASE_URL)
+        const response = await fetch(`${BASE_URL}/api/tools`);
         console.log('response', response)
         if (!response.ok) {
             throw new Error('Network response was not ok');

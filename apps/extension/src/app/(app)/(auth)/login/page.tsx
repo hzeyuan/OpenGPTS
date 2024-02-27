@@ -3,11 +3,12 @@ import React,{useEffect} from 'react';
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import {useRouter} from 'next/navigation'
 // import supabase from '~src/utils/supabase';
 
 const LoginPage = () => {
   const supabase = createClientComponentClient()
-
+  const router = useRouter()
   // useEffect(() => {
 	// 	const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
 	// 		if (session) {
@@ -22,7 +23,8 @@ const LoginPage = () => {
       console.log('session',session)
 			if (session) {
 				// window.location.href = `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`
-        window.location.href = `${window.location.origin}/auth/callback`;
+        router.replace('/')
+        // window.location.href = `${window.location.origin}/auth/callback`;
 			}
 		})
 	}, [])

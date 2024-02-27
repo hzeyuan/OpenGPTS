@@ -37,13 +37,12 @@ export default function RootLayout({
                     router.refresh();
                     router.replace('/')
                 } else if (session) {
-                    console.log('session', session)
+                    // console.log('session', session)
                     if (event === "SIGNED_IN") {
-                        console.log("登录",session)
+                        // console.log("登录",session)
                         // router.refresh();
                         // router.replace('/chat')
                     };
-
                 }
                 setSession(session)
 

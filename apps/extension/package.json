@@ -22,6 +22,9 @@
     "@ant-design/pro-components": "^2.6.46",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@langchain/community": "^0.0.30",
+    "@langchain/core": "^0.1.30",
+    "@langchain/openai": "^0.0.14",
     "@opengpts/ui": "workspace:^",
     "@plasmohq/messaging": "0.6.0",
     "@plasmohq/storage": "^1.9.0",
@@ -48,6 +51,8 @@
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
     "jquery": "^3.7.1",
+    "langchain": "^0.1.20",
+    "langsmith": "^0.1.5",
     "lodash-es": "^4.17.21",
     "lucide-react": "^0.321.0",
     "mermaid": "^10.6.1",
@@ -73,8 +78,11 @@
     "remark-breaks": "^3.0.2",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
+    "rrweb": "2.0.0-alpha.4",
+    "rrweb-snapshot": "2.0.0-alpha.4",
     "swr": "^2.2.4",
     "tippy.js": "^6.3.7",
+    "unique-selector": "^0.5.0",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.1",
     "webextension-polyfill": "^0.10.0",
@@ -107,9 +115,14 @@
       "tabs",
       "sidePanel",
       "scripting",
+      "activeTab",
+      "debugger",
       "webRequest",
       "declarativeNetRequest",
-      "<all_urls>"
+      "http://localhost:1947/*",
+      "<all_urls>",
+      "https://*/*"
+      
     ],
     "web_accessible_resources": [
       {

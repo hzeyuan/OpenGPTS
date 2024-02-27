@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import Logo from "~assets/icon.png"
 import Link from 'next/link';
 // import SidebarLinkGroup from './SidebarLinkGroup';
-import { MoreHorizontal, MessageCircleMore, LibraryBig, MousePointerSquare, LogOut, Settings2 } from 'lucide-react'
+import { MoreHorizontal, MessageCircleMore,FlaskRound, LibraryBig, MousePointerSquare, LogOut, Settings2, FunctionSquare, Wrench } from 'lucide-react'
 import { motion } from 'framer-motion';
 import QQIcon from '~assets/qq.svg';
 import githubIcon from '~assets/github.svg';
@@ -140,7 +140,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
               <ul className="mb-6 flex flex-col gap-1.5">
                 {/* <!-- Menu Item Dashboard --> */}
                 <Link
-                  href={'chat'}
+                  href={'/chat'}
                   className={`${pathname.includes('/chat') ? 'bg-white dark:bg-[var(--opengpts-option-card-bg-color)]' : ''} group relative flex items-center gap-2.5 rounded py-2 px-4 font-medium  duration-300 ease-in-out  hover:bg-white dark:hover:bg-[var(--opengpts-option-card-bg-color)]`}
                 >
                   <MessageCircleMore />
@@ -157,6 +157,53 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
                     <span>{t('Knowledge')}</span>
                   </Link>
                 </li>
+
+                <li>
+                  <Link
+                    href="/tools"
+                    className={`${pathname.includes('/tools') ? 'bg-white dark:bg-[var(--opengpts-option-card-bg-color)]' : ''} group relative flex items-center gap-2.5 rounded py-2 px-4 font-medium  duration-300 ease-in-out hover:bg-white dark:hover:bg-[var(--opengpts-option-card-bg-color)] `
+                    }
+                  >
+                    
+                   <Wrench />
+                    <span>{t('Tools')}</span>
+                  </Link>
+                </li>
+
+
+                <h3 className="mb-4 ml-4 text-sm font-semibold ">
+                {t('RPA')}
+              </h3>
+
+                <li>
+                  <Link
+                    href="/rpa/test"
+                    className={`${pathname.includes('/rpa/test') ? 'bg-white dark:bg-[var(--opengpts-option-card-bg-color)]' : ''} group relative flex items-center gap-2.5 rounded py-2 px-4 font-medium  duration-300 ease-in-out hover:bg-white dark:hover:bg-[var(--opengpts-option-card-bg-color)] `
+                    }
+                  >
+                    {/* <FunctionSquare /> */}
+                    <FlaskRound />
+
+                    <span>{t('RPA TEST')}</span>
+                  </Link>
+                </li>
+
+                <h3 className="mt-4 ml-4 text-sm font-semibold ">
+                {t('Bot')}
+              </h3>
+
+                {/* <li>
+                  <Link
+                    href="/rpa/test"
+                    className={`${pathname.includes('/rpa/test') ? 'bg-white dark:bg-[var(--opengpts-option-card-bg-color)]' : ''} group relative flex items-center gap-2.5 rounded py-2 px-4 font-medium  duration-300 ease-in-out hover:bg-white dark:hover:bg-[var(--opengpts-option-card-bg-color)] `
+                    }
+                  >
+                    <LibraryBig />
+                    <span>{t('RPA TEST')}</span>
+                  </Link>
+                </li> */}
+
+
 
                 {/* <!-- Menu Item Settings --> */}
               </ul>
