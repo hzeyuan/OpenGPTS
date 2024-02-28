@@ -1,7 +1,5 @@
 import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Redis } from '@upstash/redis';
-import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server'
 
 
