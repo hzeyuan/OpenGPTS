@@ -41,7 +41,7 @@ export default function RootLayout({
                     if (event === "SIGNED_IN") {
                         console.log("登录",session)
                         router.refresh();
-                        router.replace('/chat')
+                        // router.replace('/chat')
 
                     };
 

@@ -7,7 +7,7 @@ import { LogIn } from 'lucide-react';
 import logoIcon from "~assets/icon.png"
 import { faqs, features, footerNavigation, navigation, testimonials } from './constant';
 import { useSessionContext } from '~src/app/context/SessionContext';
-
+import  PricingPage  from './pricingPage'
 
 
 
@@ -18,6 +18,8 @@ export default function LandingPage({ params: { lng } }: {
     const { session } = useSessionContext()
 
     // console.log('user', user)
+
+
 
     const NavLogo = () => (
         <img className='w-8 h-8' src={logoIcon.src} alt='OpenGPTs' />
@@ -318,6 +320,8 @@ export default function LandingPage({ params: { lng } }: {
                     </div>
                 </div>
 
+                {/* Pricing section */}
+                <PricingPage user={session?.user}/>
                 {/* Testimonial section */}
                 <div className='mx-auto mt-32 max-w-7xl sm:mt-56 sm:px-6 lg:px-8'>
                     <div className='relative -m-2 sm:left-5 rounded-xl bg-yellow-400/20 lg:ring-1 lg:ring-yellow-500/50 lg:-m-4 '>

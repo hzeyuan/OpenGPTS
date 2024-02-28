@@ -36,6 +36,7 @@
     "@tiptap/pm": "^2.1.13",
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
+    "@tiptap/suggestion": "^2.2.4",
     "accept-language": "^3.0.18",
     "ahooks": "^3.7.8",
     "ai": "^2.2.28",
@@ -106,7 +107,6 @@
     "permissions": [
       "sidePanel"
     ],
-   
     "web_accessible_resources": [
       {
         "resources": [
