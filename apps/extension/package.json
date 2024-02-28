@@ -11,6 +11,7 @@
     "dev:next": "next dev --port 1947",
     "build": "run-s build:*",
     "build:plasmo": "plasmo build",
+    "build:plasmo:pro": "plasmo build --env=.env.production",
     "build:next": "next build",
     "package": "plasmo package",
     "type-check": "tsc --noEmit"
@@ -37,6 +38,7 @@
     "@tiptap/react": "^2.1.13",
     "@tiptap/starter-kit": "^2.1.13",
     "@tiptap/suggestion": "^2.2.4",
+    "@upstash/redis": "^1.28.4",
     "accept-language": "^3.0.18",
     "ahooks": "^3.7.8",
     "ai": "^2.2.28",

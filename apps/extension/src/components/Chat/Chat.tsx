@@ -49,6 +49,12 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
         const { selection } = useUserSelection();
         const { resetCapture } = useScreenCapture();
         const [setCloseSelectionTextPanel] = useState(true);
+
+        // const [session, setSession] = useStorage({
+        //     key: "opengpts-user",
+        //     instance: opengptsStorage
+        // })
+
         const { t } = useTranslation();
         const checkChatExist = useChatStore((state) => state.checkChatExist);
         const getChatMessages = useChatStore((state) => state.getChatMessages);
