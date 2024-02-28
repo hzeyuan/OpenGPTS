@@ -2,6 +2,7 @@ import type { ChatConfig, ModelOptions,OpenGPTsConfig } from "@opengpts/types"
 import chatgpt3_5Svg from '~assets/chatgpt3.5.svg'
 import chatgpt4Svg from '~assets/chatgpt4.svg'
 
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || process.env.PLASMO_PUBLIC_API_BASE_URL
 const WEBSITE_URL = 'https://open-gpts.vercel.app'
 const SG_SEARCH_URL = 'https://sg.search.yahoo.com/search'
 
@@ -191,6 +192,7 @@ export {
     WEBSITE_URL,
     SG_SEARCH_URL,
     OPENAI_BASE_URL,
-    OpenGPTS_BASE_URL
+    OpenGPTS_BASE_URL,
+    BASE_URL
 }
 

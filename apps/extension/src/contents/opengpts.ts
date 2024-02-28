@@ -2,7 +2,7 @@ import type { PlasmoCSConfig } from "plasmo"
 import { relayMessage } from "@plasmohq/messaging"
 
 export const config: PlasmoCSConfig = {
-    matches: ["http://localhost:1947/*"],
+    matches: ["http://localhost:1947/*","https://open-gpts.vercel.app/"],
 }
 
 console.log('opengpts inject')

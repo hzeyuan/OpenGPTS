@@ -19,7 +19,7 @@ import useScreenCapture from "~src/store/useScreenCapture";
 import { useTranslation } from "react-i18next";
 import { useStorage } from "@plasmohq/storage/hook";
 import { useDebouncedCallback } from "use-debounce";
-import { DEFAULT_CONFIG, CHATGPT_WEBAPPP_DEFAULT_CONFIG, OPENAI_BASE_URL, OpenGPTS_BASE_URL } from "~src/constant";
+import { DEFAULT_CONFIG, CHATGPT_WEBAPPP_DEFAULT_CONFIG, OPENAI_BASE_URL, OpenGPTS_BASE_URL, BASE_URL } from "~src/constant";
 import { convertToolToApiDescription, sendHttpRequest, transformMessages } from "~/src/utils";
 import { callTool, getTool } from "~src/app/services/tools";
 import type { OpenAI } from "~src/utils/web/openai";
@@ -147,7 +147,7 @@ export const Chat = forwardRef<ChatRef, ChatProps>(
 
         const { webConfig, setWebConfig, mode, setMode, input, isLoading, stop, append, messages, setMessages } = useChat({
             initMode: opengptsConfig?.mode,
-            api: `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/chat`,
+            api: `${BASE_URL}/api/chat`,
             experimental_onFunctionCall: functionCallHandler,
             credentials: "omit",
             initialMessages: [],

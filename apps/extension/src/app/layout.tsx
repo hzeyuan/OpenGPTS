@@ -26,6 +26,9 @@ export default function RootLayout(
   return (
     // dir={dir(lng)}
     <html lang={lng}  className='w-full h-full'>
+      <head>
+      <meta name="google-site-verification" content="MNYDz-zm9V5FI_xvT_kRyPs19ticgqq9IvTpDL0Rpjw" />
+      </head>
         <body className="w-full h-full">
           {children}
         </body>

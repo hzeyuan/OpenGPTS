@@ -104,31 +104,27 @@
   "manifest": {
     "default_locale": "en",
     "permissions": [
-      "tabs",
-      "sidePanel",
-      "scripting",
-      "webRequest",
-      "declarativeNetRequest",
-      "<all_urls>"
+      "sidePanel"
     ],
+   
     "web_accessible_resources": [
       {
         "resources": [
           "options.html"
         ],
         "matches": [
-          "<all_urls>"
+          "http://open-gpts.vercel.app/*"
         ],
         "extension_ids": [
           "$CRX_ID"
         ]
       }
     ],
-    "key": "$CRX_KEY",
     "host_permissions": [
-      "*://*/*",
-      "<all_urls>"
+      "http://open-gpts.vercel.app/*",
+      "http://localhost:1947/*"
     ],
+    "key": "$CRX_KEY",
     "externally_connectable": {
       "matches": [
         "*://*.localhost.com/*"

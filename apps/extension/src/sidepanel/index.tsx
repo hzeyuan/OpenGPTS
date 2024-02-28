@@ -9,7 +9,6 @@ import { Tabs, Tab, TabList, TabPanel } from 'react-tabs';
 
 import { StyleProvider } from "@ant-design/cssinjs"
 import { ConfigProvider, Popover, theme as themeStyle } from "antd"
-import { useMessage } from "@plasmohq/messaging/hook";
 import { useStorage } from "@plasmohq/storage/hook";
 import { useTranslation } from 'react-i18next';
 import pintuIcon from '~assets/pintu.svg';
@@ -61,24 +60,7 @@ function IndexSidePanel() {
     })
 
 
-    useMessage<string, string>(async (req, res) => {
-        console.log('name', req.name)
-        if (req.name === 'onTabUpdated') {
-            const data = req.body as unknown as {
-                tab: chrome.tabs.Tab
-            }
-            setTabs((prevTabs) => prevTabs.map((tab) => {
-                if (tab.index === 1 && data.tab?.favIconUrl) {
-                    return {
-                        ...tab,
-                        icon: data.tab.favIconUrl
-                    }
-                }
-                return tab;
-            })
-            );
-        }
-    })
+    
     const [tabs, setTabs] = useState([
        {
             index: 2,
