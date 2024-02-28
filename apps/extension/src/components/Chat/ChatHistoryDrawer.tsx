@@ -1,3 +1,4 @@
+'use client'
 import { CloseOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons"
 import { Drawer, Input, Modal } from "antd"
 import {  useEffect, useMemo, useState } from "react"
@@ -229,7 +230,7 @@ const ChatHistoryDrawer: React.FC<ChatHistoryDrawerProps> = ({ chatId }) => {
             </div>
             <div className="flex flex-col flex-1 px-4 pb-3 overflow-y-auto chat-history-box custom-scrollbar bg-[var(--opengpts-option-card-bg-color)]">
                 <VirtualList
-                    height={document.body.clientHeight * 0.7}
+                    // height={document?.body.clientHeight * 0.7}
                     itemHeight={47}
                     innerProps={{
                         // @ts-ignore
