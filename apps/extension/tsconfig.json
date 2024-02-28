@@ -6,6 +6,7 @@
   "include": [
     ".plasmo/index.d.ts",
     "next-env.d.ts",
+    "./global.d.ts",
     "window.d.ts",
     "**/*.ts",
     "**/*.tsx",
