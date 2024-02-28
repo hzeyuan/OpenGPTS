@@ -2,14 +2,48 @@ import OpenAI from 'openai';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import _ from 'lodash-es';
 import { transformMessages } from '~src/utils';
+import { authMiddleware } from '~src/middlewares/authMiddleware';
+import { NextResponse, type NextRequest } from 'next/server';
+import { Redis } from '@upstash/redis';
 export const runtime = 'edge';
+
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY!,
   baseURL: process.env.OPENAI_API_BASE_URL
 });
 
-export async function POST(req: Request) {
+const redis = new Redis({
+  url: process.env.UPSTASH_URL!,
+  token: process.env.UPSTASH_TOKEN!,
+})
+
+export async function POST(req: NextRequest) {
+
+
+  await authMiddleware(req);
+
+  // if (!req.user) {
+  //   return NextResponse.json({
+  //     code: 401,
+  //     message: "Unauthorized"
+  //   })
+  // }
+
+  const clientIP = req.headers.get('x-real-ip') || req.headers.get('x-forwarded-for') || req.ip;
+
+  redis.incr(`api:chat:${clientIP}`)
+
+  const count = _.toInteger(await redis.get(`api:chat:${clientIP}`));
+  console.log('count',count)
+  const freeCount = _.toInteger(process.env.FREE_CHAT_COUNT || 30);
+  if (count &&   freeCount >count  ) {
+    return NextResponse.json({
+      code: 429,
+      message: "IP request limit exceeded. Please Login to increase your rate limit."
+    })
+  }
+
 
 
   const payload = await req.json();
