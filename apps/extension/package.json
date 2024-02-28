@@ -11,6 +11,7 @@
     "dev:next": "next dev --port 1947",
     "build": "run-s build:*",
     "build:plasmo": "plasmo build",
+    "build:plasmo:pro": "plasmo build --env=.env.production",
     "build:next": "next build",
     "package": "plasmo package",
     "type-check": "tsc --noEmit"
