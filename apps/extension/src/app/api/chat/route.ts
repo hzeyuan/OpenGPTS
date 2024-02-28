@@ -3,7 +3,7 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import _ from 'lodash-es';
 import { transformMessages } from '~src/utils';
 import { authMiddleware } from '~src/middlewares/authMiddleware';
-import { NextResponse, type NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 export const runtime = 'edge';
 
@@ -35,9 +35,9 @@ export async function POST(req: NextRequest) {
   redis.incr(`api:chat:${clientIP}`)
 
   const count = _.toInteger(await redis.get(`api:chat:${clientIP}`));
-  console.log('count',count)
+  console.log('count', count)
   const freeCount = _.toInteger(process.env.FREE_CHAT_COUNT || 30);
-  if (count &&   freeCount >count  ) {
+  if (count && freeCount > count) {
     return NextResponse.json({
       code: 429,
       message: "IP request limit exceeded. Please Login to increase your rate limit."
