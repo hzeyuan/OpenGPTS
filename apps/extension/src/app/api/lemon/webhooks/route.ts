@@ -1,57 +1,68 @@
-
 import { NextRequest, NextResponse } from "next/server";
-const crypto = require('crypto');
+const crypto = require("crypto");
+import supabase from "~src/utils/supabase";
 
 export const config = {
-    api: {
-      bodyParser: false,
-    },
-  };
-  
-  
-export async function POST(req: NextRequest, { params }: {
-    params: {
-        name: string
+  api: {
+    bodyParser: false,
+  },
+};
+
+export async function POST(req: NextRequest) {
+  const rawBody = await req.text();
+  const headers = req.headers.get("X-Signature");
+  const secret = process.env.NEXT_PUBLIC_LEMONSQUEEZY_WEBHOOKS;
+  const hmac = crypto.createHmac("sha256", secret);
+  const digest = Buffer.from(hmac.update(rawBody).digest("hex"), "utf8");
+  const signature = Buffer.from(headers || "", "utf8");
+
+  if (!crypto.timingSafeEqual(digest, signature)) {
+    throw new Error("Invalid signature.");
+  }
+  const body = JSON.parse(rawBody);
+  if (body?.meta.event_name === "order_created") {
+    console.log("order_created");
+  }
+  if (body?.meta.event_name === "subscription_updated") {
+    const email = body.data.attributes.user_email;
+    const payment_status = body.data.attributes.status;
+    const { data, error } = await supabase
+      .from("user_subscription")
+      .select("*")
+      .eq("email", email);
+    if (data?.length == 0) {
+      const { error } = await supabase
+        .from("user_subscription")
+        .insert({ email, payment_status });
+    } else {
+      const { error } = await supabase
+        .from("user_subscription")
+        .update({ payment_status})
+        .eq("email", email)
     }
-}) {
-    const data = await req.json()
-    console.log('req',data)
-    const headers = req.headers.get('X-Signature')
+  }
+  if (body?.meta.event_name === "subscription_created") {
+    console.log("subscription_created");
+  }
+  if (body?.meta.event_name === "subscription_payment_success") {
+    console.log("subscription_payment_success");
+  }
 
-    let rawBody = '';
-    req.on('data', chunk => {
-      rawBody += chunk;
-    });
-  
-    await new Promise((resolve) => req.on('end', resolve));
-  
-    // 现在 rawBody 包含了原始的请求体
-    console.log(rawBody);
-  
-  
-
-    console.log('headers',headers)
-    const secret    = 'usesless';
-    const hmac      = crypto.createHmac('sha256', secret);
-    const digest    = Buffer.from(hmac.update(rawBody).digest('hex'), 'utf8');
-    const signature = Buffer.from(headers || '', 'utf8');
-
-    if (!crypto.timingSafeEqual(digest, signature)) {
-        throw new Error('Invalid signature.');
-    }
-
-    return Response.json(data)
+  return Response.json(rawBody);
 }
 
-
-export async function GET(req: NextRequest, { params }: {
+export async function GET(
+  req: NextRequest,
+  {
+    params,
+  }: {
     params: {
-        name: string
-    }
-}) {
-
-    console.log('req',req.url)
-    const { name } = params
-    console.log('123', req)
-    return Response.json(req.url)
+      name: string;
+    };
+  }
+) {
+  console.log("req", req.url);
+  const { name } = params;
+  console.log("123", req);
+  return Response.json(req.url);
 }

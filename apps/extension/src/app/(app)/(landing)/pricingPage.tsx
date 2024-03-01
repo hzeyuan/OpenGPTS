@@ -6,6 +6,7 @@ type Product = {
   name: string;
   id: string;
   price_formatted: string;
+  store_id: number;
   buy_now_url?: string;
   description: string;
   features: string[];
@@ -21,7 +22,9 @@ const PricingPage = ({ user }: { user?: User }) => {
   >(false);
 
   useEffect(() => {
-    const api = process.env.NEXT_PUBLIC_LEMONSQUEEZY_URL + "/v1/products?filter[store_id]=23099";
+    const api =
+      process.env.NEXT_PUBLIC_LEMONSQUEEZY_URL +
+      "/products?filter[store_id]=23099";
     const key = "Bearer " + process.env.NEXT_PUBLIC_LEMONSQUEEZY_KEY;
     getProductList(api, key);
   }, []);
@@ -38,16 +41,19 @@ const PricingPage = ({ user }: { user?: User }) => {
       throw err;
     });
     const res = await response.json();
-    const products = res.data.map((item) => {
-      return {
-        id: item.id,
-        name: item.attributes.name,
-        buy_now_url: item.attributes.buy_now_url,
-        price_formatted: item.attributes.price_formatted,
-        bestDeal: true,
-        status: item.attributes.status
-      };
-    }).filter(obj => obj.status === 'published');
+    const products = res.data
+      .map((item) => {
+        return {
+          id: item.id,
+          name: item.attributes.name,
+          store_id: item.attributes.store_id,
+          buy_now_url: item.attributes.buy_now_url,
+          price_formatted: item.attributes.price_formatted,
+          bestDeal: true,
+          status: item.attributes.status,
+        };
+      })
+      .filter((obj) => obj.status === "published");
     setTiers(products);
   }
 
@@ -56,22 +62,54 @@ const PricingPage = ({ user }: { user?: User }) => {
       router.push("/login");
       return;
     }
-    if(item?.buy_now_url) {
-      router.push(item?.buy_now_url);
-    }
-    // try {
-    //   setIsStripePaymentLoading(tierId);
-    //   let stripeResults = await stripePayment(tierId);
+    console.log("user", user);
+    const product = await getProductVariants(item.id);
+    console.log('product', product.data[0].attributes.slug)
+    //拼接checkout连接
+    const baseUrl = new URL(
+      `https://usesless.lemonsqueezy.com/checkout/buy/${product.data[0].attributes.slug}`
+    );
 
-    //   if (stripeResults?.sessionUrl) {
-    //     window.open(stripeResults.sessionUrl, '_self');
-    //   }
-    // } catch (error: any) {
-    //   console.error(error?.message ?? 'Something went wrong.');
-    // } finally {
-    //   setIsStripePaymentLoading(false);
-    // }
+    const email = user.email;
+
+    const url = new URL(baseUrl);
+    if (email) url.searchParams.append("checkout[email]", email);
+    router.push(url.toString())
+
   }
+  function createHeaders() {
+    const headers = new Headers();
+    headers.append("Accept", "application/vnd.api+json");
+    headers.append("Content-Type", "application/vnd.api+json");
+    headers.append(
+      "Authorization",
+      `Bearer ${process.env.NEXT_PUBLIC_LEMONSQUEEZY_KEY}`
+    );
+    return headers;
+  }
+
+  function createRequestOptions(method: string, headers: Headers): RequestInit {
+    return {
+      method,
+      headers,
+      redirect: "follow",
+      cache: "no-store",
+    };
+  }
+  async function getProductVariants(productId: string) {
+    const url = `${process.env.NEXT_PUBLIC_LEMONSQUEEZY_URL}/variants?filter[product_id]=${productId}`;
+    const headers = createHeaders();
+    const requestOptions = createRequestOptions("GET", headers);
+
+    const response: Response = await fetch(url, requestOptions);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  }
+
 
   return (
     <div className="py-10 lg:mt-10">
@@ -163,7 +201,7 @@ const PricingPage = ({ user }: { user?: User }) => {
                 </a>
               ) : (
                 <button
-                  onClick={() => handleBuyNowClick(tier.id)}
+                  onClick={() => handleBuyNowClick(tier)}
                   aria-describedby={tier.id}
                   className={`dark:text-white
                           ${
