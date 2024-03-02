@@ -1,0 +1,52 @@
+.react-flow__node {
+  & > div {
+    @apply rounded-lg transition;
+  }
+  &.selected .block-base__content {
+    @apply ring-2  ring-boxdark;
+  }
+
+  &:hover {
+    .block-menu-container {
+      display: block;
+    }
+  }
+
+  .react-flow__handle {
+    @apply h-4 w-4 rounded-full border-0;
+    &.target {
+      @apply bg-boxdark -ml-4;
+    }
+    &.source {
+      border-width: 3px;
+      @apply border-boxdark -mr-4 bg-white dark:bg-black;
+    }
+  }
+}
+
+.react-flow__edge {
+  cursor: pointer;
+  &.selected .vue-flow__edge-path {
+    stroke: theme("colors.green.300");
+  }
+}
+
+.react-flow__edge-path {
+  stroke: theme("colors.primary");
+  stroke-width: 4;
+  transition: stroke 100ms ease;
+  &:hover {
+    stroke: theme("colors.yellow.500");
+  }
+}
+
+.react-flow__controls {
+  .react-flow__controls-button {
+    @apply p-3;
+
+    svg {
+      @apply w-4 h-4 max-w-4 max-h-4;
+    }
+  }
+  
+}

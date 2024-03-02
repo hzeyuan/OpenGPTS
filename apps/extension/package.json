@@ -73,6 +73,7 @@
     "react-node-to-string": "^0.1.2",
     "react-split-grid": "^1.0.4",
     "react-tabs": "^6.0.2",
+    "reactflow": "^11.10.4",
     "rehype-highlight": "^6.0.0",
     "rehype-katex": "^6.0.3",
     "remark-breaks": "^3.0.2",

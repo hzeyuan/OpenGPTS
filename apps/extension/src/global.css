@@ -1,6 +1,69 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+@layer utilities {
+  .hoverable {
+    @apply hover:bg-gray-800 hover:bg-opacity-5 dark:hover:bg-gray-200 dark:hover:bg-opacity-5;
+  }
+  .bg-input {
+    @apply bg-black bg-opacity-5 hover:bg-opacity-10 dark:bg-gray-200 dark:bg-opacity-5 dark:hover:bg-opacity-10;
+  }
+  .bg-box-transparent-2 {
+    @apply bg-black bg-opacity-10 dark:bg-gray-200 dark:bg-opacity-10;
+  }
+
+  .block-menu {
+    @apply mb-1 bg-box-transparent-2 rounded-md;
+    button {
+      padding-left: 6px;
+      padding-right: 6px;
+      @apply focus:ring-0 py-1 hover:text-primary;
+    }
+    input:focus,
+    button:focus,
+    textarea:focus,
+    select:focus,
+    [role='button']:focus {
+      outline:none;
+      cursor:pointer
+    }
+    }
+    
+    .text-overflow {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    
+    .scroll, 
+    .scroll .cm-scroller {
+      &::-webkit-scrollbar {
+        width: 7px;
+        height: 9px;
+      }
+      &::-webkit-scrollbar-thumb {
+        @apply bg-gray-300 dark:bg-gray-700;
+        border-radius: 8px;
+      }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+    
+      &.scroll-xs::-webkit-scrollbar {
+        width: 5px;
+        height: 5px;
+      }
+    }
+
+
+}
+
+
+
+
 /* @layer base {
   a {
     text-decoration: none;
@@ -40,7 +103,7 @@ input:where(:not([type])),
 [multiple],
 textarea,
 select {
-  background: inherit !important;
+  /* background: inherit !important; */
 }
 
 :root[data-gpts-theme="dark"] {

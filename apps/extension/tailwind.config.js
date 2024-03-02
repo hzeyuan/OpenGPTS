@@ -4,9 +4,7 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 module.exports = {
   mode: "jit",
   darkMode: "class",
-  content: ["./**/*.tsx",
-    './src/app/**/*.tsx',
-    './src/components/**/*.tsx'],
+  content: ["./src/**/*.{tsx,ts}"],
   corePlugins: {
     preflight: false
   },

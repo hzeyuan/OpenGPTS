@@ -188,6 +188,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
                   </Link>
                 </li>
 
+                <li>
+                  <Link
+                    href="/rpa/workflow"
+                    className={`${pathname.includes('/rpa/workflow') ? 'bg-white dark:bg-[var(--opengpts-option-card-bg-color)]' : ''} group relative flex items-center gap-2.5 rounded py-2 px-4 font-medium  duration-300 ease-in-out hover:bg-white dark:hover:bg-[var(--opengpts-option-card-bg-color)] `
+                    }
+                  >
+                    <LibraryBig />
+                    <span>{t('RPA Workflow')}</span>
+                  </Link>
+                </li>
+
+
                 <h3 className="mt-4 ml-4 text-sm font-semibold ">
                 {t('Bot')}
               </h3>

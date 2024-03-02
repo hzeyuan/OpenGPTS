@@ -16,7 +16,7 @@ export default function RootLayout({
     const router = useRouter();
     const supabase = createClientComponentClient()
     const logout = async () => {
-       
+
         const { error } = await supabase.auth.signOut();
         console.log('退出登录', error)
         // window.localStorage.removeItem('sb-refresh-token')
