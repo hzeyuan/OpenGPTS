@@ -10,7 +10,7 @@ import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import { useTranslation } from '../i18n/client';
 import useColorMode from '~src/hooks/useColorMode';
-
+import './DefaultLayout.css'
 interface Props {
   children?: ReactNode;
   lng: string
@@ -82,31 +82,83 @@ const DefaultLayout: FC<Props> = ({ children, lng }) => {
       >
         <StyleProvider >
           {/* <SessionContext.Provider value={session}> */}
-            <div className="dark:bg-[var(--opengpts-sidebar-bg-color)] dark:text-white">
-              {/* <!-- ===== Page Wrapper Start ===== --> */}
-              <div className="flex h-screen overflow-hidden">
-                {/* <!-- ===== Sidebar Start ===== --> */}
-                <Sidebar lng={lng} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-                {/* <!-- ===== Sidebar End ===== --> */}
+          <div className="dark:bg-[var(--opengpts-sidebar-bg-color)] dark:text-white">
+            {/* <!-- ===== Page Wrapper Start ===== --> */}
+            <div className="flex h-screen overflow-hidden">
+              {/* <!-- ===== Sidebar Start ===== --> */}
+              <Sidebar lng={lng} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+              {/* <!-- ===== Sidebar End ===== --> */}
 
-                {/* <!-- ===== Content Area Start ===== --> */}
-                <div className="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
-                  {/* <!-- ===== Header Start ===== --> */}
-                  {/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user} /> */}
-                  {/* <!-- ===== Header End ===== --> */}
+              {/* <!-- ===== Content Area Start ===== --> */}
+              <div className="relative flex flex-col flex-1 overflow-x-hidden overflow-y-auto">
+                {/* <!-- ===== Header Start ===== --> */}
+                {/* <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} user={user} /> */}
+                {/* <!-- ===== Header End ===== --> */}
 
-                  {/* <!-- ===== Main Content Start ===== --> */}
-                  <main className='h-full'>
-                    <div className="h-full mx-auto">
-                      {children}
-                    </div>
-                  </main>
-                  {/* <!-- ===== Main Content End ===== --> */}
+                <div
+                  style={{
+                    zIndex: 9999
+                  }}
+                  className="fixed z-90 top-1/2   -translate-y-[50%]"
+
+                // style="transform: translateX(260px) translateY(-50%) rotate(0deg) translateZ(0px);"
+                >
+                  <button className='rotate-on-hover' onClick={() => setSidebarOpen(!sidebarOpen)}>
+                    <span className="" data-state="closed">
+                      <div className="flex h-[72px] w-8 items-center justify-center">
+                        <div className="flex flex-col items-center w-6 h-6">
+                          <div
+                            className="w-1 h-3 rounded-full rotate-left translate-y-[0.15rem]  transform     "
+                            style={{
+                              background: "var(--opengpts-primary-color)",
+                              // transform: "translateY(0.15rem)   translateZ(0px)",
+                            }}
+                          ></div>
+                          <div
+                            className="w-1 h-3 rounded-full rotate-right   translate-y-[-0.15rem]  transform  "
+                            style={{
+                              background: "var(--opengpts-primary-color)",
+                              // transform: "translateY(-0.15rem)    translateZ(0px)",
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          position: "absolute",
+                          border: "0px",
+                          width: "1px",
+                          height: "1px",
+                          padding: "0px",
+                          margin: "-1px",
+                          overflow: "hidden",
+                          clip: "rect(0px, 0px, 0px, 0px)",
+                          whiteSpace: "nowrap",
+                          overflowWrap: "normal",
+
+                        }}
+                      >
+                        关闭侧边栏
+                      </span>
+                    </span>
+                  </button>
                 </div>
-                {/* <!-- ===== Content Area End ===== --> */}
+
+
+                {/* <!-- ===== Main Content Start ===== --> */}
+                <main className='h-full '>
+
+
+                  <div className="h-full mx-auto">
+                    {children}
+                  </div>
+                </main>
+                {/* <!-- ===== Main Content End ===== --> */}
               </div>
-              {/* <!-- ===== Page Wrapper End ===== --> */}
+              {/* <!-- ===== Content Area End ===== --> */}
             </div>
+            {/* <!-- ===== Page Wrapper End ===== --> */}
+          </div>
           {/* </SessionContext.Provider> */}
         </StyleProvider>
       </ConfigProvider>
