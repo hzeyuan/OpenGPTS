@@ -62,20 +62,16 @@ const PricingPage = ({ user }: { user?: User }) => {
       router.push("/login");
       return;
     }
-    console.log("user", user);
     const product = await getProductVariants(item.id);
-    console.log('product', product.data[0].attributes.slug)
     //拼接checkout连接
     const baseUrl = new URL(
       `https://usesless.lemonsqueezy.com/checkout/buy/${product.data[0].attributes.slug}`
     );
 
     const email = user.email;
-
     const url = new URL(baseUrl);
     if (email) url.searchParams.append("checkout[email]", email);
     router.push(url.toString())
-
   }
   function createHeaders() {
     const headers = new Headers();

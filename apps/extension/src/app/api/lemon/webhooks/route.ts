@@ -19,33 +19,62 @@ export async function POST(req: NextRequest) {
   if (!crypto.timingSafeEqual(digest, signature)) {
     throw new Error("Invalid signature.");
   }
+
   const body = JSON.parse(rawBody);
+  //order_created
   if (body?.meta.event_name === "order_created") {
-    console.log("order_created");
+    const { user_email: email, status } = body.data.attributes;
+    const name = body.meta.event_name;
+    const { error } = await supabase
+      .from("subscription")
+      .insert({ subscription_type: name, email, status, details: body });
   }
+  //subscription_updated
   if (body?.meta.event_name === "subscription_updated") {
-    const email = body.data.attributes.user_email;
-    const payment_status = body.data.attributes.status;
-    const { data, error } = await supabase
-      .from("user_subscription")
-      .select("*")
-      .eq("email", email);
-    if (data?.length == 0) {
-      const { error } = await supabase
+    const {
+      status: payment_status,
+      user_email: email,
+      status,
+    } = body.data.attributes;
+    const name = body.meta.event_name;
+    //查询用户并确认支付状态
+    try {
+      const { data, error } = await supabase
         .from("user_subscription")
-        .insert({ email, payment_status });
-    } else {
-      const { error } = await supabase
-        .from("user_subscription")
-        .update({ payment_status})
-        .eq("email", email)
+        .select("*")
+        .eq("email", email);
+      if (data?.length == 0) {
+        const { error } = await supabase
+          .from("user_subscription")
+          .insert({ email, payment_status });
+      } else {
+        const { error } = await supabase
+          .from("user_subscription")
+          .update({ payment_status })
+          .eq("email", email);
+      }
+    } catch (error) {
+        console.log('error',error)
     }
+    const { error } = await supabase
+      .from("subscription")
+      .insert({ subscription_type: name, email, status, details: body });
   }
+  //subscription_created
   if (body?.meta.event_name === "subscription_created") {
-    console.log("subscription_created");
+    const { user_email: email, status } = body.data.attributes;
+    const name = body.meta.event_name;
+    const { error } = await supabase
+      .from("subscription")
+      .insert({ subscription_type: name, email, status, details: body });
   }
+  //subscription_payment_success
   if (body?.meta.event_name === "subscription_payment_success") {
-    console.log("subscription_payment_success");
+    const { user_email: email, status } = body.data.attributes;
+    const name = body.meta.event_name;
+    const { error } = await supabase
+      .from("subscription")
+      .insert({ subscription_type: name, email, status, details: body });
   }
 
   return Response.json(rawBody);
