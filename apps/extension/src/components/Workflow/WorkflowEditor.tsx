@@ -1,13 +1,16 @@
 "use client"
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect } from 'react';
 import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handle, MiniMap, Position, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, useViewport } from 'reactflow';
-import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance } from 'reactflow';
+import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore } from 'reactflow';
 
 import 'reactflow/dist/style.css';
 import './index.css';
 import BlockBasic from '../Blocks/BlockBasic';
 import BorderEdge from './Edge/BorderEdge';
 import { categories, getBlocks } from '~src/utils/workflow';
+import WorkflowEditBlock from './WorkflowEditBlock';
+import { nanoid } from '~shared/utils';
+import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 
 
 
@@ -60,25 +63,43 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         getBoundingClientRect,
     }));
 
-    
+
     const isMac = navigator.appVersion.indexOf('Mac') !== -1;
     const [nodes, setNodes] = useState<Node[]>([]);
+
     const [edges, setEdges] = useState<Edge[]>([]);
-    const [nodeId, setNodeId] = useState(2);
-    const reactFlowInstanceRef = useRef<any>(null);
+    const [curNode, setCurNode] = useState<Node<PRAWorkflow.Block> | undefined>(undefined);
+    const reactFlowInstanceRef = useRef<ReactFlowInstance<PRAWorkflow.Block, any> | null>(null);
     const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
+    const editBlockDrawerRef = useRef<any>(null);
     // const getPosition = (position) => (Array.isArray(position) ? position : [0, 0]);
 
 
-    const minimapNodeClassName = (node:Node) => {
-        console.log("node",node)
+    // update blcok EditData
+    const handleUpdateNodeData = (newNode?: Node<PRAWorkflow.Block>) => {
+        console.log('handleUpdateNodeData', newNode)
+        setCurNode(newNode)
+        setNodes((nodes) => nodes.map((node) => {
+            if (node.id === newNode?.id) {
+                return {
+                    ...node,
+                    ...newNode,
+                }
+            }
+            return node;
+        }
+        ))
+    }
+
+    const minimapNodeClassName = (node: Node) => {
+        // console.log("node", node)
         const id = node?.data.id
-        if(!id){
+        if (!id) {
             return ''
         }
         const { category } = blocks[id];
         const { color } = categories[category];
-    
+
         return color;
     }
 
@@ -116,9 +137,9 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         []
     );
 
-    const addNode = (node: Node) => {node
+    const addNode = (node: Node) => {
+        node
         setNodes((prevNodes) => [...prevNodes, node]);
-        setNodeId(nodeId + 1);
     };
 
     const getBoundingClientRect = () => {
@@ -127,6 +148,8 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     const setReactFlowInstance = (instance: ReactFlowInstance) => {
         reactFlowInstanceRef.current = instance;
     };
+
+
 
 
     const toggleHighlightElement = ({ target, elClass, classes }: {
@@ -157,26 +180,38 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         });
     }
 
+    const handleDelete = (id: string) => {
+        console.log('delete', id, editBlockDrawerRef)
+        setNodes((nodes) => nodes.filter((node) => node.id !== id));
+        setEdges((edges) => edges.filter((edge) => edge.source !== id && edge.target !== id));
+        editBlockDrawerRef.current?.setOpen(false);
+        // reactFlowInstanceRef.current?.removeElements({ id });
+    }
+
+    const handleEdit = useCallback((nodeId: string) => {
+        const nodes = reactFlowInstanceRef.current?.getNodes();
+        console.log('edit', nodes, nodeId, nodes)
+        if (!nodes) {
+            return;
+        }
+        const blockNode = nodes?.find((node) => node.id === nodeId);
+        handleUpdateNodeData(blockNode);
+        editBlockDrawerRef.current?.setOpen(true);
+    }, [nodes])
+
     const onDropInEditor: DragEventHandler = useCallback((event) => {
         console.log('Dropped item in editor')
         const { dataTransfer, clientX, clientY, target } = event;
-        // 阻止默认行为是很重要的，特别是在处理拖放事件时
-        // event.preventDefault();
-        // 你的逻辑代码，比如获取拖放数据等
-        // try {
-        //     const savedBlocks = JSON.parse(dataTransfer.getData('savedBlocks'));
-        // } catch (error) {
-        //     console.error('Error parsing savedBlocks', error);
-        // }
 
         // const { data, error } = attempt(() => {
         const data = JSON.parse(dataTransfer.getData('block'));
         // });
 
-        console.log('data', data, dataTransfer.getData('block'))
-        const viewport = reactFlowInstanceRef?.current?.getViewport();
+        const blockId = data.id
+        const block = blocks[blockId]
 
-        // console.log('savedBlocks', dataTransfer, data, reactFlowInstanceRef?.current, viewport)
+        console.log('data', data)
+        const viewport = reactFlowInstanceRef?.current?.getViewport();
 
         const editorRect = reactFlowWrapperRef.current?.getBoundingClientRect();
         if (!editorRect) {
@@ -190,40 +225,23 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         console.log('viewport', viewport, position, clientX, clientY,)
         // add node
         addNode({
-            id: nodeId.toString(),
+            id: nanoid(),
             type: 'blockBasic',
-            data: { name: data.name, id: data.id },
+            data: {
+                id: blockId,
+                onDelete: handleDelete,
+                onEdit: handleEdit,
+                ...block,
+            },
             position: {
-                x: position.x,
-                y: position.y,
+                x: position?.x,
+                y: position?.y,
             },
         } as Node)
 
         clearHighlightedElements();
-        // if (savedBlocks && !isPackage) {
-        //     if (savedBlocks.settings.asBlock) {
-        //         editor.value.addNodes([
-        //             {
-        //                 position,
-        //                 id: nanoid(),
-        //                 data: savedBlocks,
-        //                 type: 'BlockPackage',
-        //                 label: 'block-package',
-        //             },
-        //         ]);
-        //     } else {
-        //         const { nodes, edges } = savedBlocks.data;
-        //         /* eslint-disable-next-line */
-        //         const newElements = copyElements(nodes, edges, { clientX, clientY });
 
-        //         editor.value.addNodes(newElements.nodes);
-        //         editor.value.addEdges(newElements.edges);
-        //     }
-
-        //     state.dataChanged = true;
-        //     return;
-        // }
-    }, [reactFlowInstanceRef, reactFlowWrapperRef, nodeId])
+    }, [reactFlowInstanceRef, reactFlowWrapperRef])
 
     const onDragoverEditor: DragEventHandler = (event) => {
         const { target } = event;
@@ -263,7 +281,6 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                 ref={reactFlowWrapperRef}
             >
                 <Flow
-                  
                     setReactFlowInstance={setReactFlowInstance}
                     id="workflow-editor"
                     nodes={nodes}
@@ -291,6 +308,17 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
 
                     <Background className='bg-[#fafafa]' size={2} color="var(--opengpts-primary-color)" variant={BackgroundVariant.Dots} />
                 </Flow>
+
+                <WorkflowEditBlock
+                    // key={curNode?.id || 'workflow-edit-block'}
+                    ref={editBlockDrawerRef}
+                    node={curNode}
+                    workflow={{}}
+                    editor={reactFlowInstanceRef.current}
+                    autocomplete={false}
+                    onUpdate={handleUpdateNodeData}
+                />
+
             </div>
 
         </ReactFlowProvider>

@@ -16,7 +16,7 @@ const BlockBasic: ComponentType<NodeProps & {
 
     // const blockErrors = ""; // 假设用于验证的逻辑
     const block = useEditorBlock(data.id);
-    console.log('block', block, data.id, data)
+    // console.log('block', block, data.id, data)
     const IconComponent = iconMap[data.id]
     // const showTextToCopy = useMemo(() => {
     //     if (block?.details?.id && loopBlocks.includes(block?.details?.id) && data.loopId) {
@@ -54,9 +54,10 @@ const BlockBasic: ComponentType<NodeProps & {
         <BlockBase
             className='block-basic group'
             contentClass=''
-            blockId=""
-        // onEdit={undefined}
-        // onDelete={undefined}
+            blockId={id}
+            blockData={block}
+            onEdit={data.onEdit}
+            onDelete={data.onDelete}
         // onUpdate={undefined}
         // onSettings={undefined}
         >

@@ -39,3 +39,4 @@ node_modules/
 
 .next
 .vscode
+apps/extension/.env.production

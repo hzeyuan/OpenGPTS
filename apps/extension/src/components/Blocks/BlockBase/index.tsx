@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { Play, Pencil, Settings, ToggleLeft, ToggleRight, Delete, CircleDashed } from 'lucide-react';
+import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 
 
 const BlockBase: React.FC<{
   className?: string,
   contentClass?: string,
-  blockData?: any,
+  blockData?: {
+    details?: PRAWorkflow.Block | undefined;
+    category?: PRAWorkflow.Category | undefined;
+  },
   data?: any,
   blockId: string,
-  onEdit?: () => undefined,
-  onDelete?: () => undefined,
+  onEdit?: (id:string) => undefined,
+  onDelete?: (id: string) => undefined,
   onUpdate?: (props: {
     disableBlock: boolean
   }) => undefined,
@@ -49,32 +53,36 @@ const BlockBase: React.FC<{
   // };
 
   return (
-    <div className={`block-base relative w-40 rounded-lg ${className}`} data-block-id={blockId} onDoubleClick={onEdit}>
+    <div className={`block-base relative w-40 rounded-lg ${className}`} data-block-id={blockId} onDoubleClick={()=>onEdit?.(blockId)}>
       <div className="absolute top-0 hidden w-full block-menu-container" style={{ transform: 'translateY(-100%)' }}>
         <p title="Block id (click to copy)" className="inline-block px-1 pointer-events-auto block-menu text-overflow dark:text-gray-300"
           style={{ maxWidth: '96px', marginBottom: 0 }} onClick={insertToClipboard}>
           {isCopied ? '✅ Copied' : blockId}
         </p>
 
-        <div className="inline-flex items-center block-menu dark:text-gray-300">
+        <div className="inline-flex items-center justify-center block-menu dark:text-gray-300">
           {!blockData.details?.disableDelete && (
-            <button title="Delete block" onClick={onDelete}>
-              <Delete size="20" />
+            <button className='h-6 p-2 ' title="Delete block" onClick={(e) => {
+              e.stopPropagation();
+              onDelete?.(blockId);
+            }}>
+              <Delete className='cursor-pointer' size="16" />
             </button>
           )}
-          <button title="Settings" onClick={() => onSettings?.({ details: blockData.details, data, blockId })}>
-            <Settings size="20" />
+          <button className='h-6 p-2 ' title="Settings" onClick={() => onSettings?.({ details: blockData.details, data, blockId })}>
+            <Settings className='cursor-pointer' size="16" />
           </button>
-          {blockData.details?.id !== 'trigger' && (
-            <button title="Enable/Disable block" onClick={() => onUpdate?.({ disableBlock: !data.disableBlock })}>
+          {/* {blockData.details?.id !== 'trigger' && (
+            <button className='cursor-pointer' title="Enable/Disable block" onClick={() => onUpdate?.({ disableBlock: !data.disableBlock })}>
               {data.disableBlock ? <ToggleLeft size="20" /> : <ToggleRight size="20" />}
             </button>
-          )}
+          )} */}
           {/* onClick={runWorkflow} */}
-          <button title="Run workflow from here" >
-            <Play size="20" />
+          <button className='h-6 p-2 ' title="Run workflow from here" >
+            <Play className='cursor-pointer' size="16" />
           </button>
-          {!blockData.details?.disableEdit && <button title="Edit block" onClick={onEdit}><Pencil size="20" /></button>}
+          {!blockData.details?.disableEdit && 
+          <button className='h-6 p-2 cursor-pointer'  title="Edit block" onClick={()=>onEdit?.(blockId)}><Pencil size="16" /></button>}
         </div>
       </div>
       {/* ui-card */}

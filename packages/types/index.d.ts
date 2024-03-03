@@ -143,6 +143,7 @@ export * from './rpa/env';
 export * from './rpa/observe';
 export * from './rpa/thought';
 export * from './rpa/action';
+export * from './rpa/workflow';
 export {
 	Log,
 	GPTInfo,

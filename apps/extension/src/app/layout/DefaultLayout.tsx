@@ -111,14 +111,12 @@ const DefaultLayout: FC<Props> = ({ children, lng }) => {
                             className="w-1 h-3 rounded-full rotate-left translate-y-[0.15rem]  transform     "
                             style={{
                               background: "var(--opengpts-primary-color)",
-                              // transform: "translateY(0.15rem)   translateZ(0px)",
                             }}
                           ></div>
                           <div
                             className="w-1 h-3 rounded-full rotate-right   translate-y-[-0.15rem]  transform  "
                             style={{
                               background: "var(--opengpts-primary-color)",
-                              // transform: "translateY(-0.15rem)    translateZ(0px)",
                             }}
                           ></div>
                         </div>

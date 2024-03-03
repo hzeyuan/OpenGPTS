@@ -6,7 +6,6 @@ import { useRef } from 'react';
 const WorkflowLayout = () => {
 
     const workflowEditorRef = useRef<WorkflowEditorHandles>(null);
-
     return (
         <div className='flex'
             style={{ height: 'calc(100vh - 56px)' }}
