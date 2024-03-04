@@ -23,61 +23,90 @@ export async function POST(req: NextRequest) {
   const body = JSON.parse(rawBody);
   //order_created
   if (body?.meta.event_name === "order_created") {
-    const { user_email: email, status } = body.data.attributes;
-    const name = body.meta.event_name;
-    const { error } = await supabase
-      .from("subscription")
-      .insert({ subscription_type: name, email, status, details: body });
+    recordUserSubscription(body);
   }
   //subscription_updated
   if (body?.meta.event_name === "subscription_updated") {
-    const {
-      status: payment_status,
-      user_email: email,
-      status,
-    } = body.data.attributes;
-    const name = body.meta.event_name;
-    //查询用户并确认支付状态
-    try {
-      const { data, error } = await supabase
-        .from("user_subscription")
-        .select("*")
-        .eq("email", email);
-      if (data?.length == 0) {
-        const { error } = await supabase
-          .from("user_subscription")
-          .insert({ email, payment_status });
-      } else {
-        const { error } = await supabase
-          .from("user_subscription")
-          .update({ payment_status })
-          .eq("email", email);
-      }
-    } catch (error) {
-        console.log('error',error)
-    }
-    const { error } = await supabase
-      .from("subscription")
-      .insert({ subscription_type: name, email, status, details: body });
+    //查询用户创建能力表
+    updateUserAbilities(body);
+    //订阅信息记录
+    recordUserSubscription(body);
   }
   //subscription_created
   if (body?.meta.event_name === "subscription_created") {
-    const { user_email: email, status } = body.data.attributes;
-    const name = body.meta.event_name;
-    const { error } = await supabase
-      .from("subscription")
-      .insert({ subscription_type: name, email, status, details: body });
+    recordUserSubscription(body);
   }
+
   //subscription_payment_success
   if (body?.meta.event_name === "subscription_payment_success") {
-    const { user_email: email, status } = body.data.attributes;
-    const name = body.meta.event_name;
-    const { error } = await supabase
-      .from("subscription")
-      .insert({ subscription_type: name, email, status, details: body });
+    recordUserSubscription(body);
   }
 
   return Response.json(rawBody);
+}
+
+async function updateUserAbilities(body) {
+  const {
+    user_email: email,
+    status,
+    product_name,
+  } = body.data.attributes;
+  let subscription_type;
+  switch (product_name) {
+    case "monthly":
+      subscription_type = "0";
+      break;
+    case "yearly":
+      subscription_type = "1";
+      break;
+    default:
+      break;
+  }
+  //订阅为激活状态时
+  if (status === "active") {
+    console.log('com',email)
+    const { data, error } = await supabase.from("user_abilities").upsert(
+      {
+        email,
+        subscription_status: status,
+        subscription_type,
+      },
+      {
+        onConflict: "email",
+      }
+    );
+  }
+}
+
+async function recordUserSubscription(body) {
+  const {
+    user_email: email,
+    status,
+    product_name,
+    variant_name,
+  } = body.data.attributes;
+  const event_name = body.meta.event_name;
+  let subscription_type;
+  switch (product_name) {
+    case "monthly":
+      subscription_type = "0";
+      break;
+    case "yearly":
+      subscription_type = "1";
+      break;
+    default:
+      break;
+  }
+
+  const { error } = await supabase.from("user_subscription").insert({
+    event_name,
+    email,
+    subscription_type: subscription_type,
+    subscription_name: variant_name,
+    payment_status: status,
+    status,
+    details: body,
+  });
 }
 
 export async function GET(
