@@ -46,11 +46,7 @@ export async function POST(req: NextRequest) {
 }
 
 async function updateUserAbilities(body) {
-  const {
-    user_email: email,
-    status,
-    product_name,
-  } = body.data.attributes;
+  const { user_email: email, status, product_name } = body.data.attributes;
   let subscription_type;
   switch (product_name) {
     case "monthly":
@@ -64,17 +60,37 @@ async function updateUserAbilities(body) {
   }
   //订阅为激活状态时
   if (status === "active") {
-    console.log('com',email)
-    const { data, error } = await supabase.from("user_abilities").upsert(
-      {
-        email,
-        subscription_status: status,
-        subscription_type,
-      },
-      {
-        onConflict: "email",
+    const { data: existingData, error } = await supabase
+      .from("user_abilities")
+      .upsert(
+        {
+          email,
+          subscription_status: status,
+          subscription_type,
+        },
+        {
+          onConflict: "email",
+        }
+      )
+      .select()
+      .single();
+    //更新次数
+    if (existingData) {
+      const newPower = existingData.power + 20; // 增加20
+      console.log('newPower', newPower)
+      const { data: updateData, error: updateError } = await supabase
+        .from("user_abilities")
+        .update({ power: newPower }) // 更新power字段
+        .eq("email", email); // 确定更新哪条记录
+
+      if (updateError) {
+        console.error("更新power值时出错:", updateError);
+      } else {
+        console.log("成功更新power值", updateData);
       }
-    );
+    } else {
+      console.log("没有找到对应的记录");
+    }
   }
 }
 

@@ -72,15 +72,29 @@ export default function PricingPage({ user }: { user?: User }) {
   const [frequency, setFrequency] = useState(frequencies[0]);
   const [tiers, setTiers] = useState<PricingTier[]>([]);
   const [products, setProducts] = useState<any>([]);
+  const [subscriptionStatus, setSubscriptionStatus] = useState<boolean>(false);
 
   const bannerText = "";
 
   useEffect(() => {
+    //查看用户订阅状态
+    getUserAbilities();
     //从lemonsqueezy获取产品列表
     getProductList();
     //从数据库获取订阅列表
     getTiersList(frequency.subscription_type);
-  }, []);
+  }, [user]);
+
+  async function getUserAbilities() {
+    const { data, error } = await supabase
+      .from("user_abilities")
+      .select("*")
+      .eq("email", user?.email);
+    console.log("user abilities", user?.email, data);
+    if(data?.[0]?.subscription_status === 'active') {
+      setSubscriptionStatus(true)
+    }
+  }
 
   async function getProductList() {
     const api =
@@ -130,12 +144,12 @@ export default function PricingPage({ user }: { user?: User }) {
       router.push("/login");
       return;
     }
- 
-    let baseUrl = 'https://usesless.lemonsqueezy.com/checkout/buy/' + tier.slug
+
+    let baseUrl = "https://usesless.lemonsqueezy.com/checkout/buy/" + tier.slug;
     const email = user.email;
     const url = new URL(baseUrl);
     if (email) url.searchParams.append("checkout[email]", email);
-    router.push(url.toString())
+    router.push(url.toString());
   }
 
   return (
@@ -288,7 +302,7 @@ export default function PricingPage({ user }: { user?: User }) {
                 >
                   <button
                     onClick={() => buyNowBtn(tier)}
-                    disabled={tier.soldOut}
+                    disabled={subscriptionStatus}
                     className={cn(
                       "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
                       tier.featured || tier.soldOut ? "grayscale" : "",
