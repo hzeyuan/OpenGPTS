@@ -25,18 +25,28 @@ export async function POST(req: NextRequest) {
   if (body?.meta.event_name === "order_created") {
     recordUserSubscription(body);
   }
+  //subscription_created
+  if (body?.meta.event_name === "subscription_created") {
+    const { status } = body.data.attributes;
+    if (status === "active") {
+      createUserAbilities(body);
+    }
+  }
   //subscription_updated
   if (body?.meta.event_name === "subscription_updated") {
-    //查询用户创建能力表
-    updateUserAbilities(body);
+    const { status } = body.data.attributes;
+    //更新订阅
+    updateSubscriptionStatus(body);
     //订阅信息记录
     recordUserSubscription(body);
+  }
+  if (body?.meta.event_name === "subscription_expired") {
+    updateSubscriptionStatus(body);
   }
   //subscription_created
   if (body?.meta.event_name === "subscription_created") {
     recordUserSubscription(body);
   }
-
   //subscription_payment_success
   if (body?.meta.event_name === "subscription_payment_success") {
     recordUserSubscription(body);
@@ -45,53 +55,67 @@ export async function POST(req: NextRequest) {
   return Response.json(rawBody);
 }
 
-async function updateUserAbilities(body) {
-  const { user_email: email, status, product_name } = body.data.attributes;
-  let subscription_type;
-  switch (product_name) {
-    case "monthly":
-      subscription_type = "0";
-      break;
-    case "yearly":
-      subscription_type = "1";
-      break;
-    default:
-      break;
-  }
-  //订阅为激活状态时
-  if (status === "active") {
-    const { data: existingData, error } = await supabase
-      .from("user_abilities")
-      .upsert(
-        {
-          email,
-          subscription_status: status,
-          subscription_type,
-        },
-        {
-          onConflict: "email",
-        }
-      )
-      .select()
-      .single();
-    //更新次数
-    if (existingData) {
-      const newPower = existingData.power + 20; // 增加20
-      console.log('newPower', newPower)
-      const { data: updateData, error: updateError } = await supabase
-        .from("user_abilities")
-        .update({ power: newPower }) // 更新power字段
-        .eq("email", email); // 确定更新哪条记录
-
-      if (updateError) {
-        console.error("更新power值时出错:", updateError);
-      } else {
-        console.log("成功更新power值", updateData);
-      }
-    } else {
-      console.log("没有找到对应的记录");
+async function updateSubscriptionStatus(body) {
+  const {
+    user_email: email,
+    status,
+    product_id,
+    product_name,
+    variant_id,
+    variant_name,
+    first_subscription_item
+  } = body.data.attributes;
+  
+  const { data, error } = await supabase.from("user_abilities").upsert(
+    {
+      email,
+      subscription_status: status,
+      product_id,
+      product_name,
+      variant_id,
+      variant_name,
+      subscription_id: first_subscription_item.subscription_id,
+    },
+    {
+      onConflict: "email",
     }
-  }
+  );
+}
+
+async function createUserAbilities(body) {
+  const {
+    user_email: email,
+    status,
+    product_name,
+    variant_name,
+    product_id,
+    variant_id,
+    first_subscription_item,
+  } = body.data.attributes;
+  const { data: subscription_info, error: info_error } = await supabase
+    .from("subscription")
+    .select("*")
+    .eq("product_id", product_id)
+    .eq("variant_id", variant_id)
+    .single();
+  console.log("subscription_info", subscription_info);
+  const { power } = subscription_info;
+
+  const { data, error } = await supabase.from("user_abilities").upsert(
+    {
+      email,
+      subscription_status: status,
+      product_name,
+      variant_name,
+      product_id,
+      variant_id,
+      subscription_id: first_subscription_item.subscription_id,
+      power,
+    },
+    {
+      onConflict: "email",
+    }
+  );
 }
 
 async function recordUserSubscription(body) {

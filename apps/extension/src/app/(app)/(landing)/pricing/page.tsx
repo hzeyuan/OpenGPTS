@@ -4,17 +4,21 @@ import styles from "./pricing.module.css";
 import supabase from "~src/utils/supabase";
 import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { usePathname } from "next/navigation";
+import { fetchChangeSubscription } from '~src/app/services/lemon'
+import type { UserAbilities } from '@opengpts/types/user'
 
 export interface PricingTierFrequency {
   id: string;
   value: string;
   label: string;
   priceSuffix: string;
-  subscription_type: string;
+  product_name: string;
 }
 
 export interface PricingTier {
-  name: string;
+  product_name: string;
+  variant_name: string;
   id: string;
   href: string;
   discountPrice?: string | Record<string, string>;
@@ -26,7 +30,8 @@ export interface PricingTier {
   highlighted?: boolean;
   cta?: string;
   soldOut?: boolean;
-  subscription_type: string;
+  variant_id: number;
+  product_id: number;
 }
 
 export const frequencies: PricingTierFrequency[] = [
@@ -35,14 +40,14 @@ export const frequencies: PricingTierFrequency[] = [
     value: "1",
     label: "Monthly",
     priceSuffix: "/month",
-    subscription_type: "0",
+    product_name: "monthly",
   },
   {
     id: "2",
     value: "2",
     label: "Annually",
     priceSuffix: "/year",
-    subscription_type: "1",
+    product_name: "yearly",
   },
 ];
 
@@ -68,11 +73,12 @@ const cn = (...args: Array<string | boolean | undefined | null>) =>
 
 export default function PricingPage({ user }: { user?: User }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const [frequency, setFrequency] = useState(frequencies[0]);
   const [tiers, setTiers] = useState<PricingTier[]>([]);
   const [products, setProducts] = useState<any>([]);
-  const [subscriptionStatus, setSubscriptionStatus] = useState<boolean>(false);
+  const [userAbilities, setUserAbilities] = useState<UserAbilities>();
 
   const bannerText = "";
 
@@ -82,17 +88,18 @@ export default function PricingPage({ user }: { user?: User }) {
     //从lemonsqueezy获取产品列表
     getProductList();
     //从数据库获取订阅列表
-    getTiersList(frequency.subscription_type);
+    getTiersList(frequency.product_name);
   }, [user]);
 
   async function getUserAbilities() {
     const { data, error } = await supabase
       .from("user_abilities")
       .select("*")
-      .eq("email", user?.email);
-    console.log("user abilities", user?.email, data);
-    if(data?.[0]?.subscription_status === 'active') {
-      setSubscriptionStatus(true)
+      .eq("email", user?.email)
+      .single();
+    console.log("user abilities", data);
+    if (data) {
+      setUserAbilities(data);
     }
   }
 
@@ -113,18 +120,18 @@ export default function PricingPage({ user }: { user?: User }) {
     });
     const res = await response.json();
     const list = res.data.filter(
-      (obj) => obj.attributes.status === "published"
+      (obj:any) => obj.attributes.status === "published"
     );
     setProducts(list);
   }
 
-  async function getTiersList(subscription_type: string) {
+  async function getTiersList(product_name: string) {
     const { data, error } = await supabase
       .from("subscription")
       .select("*")
-      .eq("subscription_type", subscription_type);
+      .eq("product_name", product_name);
 
-    const order = ["Basic", "Standard", "Pro"];
+    const order = ["basic", "standard", "pro"];
     const subscriptionPlans = data?.sort((a, b) => {
       // 获取name值在order数组中的索引，并比较这些索引
       return order.indexOf(a.name) - order.indexOf(b.name);
@@ -132,24 +139,40 @@ export default function PricingPage({ user }: { user?: User }) {
     setTiers(subscriptionPlans);
   }
 
-  function setFrequencyFn(option) {
+  function setFrequencyFn(option: PricingTierFrequency) {
     setFrequency(
       frequencies.find((f) => f.value === option.value) as PricingTierFrequency
     );
-    getTiersList(option.subscription_type);
+    getTiersList(option.product_name);
   }
 
   function buyNowBtn(tier: PricingTier) {
     if (!user) {
       router.push("/login");
       return;
+    } else {
+      if (userAbilities) {
+        if (pathname == '/settings') {
+          console.log('change plane')
+          handleChangeSubscription(tier)
+        } else {
+          router.push("/settings");
+          return;
+        }
+      } else {
+        let baseUrl =
+          "https://usesless.lemonsqueezy.com/checkout/buy/" + tier.slug;
+        const email = user.email;
+        const url = new URL(baseUrl);
+        if (email) url.searchParams.append("checkout[email]", email);
+        router.push(url.toString());
+      }
     }
 
-    let baseUrl = "https://usesless.lemonsqueezy.com/checkout/buy/" + tier.slug;
-    const email = user.email;
-    const url = new URL(baseUrl);
-    if (email) url.searchParams.append("checkout[email]", email);
-    router.push(url.toString());
+  }
+
+  const handleChangeSubscription = (tier: PricingTier ) => {
+    fetchChangeSubscription(userAbilities?.subscription_id, tier.product_id, tier.variant_id)
   }
 
   return (
@@ -158,11 +181,11 @@ export default function PricingPage({ user }: { user?: User }) {
     >
       <div className="w-full flex flex-col items-center">
         <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col items-center">
-          <div className="w-full lg:w-auto mx-auto max-w-4xl lg:text-center">
+          {/* <div className="w-full lg:w-auto mx-auto max-w-4xl lg:text-center">
             <h1 className="text-black dark:text-white text-4xl font-semibold max-w-xs sm:max-w-none md:text-6xl !leading-tight">
               Pricing
             </h1>
-          </div>
+          </div> */}
 
           {bannerText ? (
             <div className="w-full lg:w-auto flex justify-center my-4">
@@ -240,7 +263,7 @@ export default function PricingPage({ user }: { user?: User }) {
                     "text-2xl font-bold tracking-tight"
                   )}
                 >
-                  {tier.name}
+                  {tier.variant_name}
                 </h3>
                 <p
                   className={cn(
@@ -300,20 +323,42 @@ export default function PricingPage({ user }: { user?: User }) {
                     tier.soldOut ? "pointer-events-none" : ""
                   )}
                 >
-                  <button
-                    onClick={() => buyNowBtn(tier)}
-                    disabled={subscriptionStatus}
-                    className={cn(
-                      "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
-                      tier.featured || tier.soldOut ? "grayscale" : "",
-                      !tier.highlighted && !tier.featured
-                        ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
-                        : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
-                      tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
-                    )}
-                  >
-                    BUY NOW
-                  </button>
+                  {userAbilities && pathname === "/settings" ? (
+                    <button
+                      onClick={() => buyNowBtn(tier)}
+                      disabled={
+                        userAbilities?.product_name == tier.product_name &&
+                        userAbilities?.variant_name == tier.variant_name
+                      }
+                      className={cn(
+                        "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
+                        tier.featured || tier.soldOut ? "grayscale" : "",
+                        !tier.highlighted && !tier.featured
+                          ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
+                          : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
+                        tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
+                      )}
+                    >
+                      {userAbilities?.product_name == tier.product_name &&
+                        userAbilities?.variant_name == tier.variant_name
+                        ? "CURRENTT PLAN"
+                        : "CHANGE PLAN"}
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => buyNowBtn(tier)}
+                      className={cn(
+                        "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
+                        tier.featured || tier.soldOut ? "grayscale" : "",
+                        !tier.highlighted && !tier.featured
+                          ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
+                          : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
+                        tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
+                      )}
+                    >
+                      Get started
+                    </button>
+                  )}
                 </a>
 
                 <ul
