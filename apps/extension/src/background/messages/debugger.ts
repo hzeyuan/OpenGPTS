@@ -2,7 +2,7 @@ import type { PlasmoMessaging } from "@plasmohq/messaging"
 import type { SendToBackgroundViaRelayResponseBody, SendToBackgroundViaRelayRequestBody } from '@opengpts/types';
 import { click, clickAtPosition, setValue, scroll } from "~src/utils/rpa/domActions";
 
-const handler: PlasmoMessaging.Handler<'opengpts', SendToBackgroundViaRelayRequestBody, SendToBackgroundViaRelayResponseBody> = async (req, res) => {
+const handler: PlasmoMessaging.Handler<'opengpts', SendToBackgroundViaRelayRequestBody<any>, SendToBackgroundViaRelayResponseBody> = async (req, res) => {
     const { sender } = req;
     console.log(`%c [DEBUGGER]`, `color: #ff00ff`, `Received message: ${JSON.stringify(req.body)} from tabId: ${req.sender?.tab?.id}`)
     const tabId = req.body?.tabId || sender?.tab?.id;

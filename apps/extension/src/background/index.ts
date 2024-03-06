@@ -3,8 +3,12 @@
 
 import { Storage } from "@plasmohq/storage";
 import type { ChatConfig } from "@opengpts/types";
-import Browser from "webextension-polyfill";
+import { MessageListener } from '~src/utils/message';
+import browser from 'webextension-polyfill';
 import { CHATGPT_WEBAPPP_DEFAULT_CONFIG } from "~src/constant";
+import BackgroundWorkflowUtils from "./BackgroundWorkflowUtils";
+import { sleep } from "~src/utils/helper";
+import BackgroundEventsListeners from "./BackgroundEventsListeners";
 
 
 const storage = new Storage({
@@ -13,7 +17,81 @@ const storage = new Storage({
 
 });
 
+// browser.runtime.onStartup.addListener(
+//     BackgroundEventsListeners.onRuntimeStartup
+// );
 
+// browser.runtime.onInstalled.addListener(
+//     BackgroundEventsListeners.onRuntimeInstalled
+// );
+
+const message = new MessageListener('background');
+message.on('workflow:stop', (stateId) => workflowState.stop(stateId));
+message.on('workflow:execute', async (workflowData, sender) => {
+
+    console.log('background', 'workflow:execute', workflowData, sender);
+    // const context = workflowData.settings.execContext;
+    const context = 'background'
+
+    // const isMV2 = browser.runtime.getManifest().manifest_version === 2;
+    const isMV2 = false;
+    console.log(
+        'workflow:execute',
+        workflowData,
+        !isMV2 && (!context)
+    );
+
+    if (workflowData.includeTabId) {
+        if (!workflowData.options) workflowData.options = {};
+
+        workflowData.options.tabId = sender.tab.id;
+    }
+
+    BackgroundWorkflowUtils.executeWorkflow(
+        workflowData,
+        workflowData?.options || {}
+    );
+});
+
+
+message.on('debugger:send-command', ({ tabId, method, params }) => {
+    return new Promise((resolve) => {
+        chrome.debugger.sendCommand({ tabId }, method, params, resolve);
+    });
+});
+
+
+message.on('debugger:type', ({ tabId, commands, delay }) => {
+    return new Promise((resolve) => {
+        console.log(`3. background:debugger:type`, tabId, commands, delay, new Date())
+        let index = 0;
+        async function executeCommands() {
+            const command = commands[index];
+            console.log(`background:debugger:type:executeCommands`, command, new Date())
+            if (!command) {
+                console.log('background:debugger:type:resolve', tabId, new Date());
+                resolve();
+                return;
+            }
+
+            chrome.debugger.sendCommand(
+                { tabId },
+                'Input.dispatchKeyEvent',
+                command,
+                async () => {
+                    if (delay > 0) await sleep(delay);
+
+                    index += 1;
+                    executeCommands();
+                }
+            );
+        }
+        executeCommands();
+    });
+});
+
+
+browser.runtime.onMessage.addListener(message.listener());
 
 
 // chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -99,6 +177,6 @@ const storage = new Storage({
 // })
 
 
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
+// chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch((error) => console.error(error));
 
 

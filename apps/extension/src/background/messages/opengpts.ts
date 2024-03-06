@@ -1,5 +1,5 @@
 
-import type { SendToBackgroundViaRelayRequestBody, SendToBackgroundViaRelayResponseBody } from '@opengpts/types';
+import type { ActionType, SendToBackgroundViaRelayRequestBody, SendToBackgroundViaRelayResponseBody } from '@opengpts/types';
 import { sendToContentScript, type PlasmoMessaging, sendToBackground } from '@plasmohq/messaging';
 import { opengptsStorage } from '~src/store';
 import { captureFullPageScreenshot, click, clickAtPosition, setValue, waitForPageLoadUsingDebugger } from '~src/utils/rpa/domActions';
@@ -22,7 +22,7 @@ function createWindow(options: chrome.windows.CreateData): Promise<chrome.window
 
 
 
-const handler: PlasmoMessaging.Handler<'opengpts', SendToBackgroundViaRelayRequestBody, SendToBackgroundViaRelayResponseBody> = async (req, res) => {
+const handler: PlasmoMessaging.Handler<'opengpts', SendToBackgroundViaRelayRequestBody<ActionType>, SendToBackgroundViaRelayResponseBody> = async (req, res) => {
     const { sender } = req;
     const tabId = req.body?.tabId || sender?.tab?.id;
     const windowId = req.body?.windowId || sender?.tab?.windowId;
@@ -59,7 +59,7 @@ const handler: PlasmoMessaging.Handler<'opengpts', SendToBackgroundViaRelayReque
         const url = message?.url;
         const autoZoom = message?.autoZoom;
         const windowInfo = await createWindow({
-            url,
+            url:'chrome-extension://migdljjehfllllbkjhfnbfcifaekebjk/tabs/dashboard.html',
             type: "popup", // "normal", "popup", "panel", "detached_panel"
             width: 1024,
             height: 768,
@@ -233,7 +233,7 @@ const handler: PlasmoMessaging.Handler<'opengpts', SendToBackgroundViaRelayReque
 
     }
     if (type === 'SET_ZOOM') {
-        const zoomFactor =  message?.zoomFactor;
+        const zoomFactor = message?.zoomFactor;
 
         chrome.tabs.setZoom(tabId, zoomFactor, function () {
             if (chrome.runtime.lastError) {

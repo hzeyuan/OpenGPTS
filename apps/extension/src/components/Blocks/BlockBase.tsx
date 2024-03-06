@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Pencil, Settings, ToggleLeft, ToggleRight, Delete, CircleDashed } from 'lucide-react';
 import type PRAWorkflow from '@opengpts/types/rpa/workflow';
+import { useWorkflowEditorContext } from '~src/app/context/WorkflowEditorContext';
 
 
 const BlockBase: React.FC<{
@@ -12,7 +13,7 @@ const BlockBase: React.FC<{
   },
   data?: any,
   blockId: string,
-  onEdit?: (id:string) => undefined,
+  onEdit?: (id: string) => undefined,
   onDelete?: (id: string) => undefined,
   onUpdate?: (props: {
     disableBlock: boolean
@@ -28,7 +29,7 @@ const BlockBase: React.FC<{
   // const WorkflowContext = createContext();
   // const WorkflowUtilsContext = createContext();
   // const workflowUtils = useContext(WorkflowUtilsContext);
-
+  const workflowUtils = useWorkflowEditorContext();
 
 
   const insertToClipboard = () => {
@@ -47,13 +48,14 @@ const BlockBase: React.FC<{
   //   event.dataTransfer.setData('block', JSON.stringify(payload));
   // };
 
-  // const runWorkflow = () => {
-  //   if (!workflowUtils) return;
-  //   workflowUtils.executeFromBlock(blockId);
-  // };
+  const runWorkflow = (e) => {
+    e.stopPropagation();
+    if (!workflowUtils) return;
+    workflowUtils.executeFromBlock(blockId);
+  };
 
   return (
-    <div className={`block-base relative w-40 rounded-lg ${className}`} data-block-id={blockId} onDoubleClick={()=>onEdit?.(blockId)}>
+    <div className={`block-base relative w-40 rounded-lg ${className}`} data-block-id={blockId} onDoubleClick={() => onEdit?.(blockId)}>
       <div className="absolute top-0 hidden w-full block-menu-container" style={{ transform: 'translateY(-100%)' }}>
         <p title="Block id (click to copy)" className="inline-block px-1 pointer-events-auto block-menu text-overflow dark:text-gray-300"
           style={{ maxWidth: '96px', marginBottom: 0 }} onClick={insertToClipboard}>
@@ -78,11 +80,11 @@ const BlockBase: React.FC<{
             </button>
           )} */}
           {/* onClick={runWorkflow} */}
-          <button className='h-6 p-2 ' title="Run workflow from here" >
+          <button onClick={runWorkflow} className='h-6 p-2' title="Run workflow from here" >
             <Play className='cursor-pointer' size="16" />
           </button>
-          {!blockData.details?.disableEdit && 
-          <button className='h-6 p-2 cursor-pointer'  title="Edit block" onClick={()=>onEdit?.(blockId)}><Pencil size="16" /></button>}
+          {!blockData.details?.disableEdit &&
+            <button className='h-6 p-2 cursor-pointer' title="Edit block" onClick={() => onEdit?.(blockId)}><Pencil size="16" /></button>}
         </div>
       </div>
       {/* ui-card */}

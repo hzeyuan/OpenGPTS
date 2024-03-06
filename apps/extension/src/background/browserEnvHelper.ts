@@ -1,9 +1,6 @@
 import type { GetBrowserEnv, GetEnv, InteractiveElement } from '@opengpts/types';
 
 
-
-
-
 const getEnv: GetEnv = () => {
     const interactiveElements: InteractiveElement[] = window['getInteractiveElementsFromWindow']()
 

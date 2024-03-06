@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 @layer utilities {
   .hoverable {
     @apply hover:bg-gray-800 hover:bg-opacity-5 dark:hover:bg-gray-200 dark:hover:bg-opacity-5;
@@ -16,53 +15,49 @@
 
   .block-menu {
     @apply mb-1 bg-box-transparent-2 rounded-md;
-    button {
-      padding-left: 6px;
-      padding-right: 6px;
-      @apply focus:ring-0 py-1 hover:text-primary;
+  }
+
+  .block-menu button {
+    padding-left: 6px;
+    padding-right: 6px;
+    @apply focus:ring-0 py-1 hover:text-primary;
+  }
+
+  .scroll,
+  .scroll .cm-scroller {
+    &::-webkit-scrollbar {
+      width: 7px;
+      height: 9px;
     }
-    input:focus,
-    button:focus,
-    textarea:focus,
-    select:focus,
-    [role='button']:focus {
-      outline:none;
-      cursor:pointer
+    &::-webkit-scrollbar-thumb {
+      @apply bg-gray-300 dark:bg-gray-700;
+      border-radius: 8px;
     }
-    }
-    
-    .text-overflow {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    
-    
-    .scroll, 
-    .scroll .cm-scroller {
-      &::-webkit-scrollbar {
-        width: 7px;
-        height: 9px;
-      }
-      &::-webkit-scrollbar-thumb {
-        @apply bg-gray-300 dark:bg-gray-700;
-        border-radius: 8px;
-      }
-      &::-webkit-scrollbar-track {
-        background: transparent;
-      }
-    
-      &.scroll-xs::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
-      }
+    &::-webkit-scrollbar-track {
+      background: transparent;
     }
 
-
+    &.scroll-xs::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+  }
 }
 
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-
+input:focus,
+button:focus,
+textarea:focus,
+select:focus,
+[role="button"]:focus {
+  outline: none;
+  cursor: pointer;
+}
 
 /* @layer base {
   a {
@@ -79,7 +74,6 @@
     margin: 0;
   }
 } */
-
 
 /* html,
 body {

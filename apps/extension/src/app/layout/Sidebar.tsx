@@ -10,11 +10,9 @@ import {
   MousePointerSquare,
   LogOut,
   Settings2,
-  FunctionSquare,
   Wrench,
   ArrowLeftToLine,
   ArrowRightToLine,
-  ChevronRightCircle,
 } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
 import QQIcon from "~assets/qq.svg";
@@ -43,7 +41,7 @@ const shakeAnimation = {
 
 const sidebarVariants: Variants = {
   open: {
-    width: "100%", // example value
+    width: "240px", // example value
     opacity: 1,
     visibility: "visible", // Ensure this is a valid CSS visibility value
     transition: {

@@ -1,4 +1,4 @@
-import '~/src/global.css'
+import '~/src/global.scss'
 import './index.css'
 import { initI18next } from './i18n'
 import { dir } from 'i18next'

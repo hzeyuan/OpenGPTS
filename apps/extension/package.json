@@ -45,12 +45,14 @@
     "antd": "^5.12.1",
     "cheerio": "1.0.0-rc.12",
     "copy-to-clipboard": "^3.3.3",
+    "crypto-js": "^4.2.0",
     "dayjs": "^1.11.10",
     "framer-motion": "^10.16.16",
     "i18next": "^23.7.16",
     "i18next-browser-languagedetector": "^7.2.0",
     "i18next-resources-to-backend": "^1.2.0",
     "jquery": "^3.7.1",
+    "jsonpath": "^1.1.1",
     "langchain": "^0.1.20",
     "langsmith": "^0.1.5",
     "lodash-es": "^4.17.21",
@@ -59,6 +61,7 @@
     "nanoid": "^5.0.4",
     "next": "14.0.2",
     "nextjs-cors": "^2.2.0",
+    "object-path": "^0.11.8",
     "ofetch": "^1.3.3",
     "openai": "^4.26.0",
     "plasmo": "0.84.2",
@@ -81,6 +84,7 @@
     "remark-math": "^5.1.1",
     "rrweb": "2.0.0-alpha.4",
     "rrweb-snapshot": "2.0.0-alpha.4",
+    "sizzle": "^2.3.10",
     "swr": "^2.2.4",
     "tippy.js": "^6.3.7",
     "unique-selector": "^0.5.0",
@@ -96,10 +100,12 @@
     "@tailwindcss/forms": "^0.5.7",
     "@tailwindcss/typography": "^0.5.10",
     "@types/chrome": "0.0.251",
+    "@types/crypto-js": "^4.2.2",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
     "@types/react-dom": "18.2.15",
+    "@types/sizzle": "^2.3.8",
     "@types/uuid": "^9.0.8",
     "@types/webextension-polyfill": "^0.10.7",
     "autoprefixer": "^10.4.16",
@@ -117,8 +123,11 @@
       "sidePanel",
       "scripting",
       "activeTab",
+      "storage",
       "debugger",
-      "<all_urls>"
+      "<all_urls>",
+      "webNavigation"
+
     ],
     "web_accessible_resources": [
       {
@@ -135,7 +144,8 @@
     ],
     "key": "$CRX_KEY",
     "host_permissions": [
-      "sg.search.yahoo.com"
+      "sg.search.yahoo.com",
+      "<all_urls>"
     ],
     "externally_connectable": {
       "matches": [

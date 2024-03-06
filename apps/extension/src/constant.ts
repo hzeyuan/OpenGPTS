@@ -182,6 +182,7 @@ const chatgptWebModelKeys = [
     'chatgptPlus4'
 ]
 
+const BROWSER_TYPE = 'chrome'
 
 
 
@@ -195,6 +196,7 @@ export {
     SG_SEARCH_URL,
     OPENAI_BASE_URL,
     OpenGPTS_BASE_URL,
-    BASE_URL
+    BASE_URL,
+    BROWSER_TYPE
 }
 

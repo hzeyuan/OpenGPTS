@@ -4,7 +4,6 @@ import BlockBase from './BlockBase';
 import { iconMap } from '~src/utils/workflow';
 import useEditorBlock from '~src/hooks/useEditorBlock';
 
-// import './BlockBasic.css'; // 样式文件，请根据需要进行调整
 // position, events, dimensions
 const BlockBasic: ComponentType<NodeProps & {
     data: any

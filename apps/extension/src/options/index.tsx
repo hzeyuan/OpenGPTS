@@ -4,7 +4,7 @@ import { useStorage } from "@plasmohq/storage/hook"
 import { useTranslation } from 'react-i18next';
 import '../i18n.js';
 import "./index.css"
-import '../global.css'
+import '../global.scss'
 import { opengptsStorage } from '~src/store';
 import { ConfigProvider, theme as themeStyle, type RadioChangeEvent, Divider, Typography, Radio, Space, Menu } from "antd"
 import ModeSelector from "~src/components/ModeSelector.jsx";

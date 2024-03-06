@@ -1,8 +1,7 @@
 "use client"
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect, useContext } from 'react';
 import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handle, MiniMap, Position, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, useViewport } from 'reactflow';
 import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore } from 'reactflow';
-
 import 'reactflow/dist/style.css';
 import './index.css';
 import BlockBasic from '../Blocks/BlockBasic';
@@ -11,6 +10,8 @@ import { categories, getBlocks } from '~src/utils/workflow';
 import WorkflowEditBlock from './WorkflowEditBlock';
 import { nanoid } from '~shared/utils';
 import type PRAWorkflow from '@opengpts/types/rpa/workflow';
+import { WorkflowEditorContext, useWorkflowEditorContext } from '~src/app/context/WorkflowEditorContext';
+import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 
 
 
@@ -57,7 +58,6 @@ const Flow: React.FC<{
 
 const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => {
 
-
     useImperativeHandle(ref, () => ({
         addNode,
         getBoundingClientRect,
@@ -74,6 +74,21 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     const editBlockDrawerRef = useRef<any>(null);
     // const getPosition = (position) => (Array.isArray(position) ? position : [0, 0]);
 
+    // 执行工作流
+    const executeFromBlock = async (blockId: string) => {
+        console.log(`executeFromBlock: ${blockId}`)
+        const workflow = {};
+        await sendToBackgroundViaRelay({
+            name: 'workflow',
+            body: {
+                type: 'workflow:execute',
+                data: {
+                    blockId,
+                    workflow
+                }
+            }
+        });
+    }
 
     // update blcok EditData
     const handleUpdateNodeData = (newNode?: Node<PRAWorkflow.Block>) => {
@@ -150,8 +165,6 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     };
 
 
-
-
     const toggleHighlightElement = ({ target, elClass, classes }: {
         target: EventTarget,
         elClass: string,
@@ -202,11 +215,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     const onDropInEditor: DragEventHandler = useCallback((event) => {
         console.log('Dropped item in editor')
         const { dataTransfer, clientX, clientY, target } = event;
-
-        // const { data, error } = attempt(() => {
         const data = JSON.parse(dataTransfer.getData('block'));
-        // });
-
         const blockId = data.id
         const block = blocks[blockId]
 
@@ -231,6 +240,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                 id: blockId,
                 onDelete: handleDelete,
                 onEdit: handleEdit,
+                // runworkflow
                 ...block,
             },
             position: {
@@ -272,56 +282,62 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
 
 
     return (
-        <ReactFlowProvider>
-            <div
-                className='w-full h-full'
-                onDrop={onDropInEditor}
-                onDragOver={onDragoverEditor}
-                onDragEnd={clearHighlightedElements}
-                ref={reactFlowWrapperRef}
-            >
-                <Flow
-                    setReactFlowInstance={setReactFlowInstance}
-                    id="workflow-editor"
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onConnect={onConnect}
-                    nodeTypes={nodeTypes}
-                    edgeTypes={edgeTypes}
-                    style={{ width: '100%', height: '100vh' }}
-                    {...reactFlowProps}
+
+        <WorkflowEditorContext.Provider
+            value={{ executeFromBlock }}
+        >
+            <ReactFlowProvider>
+                <div
+                    className='w-full h-full'
+                    onDrop={onDropInEditor}
+                    onDragOver={onDragoverEditor}
+                    onDragEnd={clearHighlightedElements}
+                    ref={reactFlowWrapperRef}
                 >
-                    <Controls
-                        fitViewOptions={{
-                            padding: 16
-                        }}
-                        position="top-left"
-                        showFitView={true}
-                        showZoom={true}
-                        showInteractive={true} />
-                    <MiniMap
-                        nodeClassName={(node) => minimapNodeClassName(node)}
-                        className="hidden md:block"
+                    <Flow
+                        setReactFlowInstance={setReactFlowInstance}
+                        id="workflow-editor"
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        onConnect={onConnect}
+                        nodeTypes={nodeTypes}
+                        edgeTypes={edgeTypes}
+                        style={{ width: '100%', height: '100vh' }}
+                        {...reactFlowProps}
+                    >
+                        <Controls
+                            fitViewOptions={{
+                                padding: 16
+                            }}
+                            position="bottom-left"
+                            showFitView={true}
+                            showZoom={true}
+                            showInteractive={true} />
+                        <MiniMap
+                            nodeClassName={(node) => minimapNodeClassName(node)}
+                            className="hidden md:block"
+                        />
+
+                        <Background className='bg-[#fafafa]' size={2} color="var(--opengpts-primary-color)" variant={BackgroundVariant.Dots} />
+                    </Flow>
+
+                    <WorkflowEditBlock
+                        // key={curNode?.id || 'workflow-edit-block'}
+                        ref={editBlockDrawerRef}
+                        node={curNode}
+                        workflow={{}}
+                        editor={reactFlowInstanceRef.current}
+                        autocomplete={false}
+                        onUpdate={handleUpdateNodeData}
                     />
 
-                    <Background className='bg-[#fafafa]' size={2} color="var(--opengpts-primary-color)" variant={BackgroundVariant.Dots} />
-                </Flow>
+                </div>
 
-                <WorkflowEditBlock
-                    // key={curNode?.id || 'workflow-edit-block'}
-                    ref={editBlockDrawerRef}
-                    node={curNode}
-                    workflow={{}}
-                    editor={reactFlowInstanceRef.current}
-                    autocomplete={false}
-                    onUpdate={handleUpdateNodeData}
-                />
+            </ReactFlowProvider>
+        </WorkflowEditorContext.Provider>
 
-            </div>
-
-        </ReactFlowProvider>
     );
 })
 
