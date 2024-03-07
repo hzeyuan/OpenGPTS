@@ -2,7 +2,6 @@
 
 export const fetchCancelSubscription = async (subscription_id: number) => {
     try {
-        console.log('cancel')
         const api =
             process.env.NEXT_PUBLIC_LEMONSQUEEZY_URL +
             `/subscriptions/${subscription_id}`;

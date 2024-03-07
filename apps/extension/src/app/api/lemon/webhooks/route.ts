@@ -8,6 +8,20 @@ export const config = {
   },
 };
 
+enum SubscriptionLevel {
+  Basic = "basic",
+  Standard = "standard",
+  Pro = "pro",
+}
+
+const subscriptionLevels: Record<SubscriptionLevel, number> = {
+  [SubscriptionLevel.Basic]: 1,
+  [SubscriptionLevel.Standard]: 2,
+  [SubscriptionLevel.Pro]: 3,
+};
+
+type ComparisonResult = "upgrade" | "downgrade" | "same";
+
 export async function POST(req: NextRequest) {
   const rawBody = await req.text();
   const headers = req.headers.get("X-Signature");
@@ -63,18 +77,44 @@ async function updateSubscriptionStatus(body) {
     product_name,
     variant_id,
     variant_name,
-    first_subscription_item
+    first_subscription_item,
   } = body.data.attributes;
-  
+
+  let update_data = {
+    email,
+    subscription_status: status,
+    product_id,
+    product_name,
+    variant_id,
+    variant_name,
+    subscription_id: first_subscription_item.subscription_id,
+  };
+
+  if (status === "active") {
+    const { data: subscription_info, error: info_error } = await supabase
+      .from("subscription")
+      .select("*")
+      .eq("product_id", product_id)
+      .eq("variant_id", variant_id)
+      .single();
+    const { data: user_info, error: user_error } = await supabase
+      .from("user_abilities")
+      .select("*")
+      .eq("email", email)
+      .single();
+    const { power } = subscription_info;
+    const { variant_name: user_variant_name } = user_info
+    const result = compareSubscriptions(user_variant_name, variant_name);
+    if (result === "upgrade") {
+      (update_data as any).power = power;
+    }
+    if (result === "downgrade") {
+    }
+  }
+
   const { data, error } = await supabase.from("user_abilities").upsert(
     {
-      email,
-      subscription_status: status,
-      product_id,
-      product_name,
-      variant_id,
-      variant_name,
-      subscription_id: first_subscription_item.subscription_id,
+      ...update_data,
     },
     {
       onConflict: "email",
@@ -163,4 +203,20 @@ export async function GET(
   const { name } = params;
   console.log("123", req);
   return Response.json(req.url);
+}
+
+function compareSubscriptions(
+  oldSubscription: SubscriptionLevel,
+  newSubscription: SubscriptionLevel
+): ComparisonResult {
+  const oldLevel = subscriptionLevels[oldSubscription];
+  const newLevel = subscriptionLevels[newSubscription];
+
+  if (newLevel > oldLevel) {
+    return "upgrade";
+  } else if (newLevel < oldLevel) {
+    return "downgrade";
+  } else {
+    return "same";
+  }
 }

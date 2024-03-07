@@ -7,7 +7,7 @@ import type { User } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import { fetchChangeSubscription } from '~src/app/services/lemon'
 import type { UserAbilities } from '@opengpts/types/user'
-
+import { Popconfirm } from "antd"
 export interface PricingTierFrequency {
   id: string;
   value: string;
@@ -77,19 +77,26 @@ export default function PricingPage({ user }: { user?: User }) {
 
   const [frequency, setFrequency] = useState(frequencies[0]);
   const [tiers, setTiers] = useState<PricingTier[]>([]);
+  const [plans, setPlans] = useState<PricingTier[]>()
   const [products, setProducts] = useState<any>([]);
   const [userAbilities, setUserAbilities] = useState<UserAbilities>();
+  const [tempData, setTempData] = useState<UserAbilities>();
 
   const bannerText = "";
 
   useEffect(() => {
     //查看用户订阅状态
-    getUserAbilities();
+    fetchUserAbilites()
     //从lemonsqueezy获取产品列表
     getProductList();
     //从数据库获取订阅列表
     getTiersList(frequency.product_name);
   }, [user]);
+
+  async function fetchUserAbilites() {
+    const data = await getUserAbilities()
+    setTempData(data)
+  }
 
   async function getUserAbilities() {
     const { data, error } = await supabase
@@ -100,6 +107,7 @@ export default function PricingPage({ user }: { user?: User }) {
     console.log("user abilities", data);
     if (data) {
       setUserAbilities(data);
+      return data
     }
   }
 
@@ -120,7 +128,7 @@ export default function PricingPage({ user }: { user?: User }) {
     });
     const res = await response.json();
     const list = res.data.filter(
-      (obj:any) => obj.attributes.status === "published"
+      (obj: any) => obj.attributes.status === "published"
     );
     setProducts(list);
   }
@@ -129,21 +137,31 @@ export default function PricingPage({ user }: { user?: User }) {
     const { data, error } = await supabase
       .from("subscription")
       .select("*")
-      .eq("product_name", product_name);
-
+    if (data) {
+      setPlans(data)
+      initialTier(data)
+    }
+  }
+  function initialTier(data: PricingTier[]) {
     const order = ["basic", "standard", "pro"];
-    const subscriptionPlans = data?.sort((a, b) => {
+    const plans = data?.filter(item => item.product_name === 'monthly').sort((a, b) => {
       // 获取name值在order数组中的索引，并比较这些索引
-      return order.indexOf(a.name) - order.indexOf(b.name);
+      return order.indexOf(a.variant_name) - order.indexOf(b.variant_name);
     });
-    setTiers(subscriptionPlans);
+    setTiers(plans);
+
   }
 
   function setFrequencyFn(option: PricingTierFrequency) {
     setFrequency(
       frequencies.find((f) => f.value === option.value) as PricingTierFrequency
     );
-    getTiersList(option.product_name);
+    const order = ["basic", "standard", "pro"];
+    const freqPlan = plans?.filter(item => item.product_name === option.product_name).sort((a, b) => {
+      // 获取name值在order数组中的索引，并比较这些索引
+      return order.indexOf(a.variant_name) - order.indexOf(b.variant_name);
+    });
+    setTiers(freqPlan)
   }
 
   function buyNowBtn(tier: PricingTier) {
@@ -171,16 +189,50 @@ export default function PricingPage({ user }: { user?: User }) {
 
   }
 
-  const handleChangeSubscription = (tier: PricingTier ) => {
+  const handleChangeSubscription = (tier: PricingTier) => {
     fetchChangeSubscription(userAbilities?.subscription_id, tier.product_id, tier.variant_id)
+    fetchDataWithTimer()
+  }
+
+  const fetchDataWithTimer = async () => {
+    let totalTime = 0;
+    const intervalId = setInterval(async () => {
+      try {
+        const data = await getUserAbilities()
+        if (JSON.stringify(tempData) !== JSON.stringify(data)) {
+          // 数据变化，清除计时器
+          clearInterval(intervalId);
+          console.log('数据变化，停止请求');
+        } else {
+          console.log('继续请求')
+        }
+        // 如果数据相同，不做任何操作，计时器会继续工作
+
+        totalTime += 500; // 每次请求后增加时间
+        if (totalTime >= 10000) {
+          // 达到10秒，清除计时器
+          clearInterval(intervalId);
+          console.log('10秒到了，停止请求');
+        }
+      } catch (error) {
+        console.error('请求失败:', error);
+        clearInterval(intervalId); // 请求失败也应当清除计时器
+      }
+    }, 2000); // 每2秒执行一次请求
+
+   
+
+  };
+  function handleConfirm(tier: PricingTier) {
+      buyNowBtn(tier)
   }
 
   return (
     <div
-      className={cn("flex flex-col w-full items-center", styles.fancyOverlay)}
+      className={cn("flex flex-col items-center", styles.fancyOverlay)}
     >
       <div className="w-full flex flex-col items-center">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col items-center">
+        <div className="w-full mx-auto max-w-7xl px-6 lg:px-8 flex flex-col items-center">
           {/* <div className="w-full lg:w-auto mx-auto max-w-4xl lg:text-center">
             <h1 className="text-black dark:text-white text-4xl font-semibold max-w-xs sm:max-w-none md:text-6xl !leading-tight">
               Pricing
@@ -235,64 +287,63 @@ export default function PricingPage({ user }: { user?: User }) {
           ) : (
             <div className="mt-12" aria-hidden="true"></div>
           )}
-
-          <div
-            className={cn(
-              "isolate mx-auto mt-4 mb-28 grid max-w-md grid-cols-1 gap-8 lg:mx-0 lg:max-w-none select-none",
-              tiers.length === 2 ? "lg:grid-cols-2" : "",
-              tiers.length === 3 ? "lg:grid-cols-3" : ""
-            )}
-          >
-            {tiers.map((tier) => (
-              <div
-                key={tier.id}
-                className={cn(
-                  tier.featured
-                    ? "!bg-gray-900 ring-gray-900 dark:!bg-gray-100 dark:ring-gray-100"
-                    : "bg-white dark:bg-gray-900/80 ring-gray-300/70 dark:ring-gray-700",
-                  "max-w-xs ring-1 rounded-3xl p-8 xl:p-10",
-                  tier.highlighted ? styles.fancyGlassContrast : ""
-                )}
-              >
-                <h3
-                  id={tier.id}
+          <div className="w-full horizontal-scroll-container overflow-x-auto whitespace-nowrap">
+            <div
+              className={cn(
+                "isolate flex mx-auto mt-4 mb-28 max-w-md gap-8 lg:mx-0 lg:max-w-none select-none",
+              )}
+            >
+              {tiers.map((tier) => (
+                <div
+                  key={tier.id}
                   className={cn(
                     tier.featured
-                      ? "text-white dark:text-black"
-                      : "text-black dark:text-white",
-                    "text-2xl font-bold tracking-tight"
+                      ? "!bg-gray-900 ring-gray-900 dark:!bg-gray-100 dark:ring-gray-100"
+                      : "bg-white dark:bg-gray-900/80 ring-gray-300/70 dark:ring-gray-700",
+                    "max-w-xs ring-1 rounded-3xl p-8 xl:p-10",
+                    tier.highlighted ? styles.fancyGlassContrast : "",
+                    "min-w-75"
                   )}
                 >
-                  {tier.variant_name}
-                </h3>
-                <p
-                  className={cn(
-                    tier.featured
-                      ? "text-gray-300 dark:text-gray-500"
-                      : "text-gray-600 dark:text-gray-400",
-                    "mt-4 text-sm leading-6"
-                  )}
-                >
-                  {tier.description}
-                </p>
-                <p className="mt-6 flex items-baseline gap-x-1">
-                  <span
+                  <h3
+                    id={tier.id}
                     className={cn(
                       tier.featured
                         ? "text-white dark:text-black"
                         : "text-black dark:text-white",
-                      "text-4xl font-bold tracking-tight",
-                      tier.discountPrice && tier.discountPrice[frequency.value]
-                        ? "line-through"
-                        : ""
+                      "text-2xl font-bold tracking-tight"
                     )}
                   >
-                    {typeof tier.price === "string"
-                      ? tier.price
-                      : tier.price[frequency.value]}
-                  </span>
+                    {tier.variant_name}
+                  </h3>
+                  <p
+                    className={cn(
+                      tier.featured
+                        ? "text-gray-300 dark:text-gray-500"
+                        : "text-gray-600 dark:text-gray-400",
+                      "mt-4 text-sm leading-6 whitespace-normal"
+                    )}
+                  >
+                    {tier.description}
+                  </p>
+                  <p className="mt-6 flex items-baseline gap-x-1">
+                    <span
+                      className={cn(
+                        tier.featured
+                          ? "text-white dark:text-black"
+                          : "text-black dark:text-white",
+                        "text-4xl font-bold tracking-tight",
+                        tier.discountPrice && tier.discountPrice[frequency.value]
+                          ? "line-through"
+                          : ""
+                      )}
+                    >
+                      {typeof tier.price === "string"
+                        ? '$' + tier.price
+                        : tier.price[frequency.value]}
+                    </span>
 
-                  {/* <span
+                    {/* <span
                     className={cn(
                       tier.featured ? 'text-white dark:text-black' : 'text-black dark:text-white',
                     )}
@@ -302,91 +353,104 @@ export default function PricingPage({ user }: { user?: User }) {
                       : tier.discountPrice[frequency.value]}
                   </span> */}
 
-                  {typeof tier.price !== "string" ? (
-                    <span
-                      className={cn(
-                        tier.featured
-                          ? "text-gray-300 dark:text-gray-500"
-                          : "dark:text-gray-400 text-gray-600",
-                        "text-sm font-semibold leading-6"
-                      )}
-                    >
-                      {frequency.priceSuffix}
-                    </span>
-                  ) : null}
-                </p>
-                <a
-                  href={tier.href}
-                  aria-describedby={tier.id}
-                  className={cn(
-                    "flex mt-6 shadow-sm",
-                    tier.soldOut ? "pointer-events-none" : ""
-                  )}
-                >
-                  {userAbilities && pathname === "/settings" ? (
-                    <button
-                      onClick={() => buyNowBtn(tier)}
-                      disabled={
-                        userAbilities?.product_name == tier.product_name &&
-                        userAbilities?.variant_name == tier.variant_name
-                      }
-                      className={cn(
-                        "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
-                        tier.featured || tier.soldOut ? "grayscale" : "",
-                        !tier.highlighted && !tier.featured
-                          ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
-                          : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
-                        tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
-                      )}
-                    >
-                      {userAbilities?.product_name == tier.product_name &&
-                        userAbilities?.variant_name == tier.variant_name
-                        ? "CURRENTT PLAN"
-                        : "CHANGE PLAN"}
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => buyNowBtn(tier)}
-                      className={cn(
-                        "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
-                        tier.featured || tier.soldOut ? "grayscale" : "",
-                        !tier.highlighted && !tier.featured
-                          ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
-                          : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
-                        tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
-                      )}
-                    >
-                      Get started
-                    </button>
-                  )}
-                </a>
-
-                <ul
-                  className={cn(
-                    tier.featured
-                      ? "text-gray-300 dark:text-gray-500"
-                      : "text-gray-700 dark:text-gray-400",
-                    "mt-8 space-y-3 text-sm leading-6 xl:mt-10"
-                  )}
-                >
-                  {tier.features.feature.map((feature) => (
-                    <li key={feature} className="flex gap-x-3">
-                      <CheckIcon
+                    {typeof tier.price == "string" ? (
+                      <span
                         className={cn(
-                          tier.featured ? "text-white dark:text-black" : "",
-                          tier.highlighted ? "text-slate-500" : "text-gray-500",
-
-                          "h-6 w-5 flex-none"
+                          tier.featured
+                            ? "text-gray-300 dark:text-gray-500"
+                            : "dark:text-gray-400 text-gray-600",
+                          "text-sm font-semibold leading-6"
                         )}
-                        aria-hidden="true"
-                      />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+                      >
+                        {frequency.priceSuffix}
+                      </span>
+                    ) : null}
+                  </p>
+                  <a
+                    href={tier.href}
+                    aria-describedby={tier.id}
+                    className={cn(
+                      "flex mt-6 shadow-sm",
+                      tier.soldOut ? "pointer-events-none" : ""
+                    )}
+                  >
+                    {userAbilities && pathname === "/settings" ? (
+                      <button
+                        // onClick={() => buyNowBtn(tier)}
+                        disabled={
+                          userAbilities?.product_name == tier.product_name &&
+                          userAbilities?.variant_name == tier.variant_name
+                        }
+                        className={cn(
+                          "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
+                          tier.featured || tier.soldOut ? "grayscale" : "",
+                          !tier.highlighted && !tier.featured
+                            ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
+                            : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
+                          tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
+                        )}
+                      >
+                        {userAbilities?.product_name == tier.product_name &&
+                          userAbilities?.variant_name == tier.variant_name
+                          ? "CURRENTT PLAN"
+                          :
+                          <Popconfirm
+                            title="change subscription"
+                            description="Are you sure to change this subscription"
+                            onConfirm={() => handleConfirm(tier)}
+                            // onCancel={cancel}
+                            okText="Yes"
+                            cancelText="No"
+                          >
+                            CHANGE PLAN
+                          </Popconfirm>
+                        }
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => buyNowBtn(tier)}
+                        className={cn(
+                          "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
+                          tier.featured || tier.soldOut ? "grayscale" : "",
+                          !tier.highlighted && !tier.featured
+                            ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
+                            : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
+                          tier.featured ? "!bg-gray-100 dark:!bg-black" : ""
+                        )}
+                      >
+                        Get started
+                      </button>
+                    )}
+                  </a>
+
+                  <ul
+                    className={cn(
+                      tier.featured
+                        ? "text-gray-300 dark:text-gray-500"
+                        : "text-gray-700 dark:text-gray-400",
+                      "mt-8 space-y-3 text-sm leading-6 xl:mt-10"
+                    )}
+                  >
+                    {tier.features.feature.map((feature) => (
+                      <li key={feature} className="flex gap-x-3 whitespace-normal">
+                        <CheckIcon
+                          className={cn(
+                            tier.featured ? "text-white dark:text-black" : "",
+                            tier.highlighted ? "text-slate-500" : "text-gray-500",
+
+                            "h-6 w-5 flex-none"
+                          )}
+                          aria-hidden="true"
+                        />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
+
         </div>
       </div>
     </div>
