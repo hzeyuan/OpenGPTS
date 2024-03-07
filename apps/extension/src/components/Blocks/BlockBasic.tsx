@@ -1,5 +1,5 @@
 import React, { useState, useContext, useMemo, type ComponentType } from 'react';
-import { Handle, Position, type NodeProps } from 'reactflow';
+import { Handle, Position, type NodeProps, useReactFlow } from 'reactflow';
 import BlockBase from './BlockBase';
 import { iconMap } from '~src/utils/workflow';
 import useEditorBlock from '~src/hooks/useEditorBlock';
@@ -13,28 +13,8 @@ const BlockBasic: ComponentType<NodeProps & {
     //   const workflowUtils = useContext(WorkflowUtilsContext);
     // const loopBlocks = ['loop-data', 'loop-elements'];
 
-    // const blockErrors = ""; // 假设用于验证的逻辑
     const block = useEditorBlock(data.id);
-    // console.log('block', block, data.id, data)
     const IconComponent = iconMap[data.id]
-    // const showTextToCopy = useMemo(() => {
-    //     if (block?.details?.id && loopBlocks.includes(block?.details?.id) && data.loopId) {
-    //         return { name: 'Loop id', value: data.loopId };
-    //     }
-
-    //     if (block.details?.id === 'google-sheets' && data.refKey) {
-    //         return { name: 'Reference key', value: data.refKey };
-    //     }
-
-    //     return null;
-    // }, [block.details, data.loopId, data.refKey]);
-
-    // const insertToClipboard = (text) => {
-    //     navigator.clipboard.writeText(text);
-    //     setIsCopied(true);
-    //     setTimeout(() => setIsCopied(false), 1000);
-    // };
-
 
 
     const getBlockName = () => {

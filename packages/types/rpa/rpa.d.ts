@@ -16,10 +16,11 @@ interface SendMessageToWindowMessage {
     action?: Action;
 }
 
-type SendToBackgroundViaRelayRequestBody = {
-    type: ActionType;
+type SendToBackgroundViaRelayRequestBody<T> = {
+    type: T;
     tabId?: number;
     windowId?: number;
+    [key: string]: any;
     message?: SendMessageToWindowMessage;
 
 };

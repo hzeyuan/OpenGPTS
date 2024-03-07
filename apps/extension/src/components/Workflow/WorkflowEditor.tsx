@@ -1,7 +1,7 @@
 "use client"
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect, useContext } from 'react';
 import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handle, MiniMap, Position, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, useViewport } from 'reactflow';
-import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore } from 'reactflow';
+import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore, EdgeMouseHandler } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './index.css';
 import BlockBasic from '../Blocks/BlockBasic';
@@ -12,6 +12,7 @@ import { nanoid } from '~shared/utils';
 import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 import { WorkflowEditorContext, useWorkflowEditorContext } from '~src/app/context/WorkflowEditorContext';
 import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
+import { useWorkflowStore } from '~src/store/useWorkflowStore';
 
 
 
@@ -62,6 +63,9 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         addNode,
         getBoundingClientRect,
     }));
+
+    const workflow = useWorkflowStore((state) => state.workflow);
+
 
 
     const isMac = navigator.appVersion.indexOf('Mac') !== -1;
@@ -136,24 +140,27 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     );
 
     const onConnect: OnConnect = useCallback(
-        (connection) => setEdges((eds) => addEdge(connection, eds)),
+        (connection) => {
+            console.log('onConnect', connection)
+            setEdges((eds) => addEdge(connection, eds))
+        },
         []
     );
 
+
+
     const onEdgesChange: OnEdgesChange = useCallback(
-        (changes) => setEdges((eds) => applyEdgeChanges(changes, eds).map(edge => {
-            // 检测边缘是否被选中，并更新其 data 属性
-            console.log('edge', edge);
-            if (edge.selected) {
-                return { ...edge, data: { ...edge.data, isSelected: true } };
-            }
-            return edge;
-        })),
+        (changes) => {
+            clearHighlightedElements();
+            setEdges((currentEdges) => {
+                return applyEdgeChanges(changes, currentEdges);
+            });
+        },
         []
     );
 
     const addNode = (node: Node) => {
-        node
+        console.log('addNode', node)
         setNodes((prevNodes) => [...prevNodes, node]);
     };
 
@@ -183,14 +190,14 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     }
 
     function clearHighlightedElements() {
-        console.log('clearHighlightedElements')
-        const elements = document.querySelectorAll(
-            '.dropable-area__node, .dropable-area__handle'
-        );
-        elements.forEach((element) => {
-            element.classList.remove('dropable-area__node');
-            element.classList.remove('dropable-area__handle');
-        });
+        const currentEdges = reactFlowInstanceRef.current?.getEdges();
+        if (!currentEdges) return;
+        const edgesWithClearedSelection = currentEdges?.map(edge => ({
+            ...edge,
+            selected: false,
+            className: '' // 清除自定义的选中类名
+        }));
+        setEdges(edgesWithClearedSelection);
     }
 
     const handleDelete = (id: string) => {
@@ -200,6 +207,8 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         editBlockDrawerRef.current?.setOpen(false);
         // reactFlowInstanceRef.current?.removeElements({ id });
     }
+
+
 
     const handleEdit = useCallback((nodeId: string) => {
         const nodes = reactFlowInstanceRef.current?.getNodes();
@@ -275,6 +284,11 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         event.preventDefault()
     }
 
+    const onEdgeDoubleClick: EdgeMouseHandler = (event, edge) => {
+        console.log('onEdgeDoubleClick')
+        setEdges((edges) => edges.filter((e) => e.id !== edge.id));
+    }
+
     // useEffect(() => {
     //     const editor = reactFlowInstanceRef.current;
     //     editor?.setViewport({ zoom: 3,  x: 0, y: 0  });
@@ -294,11 +308,21 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                     onDragEnd={clearHighlightedElements}
                     ref={reactFlowWrapperRef}
                 >
+                    {/* <div>连接数: {edges.length}</div>
+                    <div>节点数: {nodes.length}</div>
+                    {nodes.map(node => {
+                        return <div>节点数:{JSON.stringify(node)}</div>
+                    })}
+                    {edges.map(node => {
+                        return <div>链接数:{JSON.stringify(node)}</div>
+                    })} */}
+
                     <Flow
                         setReactFlowInstance={setReactFlowInstance}
                         id="workflow-editor"
                         nodes={nodes}
                         edges={edges}
+                        onEdgeDoubleClick={onEdgeDoubleClick}
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
