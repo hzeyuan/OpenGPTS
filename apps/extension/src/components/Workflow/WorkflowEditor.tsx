@@ -1,6 +1,6 @@
 "use client"
 import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect, useContext } from 'react';
-import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handle, MiniMap, Position, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, useViewport } from 'reactflow';
+import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handle, MiniMap, Position, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, useViewport, useNodesState, useEdgesState } from 'reactflow';
 import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore, EdgeMouseHandler } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './index.css';
@@ -13,11 +13,11 @@ import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 import { WorkflowEditorContext, useWorkflowEditorContext } from '~src/app/context/WorkflowEditorContext';
 import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { useWorkflowStore } from '~src/store/useWorkflowStore';
+import { Play, Save } from 'lucide-react';
 
 
 
 export type WorkflowEditorHandles = {
-    addNode: (node: Node) => void,
     getBoundingClientRect: () => DOMRect | undefined
 }
 
@@ -60,38 +60,53 @@ const Flow: React.FC<{
 const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => {
 
     useImperativeHandle(ref, () => ({
-        addNode,
         getBoundingClientRect,
     }));
 
-    const workflow = useWorkflowStore((state) => state.workflow);
-
-
+    // const workflow = useWorkflowStore((state) => state);
+    const updateWorkflowData = useWorkflowStore(state => state.updateWorkflowData)
+    const workflowData = useWorkflowStore(state => state.workflowData)
 
     const isMac = navigator.appVersion.indexOf('Mac') !== -1;
-    const [nodes, setNodes] = useState<Node[]>([]);
+    const initialNodes = [];
+    const initialEdges = [];
+    const defaultViewport = { x: 0, y: 0, zoom: 1 };
+    // const [nodes, setNodes] = useState<Node[]>([]);
 
-    const [edges, setEdges] = useState<Edge[]>([]);
+    const [nodes, setNodes, _onNodesChange] = useNodesState(initialNodes);
+    const [edges, setEdges, _onEdgesChange] = useEdgesState(initialEdges);
+
+    // const [edges, setEdges] = useState<Edge[]>([]);
     const [curNode, setCurNode] = useState<Node<PRAWorkflow.Block> | undefined>(undefined);
-    const reactFlowInstanceRef = useRef<ReactFlowInstance<PRAWorkflow.Block, any> | null>(null);
+    const reactFlowInstanceRef = useRef<ReactFlowInstance<any, any> | null>(null);
     const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
     const editBlockDrawerRef = useRef<any>(null);
     // const getPosition = (position) => (Array.isArray(position) ? position : [0, 0]);
 
     // 执行工作流
     const executeFromBlock = async (blockId: string) => {
-        console.log(`executeFromBlock: ${blockId}`)
-        const workflow = {};
-        await sendToBackgroundViaRelay({
-            name: 'workflow',
-            body: {
-                type: 'workflow:execute',
-                data: {
-                    blockId,
-                    workflow
+        try {
+            console.log(`executeFromBlock: ${blockId}`)
+            if (!blockId) return;
+            const workflowOptions = { blockId };
+            console.log('workflowData', workflowData)
+
+
+
+            await sendToBackgroundViaRelay({
+                name: 'workflow',
+                body: {
+                    type: 'workflow:execute',
+                    data: {
+                        // blockId,
+                        workflowData: JSON.stringify(workflowData),
+                        workflowOptions
+                    }
                 }
-            }
-        });
+            });
+        } catch (error) {
+            console.error(`executeFromBlock error: ${error}`)
+        }
     }
 
     // update blcok EditData
@@ -107,9 +122,10 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             }
             return node;
         }
-        ))
-    }
+        ));
 
+    }
+    // 为了在minimap中显示不同的颜色
     const minimapNodeClassName = (node: Node) => {
         // console.log("node", node)
         const id = node?.data.id
@@ -129,16 +145,13 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         minZoom: 0.5,
         maxZoom: 3,
         multiSelectionKeyCode: isMac ? 'Meta' : 'Control',
-
-
         ...props.options,
     }
-
-    const onNodesChange: OnNodesChange = useCallback(
-        (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-        []
-    );
-
+    // 更新节点
+    const onNodesChange: OnNodesChange = (changes) => {
+        _onNodesChange(changes);
+    }
+    // 连接节点
     const onConnect: OnConnect = useCallback(
         (connection) => {
             console.log('onConnect', connection)
@@ -147,48 +160,16 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         []
     );
 
-
-
-    const onEdgesChange: OnEdgesChange = useCallback(
-        (changes) => {
-            clearHighlightedElements();
-            setEdges((currentEdges) => {
-                return applyEdgeChanges(changes, currentEdges);
-            });
-        },
-        []
-    );
-
-    const addNode = (node: Node) => {
-        console.log('addNode', node)
-        setNodes((prevNodes) => [...prevNodes, node]);
-    };
-
+    // 获取reactflow的位置  
     const getBoundingClientRect = () => {
         return reactFlowWrapperRef.current?.getBoundingClientRect();
     }
+    // 设置reactflow的实例
     const setReactFlowInstance = (instance: ReactFlowInstance) => {
         reactFlowInstanceRef.current = instance;
     };
 
-
-    const toggleHighlightElement = ({ target, elClass, classes }: {
-        target: EventTarget,
-        elClass: string,
-        classes: string
-    }) => {
-        const targetEl = (target as HTMLElement).closest(elClass);
-
-        if (targetEl) {
-            targetEl.classList.add(classes);
-        } else {
-            const elements = document.querySelectorAll(`.${classes}`);
-            elements.forEach((element) => {
-                element.classList.remove(classes);
-            });
-        }
-    }
-
+    // 清除高亮元素
     function clearHighlightedElements() {
         const currentEdges = reactFlowInstanceRef.current?.getEdges();
         if (!currentEdges) return;
@@ -205,7 +186,6 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         setNodes((nodes) => nodes.filter((node) => node.id !== id));
         setEdges((edges) => edges.filter((edge) => edge.source !== id && edge.target !== id));
         editBlockDrawerRef.current?.setOpen(false);
-        // reactFlowInstanceRef.current?.removeElements({ id });
     }
 
 
@@ -225,8 +205,8 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         console.log('Dropped item in editor')
         const { dataTransfer, clientX, clientY, target } = event;
         const data = JSON.parse(dataTransfer.getData('block'));
-        const blockId = data.id
-        const block = blocks[blockId]
+        const blockKey = data.id
+        const block = blocks[blockKey]
 
         console.log('data', data)
         const viewport = reactFlowInstanceRef?.current?.getViewport();
@@ -240,13 +220,14 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             y: clientY - editorRect.top,
             x: clientX - editorRect.left,
         });
-        console.log('viewport', viewport, position, clientX, clientY,)
+        console.log('viewport', blockKey, block, viewport, position, clientX, clientY,)
         // add node
-        addNode({
+
+        const node = {
             id: nanoid(),
             type: 'blockBasic',
             data: {
-                id: blockId,
+                id: blockKey,
                 onDelete: handleDelete,
                 onEdit: handleEdit,
                 // runworkflow
@@ -256,38 +237,59 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                 x: position?.x,
                 y: position?.y,
             },
-        } as Node)
+            label: blockKey,
+        } as Node
+        setNodes((prevNodes) => [...prevNodes, node]);
 
         clearHighlightedElements();
 
     }, [reactFlowInstanceRef, reactFlowWrapperRef])
 
     const onDragoverEditor: DragEventHandler = (event) => {
-        const { target } = event;
-        console.log('drag over editor')
-        toggleHighlightElement({
-            target,
-            elClass: '.react-flow__handle.source',
-            classes: 'dropable-area__handle',
-        });
-
-        if (!(target instanceof Element)) {
-            return;
-        }
-        if (!target.closest('.react-flow__handle')) {
-            toggleHighlightElement({
-                target,
-                elClass: '.react-flow__node:not(.react-flow__node-BlockGroup)',
-                classes: 'dropable-area__node',
-            });
-        }
         event.preventDefault()
     }
 
+
+    // 更新边缘
+    const onEdgesChange: OnEdgesChange = useCallback(
+        (changes) => {
+            clearHighlightedElements();
+            _onEdgesChange(changes);
+        },
+        [_onEdgesChange]
+    );
+    // 双击边缘
     const onEdgeDoubleClick: EdgeMouseHandler = (event, edge) => {
         console.log('onEdgeDoubleClick')
         setEdges((edges) => edges.filter((e) => e.id !== edge.id));
     }
+
+    const handleSaveWorkflow = () => {
+        if (!reactFlowInstanceRef?.current) {
+            return;
+        }
+        // const drawFlow = reactFlowInstanceRef?.current?.toObject();
+        updateWorkflowData({
+            drawflow: {
+                edges,
+                nodes: nodes.map((node) => {
+                    return {
+                        id: node.id,
+                        data: node.data.data,
+                        position: node.position,
+                        label: node.label,
+                        event: node.event,
+                        type: node.type,
+
+                    }
+                })
+            },
+        })
+    }
+
+    useEffect(() => {
+        handleSaveWorkflow();
+    }, [edges, nodes])
 
     // useEffect(() => {
     //     const editor = reactFlowInstanceRef.current;
@@ -308,12 +310,13 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                     onDragEnd={clearHighlightedElements}
                     ref={reactFlowWrapperRef}
                 >
-                    {/* <div>连接数: {edges.length}</div>
+                    {JSON.stringify(workflowData)}
+                    <div>连接数: {edges.length}</div>
                     <div>节点数: {nodes.length}</div>
-                    {nodes.map(node => {
+                    {/* {nodes.map(node => {
                         return <div>节点数:{JSON.stringify(node)}</div>
-                    })}
-                    {edges.map(node => {
+                    })} */}
+                    {/* {edges.map(node => {
                         return <div>链接数:{JSON.stringify(node)}</div>
                     })} */}
 
@@ -326,6 +329,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
                         onConnect={onConnect}
+                        defaultViewport={defaultViewport}
                         nodeTypes={nodeTypes}
                         edgeTypes={edgeTypes}
                         style={{ width: '100%', height: '100vh' }}
@@ -345,13 +349,32 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                         />
 
                         <Background className='bg-[#fafafa]' size={2} color="var(--opengpts-primary-color)" variant={BackgroundVariant.Dots} />
+
+                        <div
+                            className="absolute top-0 left-0 z-10 flex items-center w-full p-4 pointer-events-none"
+                        >
+                            <div className='flex justify-between w-full'>
+                                <div></div>
+                                <div className="flex items-center p-1 ml-4 bg-white rounded-lg pointer-events-auto ui-card dark:bg-gray-800 ">
+                                    <button className="flex items-center justify-center p-2 rounded-lg cursor-pointer hoverable">
+                                        <Play size="20" />
+                                    </button>
+                                    <button onClick={handleSaveWorkflow} className="flex items-center justify-center px-4 py-2 text-white bg-black rounded-lg cursor-pointer h-9 hover:bg-gray-700 dark:bg-gray-100 dark:hover:bg-gray-200 dark:text-black">
+                                        <Save size="24" className='pr-2' />
+                                        <span className="text-white">Save</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <button className="absolute" style={{ zIndex: 9999 }} onClick={handleSaveWorkflow}>转换为object对象</button>
                     </Flow>
 
                     <WorkflowEditBlock
-                        // key={curNode?.id || 'workflow-edit-block'}
                         ref={editBlockDrawerRef}
                         node={curNode}
-                        workflow={{}}
+                        workflow={workflowData}
                         editor={reactFlowInstanceRef.current}
                         autocomplete={false}
                         onUpdate={handleUpdateNodeData}

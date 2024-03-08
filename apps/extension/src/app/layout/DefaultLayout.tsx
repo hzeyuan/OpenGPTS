@@ -108,13 +108,13 @@ const DefaultLayout: FC<Props> = ({ children, lng }) => {
                       <div className="flex h-[72px] w-8 items-center justify-center">
                         <div className="flex flex-col items-center w-6 h-6">
                           <div
-                            className="w-1 h-3 rounded-full rotate-left translate-y-[0.15rem]  transform     "
+                            className={`w-1 h-3 rounded-full rotate-left ${!sidebarOpen?'':'rotate-hidden'} translate-y-[0.15rem]  transform    `}
                             style={{
                               background: "var(--opengpts-primary-color)",
                             }}
                           ></div>
                           <div
-                            className="w-1 h-3 rounded-full rotate-right   translate-y-[-0.15rem]  transform  "
+                            className={`w-1 h-3 rounded-full ${!sidebarOpen?'':'rotate-hidden'} rotate-right   translate-y-[-0.15rem]  transform `}
                             style={{
                               background: "var(--opengpts-primary-color)",
                             }}

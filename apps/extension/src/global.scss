@@ -50,6 +50,7 @@
   white-space: nowrap;
 }
 
+input,
 input:focus,
 button:focus,
 textarea:focus,
@@ -57,6 +58,14 @@ select:focus,
 [role="button"]:focus {
   outline: none;
   cursor: pointer;
+  // border:none;
+}
+
+input,
+input:focus
+{
+  // border:none !important;
+  // box-shadow:none !important;
 }
 
 /* @layer base {
@@ -81,24 +90,24 @@ body {
   width: 100%;
 } */
 
-[type="text"],
-input:where(:not([type])),
-[type="email"],
-[type="url"],
-[type="password"],
-[type="number"],
-[type="date"],
-[type="datetime-local"],
-[type="month"],
-[type="search"],
-[type="tel"],
-[type="time"],
-[type="week"],
-[multiple],
-textarea,
-select {
-  /* background: inherit !important; */
-}
+// [type="text"],
+// input:where(:not([type])),
+// [type="email"],
+// [type="url"],
+// [type="password"],
+// [type="number"],
+// [type="date"],
+// [type="datetime-local"],
+// [type="month"],
+// [type="search"],
+// [type="tel"],
+// [type="time"],
+// [type="week"],
+// [multiple],
+// textarea,
+// select {
+//   /* background: inherit !important; */
+// }
 
 :root[data-gpts-theme="dark"] {
   --opengpts-gutter-bg-color: #1414145c;

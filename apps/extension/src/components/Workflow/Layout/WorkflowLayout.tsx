@@ -13,8 +13,7 @@ const WorkflowLayout = () => {
         >
             <WorkflowDetailsCard />
             <div className="relative flex-1 overflow-auto">
-                {/* 顶层的图标 */}
-                <div
+                {/* <div
                     className="absolute top-0 left-0 z-10 flex items-center w-full p-4 pointer-events-none"
                 >
                     <div className='flex justify-between w-full'>
@@ -23,10 +22,11 @@ const WorkflowLayout = () => {
                             <div className="flex items-center justify-center p-2 rounded-lg cursor-pointer hoverable">
                                 <Play size="20" />
                             </div>
+                           
                         </div>
 
                     </div>
-                </div>
+                </div> */}
                 {/* 主要容器 */}
                 {/* ui-tab-panels */}
                 <WorkflowEditor

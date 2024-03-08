@@ -40,8 +40,7 @@ const BlockBasic: ComponentType<NodeProps & {
         // onUpdate={undefined}
         // onSettings={undefined}
         >
-
-            {<Handle id={`${id}-input-1`} type="target" position={Position.Left} />}
+            {block.details?.id !== 'trigger' && <Handle id={`${id}-input-1`} type="target" position={Position.Left} />}
             <div className="flex items-center">
                 {/* Icon and block name */}
                 <span className={`${iconColor} flex  p-2 mr-2 rounded-lg dark:text-black`}>
@@ -53,7 +52,6 @@ const BlockBasic: ComponentType<NodeProps & {
                         //   v-if="block.details.id"
                         className="font-semibold leading-tight text-overflow whitespace-nowrap"
                     >
-                        {/*  {{ getBlockName() }} */}
                         {data?.name}
                     </p>
                     {/* <p>描述</p> */}

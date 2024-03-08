@@ -121,7 +121,7 @@ class WorkflowEngine {
 
     // 获取工作流中所有块的定义
     blocks = getBlocks();
-    console.log('blcoks', blocks)
+    console.log('blocks', blocks)
     // 检查触发器块是否需要参数，并处理参数输入
     // const checkParams = this.options?.checkParams ?? true;
     // const hasParams =
@@ -185,6 +185,8 @@ class WorkflowEngine {
       acc[node.id] = node;
       return acc;
     }, {});
+
+    console.log("this.blocks",nodes,  this.blocks)
 
     // 构建连接映射，这是节点之间连接的详细描述
     this.connectionsMap = edges.reduce(

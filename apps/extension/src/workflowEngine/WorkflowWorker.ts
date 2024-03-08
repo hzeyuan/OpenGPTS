@@ -127,7 +127,7 @@ class WorkflowWorker {
         // console.log(`1. 过去executeNextBlocks connections`, connections)
         console.log(`%c 所有的connections: ${JSON.stringify(connections)}`, 'color: red')
         connections.forEach((connection: { id: any; targetHandle: any; sourceHandle: any; }, index: number) => {
-            console.log(`%c  当前的connection: ${JSON.stringify(connection)}`, 'color: red')
+            console.log(`%c  当前的connection: ${JSON.stringify(connection)}`, 'color: red', "prevBlockData", prevBlockData)
             const { id, targetHandle, sourceHandle } =
                 typeof connection === 'string'
                     ? { id: connection, targetHandle: '', sourceHandle: '' }
@@ -138,7 +138,7 @@ class WorkflowWorker {
                 sourceHandle,
                 nextBlockBreakpointCount,
             };
-
+            console.log('execParam', execParam)
             if (index === 0) {
                 this.executeBlock(this.engine.blocks[id], {
                     prevBlockData,
@@ -180,7 +180,7 @@ class WorkflowWorker {
 
     async executeBlock(block, execParam = {}, isRetry = false) {
         //打印绿色，时间，参数
-        console.log(`executeBlock: ${block.label}`, new Date(), block, execParam)
+        console.log(`[workflowWorker] executeBlock: ${block.label}`, execParam)
         const currentState = await this.engine.states.get(this.engine.id);
 
         // zh: 如果当前状态不存在或者已经被销毁，那么直接销毁当前worker
@@ -250,6 +250,7 @@ class WorkflowWorker {
             activeTabUrl: this.activeTab.url,
         };
 
+        console.log('this.engine.referenceData', this.engine.referenceData);
         const replacedBlock = await templating({
             block,
             data: refData,
@@ -259,6 +260,12 @@ class WorkflowWorker {
                     ? null
                     : this.blocksDetail[block.label].refDataKeys,
         });
+        console.log(
+            `8. workflowWorker executeBlock -> replacedBlock`,
+            replacedBlock
+          );
+
+
 
         const blockDelay = this.settings?.blockDelay || 0;
         const addBlockLog = (status, obj = {}) => {

@@ -48,7 +48,7 @@ const BlockBase: React.FC<{
   //   event.dataTransfer.setData('block', JSON.stringify(payload));
   // };
 
-  const runWorkflow = (e) => {
+  const handleRunWorkflow = (e) => {
     e.stopPropagation();
     if (!workflowUtils) return;
     workflowUtils.executeFromBlock(blockId);
@@ -79,8 +79,7 @@ const BlockBase: React.FC<{
               {data.disableBlock ? <ToggleLeft size="20" /> : <ToggleRight size="20" />}
             </button>
           )} */}
-          {/* onClick={runWorkflow} */}
-          <button onClick={runWorkflow} className='h-6 p-2' title="Run workflow from here" >
+          <button onClick={handleRunWorkflow} className='h-6 p-2' title="Run workflow from here" >
             <Play className='cursor-pointer' size="16" />
           </button>
           {!blockData.details?.disableEdit &&
