@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers';
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs';
-import { Redis } from '@upstash/redis';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server'
 
@@ -16,7 +15,6 @@ export async function authMiddleware(req: NextRequest) {
     const supabase = createServerComponentClient({
         cookies: () => cookieStore,
     })
-    console.log('xxxxx')
     const { data } = await supabase.auth.getUser()
     console.log('user', data)
     if (data?.user) {

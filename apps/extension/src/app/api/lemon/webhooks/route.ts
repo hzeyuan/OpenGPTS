@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
   return Response.json(rawBody);
 }
 
-async function updateSubscriptionStatus(body) {
+async function updateSubscriptionStatus(body: { data: { attributes: { user_email: any; status: any; product_id: any; product_name: any; variant_id: any; variant_name: any; first_subscription_item: any; }; }; }) {
   const {
     user_email: email,
     status,
@@ -102,8 +102,17 @@ async function updateSubscriptionStatus(body) {
       .select("*")
       .eq("email", email)
       .single();
+
+    if (user_error) {
+      return NextResponse.json({
+        error: "get user abilities error",
+        code: -1,
+      })
+    }
     const { power } = subscription_info;
-    const { variant_name: user_variant_name } = user_info
+    // const { variant_name: user_variant_name } = user_info;
+    const user_variant_name = user_info!.variant_name!;
+    // user_info?.variant_name
     const result = compareSubscriptions(user_variant_name, variant_name);
     if (result === "upgrade") {
       (update_data as any).power = power;
@@ -122,7 +131,19 @@ async function updateSubscriptionStatus(body) {
   );
 }
 
-async function createUserAbilities(body) {
+async function createUserAbilities(body: {
+  data: {
+    attributes: {
+      user_email: any;
+      status: any;
+      product_name: any;
+      variant_name: any;
+      product_id: any;
+      variant_id: any;
+      first_subscription_item: any;
+    };
+  };
+}) {
   const {
     user_email: email,
     status,
@@ -158,13 +179,11 @@ async function createUserAbilities(body) {
   );
 }
 
-async function recordUserSubscription(body) {
-  const {
-    user_email: email,
-    status,
-    product_name,
-    variant_name,
-  } = body.data.attributes;
+async function recordUserSubscription(body: {
+  data: { attributes: { user_email: any; status: any; product_name: any; variant_name: any } };
+  meta: { event_name: any };
+}) {
+  const { user_email: email, status, product_name, variant_name } = body.data.attributes;
   const event_name = body.meta.event_name;
   let subscription_type;
   switch (product_name) {
@@ -178,7 +197,7 @@ async function recordUserSubscription(body) {
       break;
   }
 
-  const { error } = await supabase.from("user_subscription").insert({
+  const { error } = await supabase.from("user_subscription_history").insert({
     event_name,
     email,
     subscription_type: subscription_type,
@@ -187,6 +206,9 @@ async function recordUserSubscription(body) {
     status,
     details: body,
   });
+  if (error) {
+    console.log("error", error);
+  }
 }
 
 export async function GET(

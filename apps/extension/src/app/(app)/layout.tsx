@@ -5,6 +5,7 @@ import { SessionContext } from '../context/SessionContext';
 import { useRouter } from "next/navigation";
 import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs';
+import { getUserAbilities } from '../services/user';
 
 
 export default function RootLayout({
@@ -13,10 +14,11 @@ export default function RootLayout({
     children: React.ReactNode,
 }) {
     const [session, setSession] = useState<Session | null>(null)
+    const [subscription, setSubscription] = useState<any>(null)
     const router = useRouter();
+
     const supabase = createClientComponentClient()
     const logout = async () => {
-       
         const { error } = await supabase.auth.signOut();
         console.log('退出登录', error)
         // window.localStorage.removeItem('sb-refresh-token')
@@ -29,6 +31,7 @@ export default function RootLayout({
         }
     };
 
+
     useEffect(() => {
         const { data: authListener } = supabase.auth.onAuthStateChange(
             (event, session) => {
@@ -37,15 +40,13 @@ export default function RootLayout({
                     router.refresh();
                     router.replace('/')
                 } else if (session) {
-                    console.log('session', session)
                     if (event === "SIGNED_IN") {
-                        console.log("登录",session)
+                        console.log("登录", session)
                         router.refresh();
                         // router.replace('/chat')
-
                     };
-
                 }
+                console.log('session', session);
                 setSession(session)
 
                 sendToBackgroundViaRelay({
@@ -63,11 +64,23 @@ export default function RootLayout({
 
     }, [])
 
+    useEffect(() => {
+        if (!session?.user) return;
+        if (subscription) return;
+        const email = session?.user?.email!
+        getUserAbilities(email).then((data) => {
+            console.log('user abilities', data)
+            setSubscription(data)
+        });
+    }, [session?.user])
+
     return (
         <SessionContext.Provider value={{
             session,
             setSession,
-            logout
+            logout,
+            subscription,
+            setSubscription
         }}>
             {children}
         </SessionContext.Provider >

@@ -20,8 +20,6 @@ export const fetchCancelSubscription = async (subscription_id: number) => {
     }
 }
 
-
-
 export const fetchResumeSubscription = async (subscription_id: number) => {
     const data = {
         data: {

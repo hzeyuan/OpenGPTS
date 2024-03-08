@@ -4,11 +4,15 @@ import React from "react"
 const SessionContext = React.createContext<{
     session: Session | null
     setSession: React.Dispatch<React.SetStateAction<Session | null>>
-    logout: () => void
+    logout: () => void;
+    subscription: any;
+    setSubscription: React.Dispatch<React.SetStateAction<any>>;
 }>({
     session: null,
     setSession: () => null,
-    logout: () => null
+    logout: () => null,
+    subscription: null,
+    setSubscription: () => null
 })
 
 const useSessionContext = () => {

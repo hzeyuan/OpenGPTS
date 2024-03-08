@@ -7,7 +7,7 @@ import { LogIn } from 'lucide-react';
 import logoIcon from "~assets/icon.png"
 import { faqs, features, footerNavigation, navigation, testimonials } from './constant';
 import { useSessionContext } from '~src/app/context/SessionContext';
-import  PricingPage  from './pricing/page'
+import Plans from "~src/components/plans"
 
 
 
@@ -322,7 +322,7 @@ export default function LandingPage({ params: { lng } }: {
 
                 {/* Pricing section */}
                 <div className='mt-48'>
-                <PricingPage user={session?.user} />
+                    <Plans isUI={true} />
                 </div>
                 {/* Testimonial section */}
                 <div className='mx-auto mt-32 max-w-7xl sm:mt-56 sm:px-6 lg:px-8'>
