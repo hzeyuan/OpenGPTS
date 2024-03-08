@@ -5,8 +5,22 @@ declare namespace PRAWorkflow {
         color: string;
     }
 
+
+    interface WorkflowData {
+        drawflow: any;
+        name: string,
+        description?: string,
+        icon?: string,
+        globalData: any,
+        settings: any,
+        createAt: number,
+        updateAt: number,
+        id: string,
+        
+    }
+
     interface Block {
-        id?:string;
+        id?: string;
         name: string;
         description?: string;
         icon: string;
