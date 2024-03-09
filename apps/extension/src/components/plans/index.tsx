@@ -83,7 +83,7 @@ const Plans: React.FC<{
       return;
     }
     if (props.isUI) {
-      router.push("/settings");
+      router.push("/plans");
       return
     }
     // handleChangeSubscription(tier)

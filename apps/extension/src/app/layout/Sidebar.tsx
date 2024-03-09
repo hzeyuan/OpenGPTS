@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import Logo from "~assets/icon.png"
 import Link from 'next/link';
 // import SidebarLinkGroup from './SidebarLinkGroup';
-import { MoreHorizontal, MessageCircleMore, LibraryBig, MousePointerSquare, LogOut, Settings2 } from 'lucide-react'
+import { MoreHorizontal, MessageCircleMore, LibraryBig, MousePointerSquare, LogOut, Settings2, Sprout } from 'lucide-react'
 import { motion } from 'framer-motion';
 import QQIcon from '~assets/qq.svg';
 import githubIcon from '~assets/github.svg';
@@ -47,6 +47,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
     }
     else if (e.key === 'settings') {
       router.push('/settings');
+    }
+    else if (e.key === 'plans') {
+      router.push('/plans');
     }
   };
 
@@ -179,6 +182,18 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
               className="w-full flex  items-center justify-between  bg-[var(--opengpts-option-box-bg-color)] rounded-lg  text-sm my-4 px-4 py-3"
               menu={{
                 items: [
+                  {
+                    key: 'plans',
+                    label: (
+                      <div  className='flex items-center'>
+                          <Sprout className='w-4 h-4 mr-1' />
+                        <span>
+                          {t('Plans')}
+
+                        </span>
+                      </div>
+                    ),
+                  },
                   {
                     key: 'settings',
                     label: (
