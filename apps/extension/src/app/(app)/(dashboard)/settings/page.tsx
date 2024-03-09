@@ -1,6 +1,6 @@
 
 "use client"
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './index.css'
 import { useStorage } from "@plasmohq/storage/hook";
 import type { ThemeMode } from '@opengpts/types'
@@ -10,12 +10,7 @@ import { useTranslation } from 'react-i18next';
 import { useRootContext } from '~src/app/layout/DefaultLayout';
 import ModeSelector from '~src/components/ModeSelector';
 import { opengptsStorage } from '~src/store';
-import {
-    ProCard,
-} from '@ant-design/pro-components';
-import supabase from "~src/utils/supabase";
 import { useSessionContext } from '~src/app/context/SessionContext';
-import Plans from '~src/components/plans'
 
 
 const SettingsPage = () => {
