@@ -69,7 +69,19 @@ export async function POST(req: NextRequest) {
   return Response.json(rawBody);
 }
 
-async function updateSubscriptionStatus(body: { data: { attributes: { user_email: any; status: any; product_id: any; product_name: any; variant_id: any; variant_name: any; first_subscription_item: any; }; }; }) {
+async function updateSubscriptionStatus(body: {
+  data: {
+    attributes: {
+      user_email: any;
+      status: any;
+      product_id: any;
+      product_name: any;
+      variant_id: any;
+      variant_name: any;
+      first_subscription_item: any;
+    };
+  };
+}) {
   const {
     user_email: email,
     status,
@@ -92,11 +104,17 @@ async function updateSubscriptionStatus(body: { data: { attributes: { user_email
 
   if (status === "active") {
     const { data: subscription_info, error: info_error } = await supabase
-      .from("subscription")
+      .from("plans")
       .select("*")
       .eq("product_id", product_id)
       .eq("variant_id", variant_id)
       .single();
+    if (info_error) {
+      return NextResponse.json({
+        message: "get subscription_info error",
+        code: -1,
+      });
+    }
     const { data: user_info, error: user_error } = await supabase
       .from("user_abilities")
       .select("*")
@@ -105,9 +123,9 @@ async function updateSubscriptionStatus(body: { data: { attributes: { user_email
 
     if (user_error) {
       return NextResponse.json({
-        error: "get user abilities error",
+        message: "get user abilities error",
         code: -1,
-      })
+      });
     }
     const { power } = subscription_info;
     // const { variant_name: user_variant_name } = user_info;
@@ -180,10 +198,22 @@ async function createUserAbilities(body: {
 }
 
 async function recordUserSubscription(body: {
-  data: { attributes: { user_email: any; status: any; product_name: any; variant_name: any } };
+  data: {
+    attributes: {
+      user_email: any;
+      status: any;
+      product_name: any;
+      variant_name: any;
+    };
+  };
   meta: { event_name: any };
 }) {
-  const { user_email: email, status, product_name, variant_name } = body.data.attributes;
+  const {
+    user_email: email,
+    status,
+    product_name,
+    variant_name,
+  } = body.data.attributes;
   const event_name = body.meta.event_name;
   let subscription_type;
   switch (product_name) {

@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, { params }: {
     const { name } = params
     const data = await req.json()
     if(name === 'fetchCancelSubscription') {
-        fetchCancelSubscription(data.subscription_id)
+         fetchCancelSubscription(data.subscription_id)
     }
     if(name === 'fetchResumeSubscription') {
         fetchResumeSubscription(data.subscription_id)

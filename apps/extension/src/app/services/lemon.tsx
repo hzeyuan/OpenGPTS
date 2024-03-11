@@ -1,4 +1,5 @@
 
+import supabase from "~src/utils/supabase";
 
 export const fetchCancelSubscription = async (subscription_id: number) => {
     try {
@@ -14,7 +15,22 @@ export const fetchCancelSubscription = async (subscription_id: number) => {
                 Authorization: key,
             },
         })
-        console.log('responese', response)
+        console.log('responese fetchCancelSubscription', await response.json())
+        const data = await response.json()
+        const { status, user_email: email } = data.attributes
+        const { data: userAbilites, error } = await supabase.from("user_abilities").upsert(
+            {
+                email,
+                subscription_status: status,
+            },
+            {
+                onConflict: "email",
+            }
+        );
+        if (error) {
+            console.log('error')
+        }
+        return userAbilites
     } catch (error) {
         console.log('error', error)
     }
@@ -45,14 +61,29 @@ export const fetchResumeSubscription = async (subscription_id: number) => {
             },
             body: JSON.stringify(data)
         })
-        console.log('responese', response)
+        console.log('responese fetchResumeSubscription', await response.json())
+        const resData = await response.json()
+        const { status, user_email: email } = resData.attributes
+        const { data: userAbilites, error } = await supabase.from("user_abilities").upsert(
+            {
+                email,
+                subscription_status: status,
+            },
+            {
+                onConflict: "email",
+            }
+        );
+        if (error) {
+            console.log('error')
+        }
+        return userAbilites
     } catch (error) {
         console.log('error', error)
     }
 }
 
 export const fetchChangeSubscription = async (subscription_id: number, product_id: number, variant_id: number) => {
-    console.log("subscription_id",subscription_id,product_id,variant_id)
+    console.log("subscription_id", subscription_id, product_id, variant_id)
     const data = {
         data: {
             type: "subscriptions",

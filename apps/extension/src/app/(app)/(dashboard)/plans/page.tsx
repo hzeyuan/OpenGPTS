@@ -14,17 +14,27 @@ const Page = () => {
     const handleCancelSubscription = async () => {
         try {
             setLoading(true);
-            await fetch("/api/lemon/fetchCancelSubscription", {
+            const res = await fetch("/api/lemon/fetchCancelSubscription", {
                 method: "POST",
                 body: JSON.stringify({
                     subscription_id: subscription?.subscription_id,
                 }),
             });
-            fetchDataWithTimer();
+            const resData = await res.json()
+            
+            if (!res.ok || resData.code !== 0) {
+                message.error("fetchCancelSubscription error");
+                return
+            }
+
+            setSubscription(resData.data)
+
+            
+
         } catch (error) {
             message.error("error");
-            setLoading(false);
         } finally {
+            setLoading(false);
         }
     };
     const handleResumeSubscription = async () => {
@@ -36,9 +46,15 @@ const Page = () => {
                     subscription_id: subscription?.subscription_id,
                 }),
             });
-            fetchDataWithTimer();
+            const resData = await res.json()
+
+            if (!res.ok || resData.code !== 0) {
+                message.error("fetchResumeSubscription error");
+            }
+
         } catch (error) {
             message.error("error");
+        } finally {
             setLoading(false);
         }
     };
@@ -86,32 +102,32 @@ const Page = () => {
                         <div className="flex flex-col items-center p-6 pt-0 grow">
                             <h2 className="text-3xl">😃</h2>
                             <h3 className="flex items-center mt-2 text-2xl text-color-accent">
-                            <div className="mb-2">{subscription?.variant_name}</div>
-                            {/* {subscription?.subscription_status} */}
+                                <div className="mb-2">{subscription?.variant_name}</div>
+                                {/* {subscription?.subscription_status} */}
                             </h3>
                             {subscription?.subscription_status === "active" ? (
-                            <Popconfirm
-                                title="cancel subscription"
-                                description="Are you sure to cancel this subscription"
-                                onConfirm={handleCancelSubscription}
-                                // onCancel={cancel}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button>取消续订</Button>
-                            </Popconfirm>
-                        ) : (
-                            <Popconfirm
-                                title="resume subsription"
-                                description="Are you sure to resume this subscription?"
-                                onConfirm={handleResumeSubscription}
-                                // onCancel={cancel}
-                                okText="Yes"
-                                cancelText="No"
-                            >
-                                <Button>续订</Button>
-                            </Popconfirm>
-                        )}
+                                <Popconfirm
+                                    title="cancel subscription"
+                                    description="Are you sure to cancel this subscription"
+                                    onConfirm={handleCancelSubscription}
+                                    // onCancel={cancel}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button>取消续订</Button>
+                                </Popconfirm>
+                            ) : (
+                                <Popconfirm
+                                    title="resume subsription"
+                                    description="Are you sure to resume this subscription?"
+                                    onConfirm={handleResumeSubscription}
+                                    // onCancel={cancel}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <Button>续订</Button>
+                                </Popconfirm>
+                            )}
 
                         </div>
                         <div className="flex flex-col items-stretch p-6 pt-0 gap-y-2"></div>
