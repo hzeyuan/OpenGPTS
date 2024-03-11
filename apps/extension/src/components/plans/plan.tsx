@@ -1,7 +1,8 @@
 import { cn } from "~src/utils"
 import styles from "./pricing.module.css";
 import type { PlanRow, UserAbilitiesRow } from "@opengpts/types";
-import {Check} from 'lucide-react'
+import { Check } from 'lucide-react'
+import { Popconfirm } from "antd";
 
 
 export const Plan: React.FC<{
@@ -78,25 +79,34 @@ export const Plan: React.FC<{
                     // plan.soldOut ? "pointer-events-none" : ""
                 )}
             >
-                <button
-                    onClick={() => onClick(plan)}
-                    disabled={subscription?.variant_id === plan.variant_id}
-                    className={cn(
-                        'cursor-pointer',                        
-                        "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
-                        // plan.featured || plan.soldOut ? "grayscale" : "",
-                        !plan.highlighted && !plan.featured
-                            ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
-                            : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
-                        plan.featured ? "!bg-gray-100 dark:!bg-black" : ""
-                    )}
+                <Popconfirm
+                    title="change subscription"
+                    description="Are you sure to change this subscription"
+                    onConfirm={() => onClick(plan)}
+                    // onCancel={cancel}
+                    okText="Yes"
+                    cancelText="No"
                 >
-                    {subscription?.variant_id === plan.variant_id
-                        ? "Current plan"
-                        :
-                        <span>Get Started</span>
-                    }
-                </button>
+                    <button
+                        disabled={subscription?.variant_id === plan.variant_id}
+                        className={cn(
+                            'cursor-pointer',
+                            "w-full inline-flex items-center justify-center font-medium ring-offset-background hover:opacity-80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 text-black dark:text-white h-12 rounded-md px-6 sm:px-10 text-md",
+                            // plan.featured || plan.soldOut ? "grayscale" : "",
+                            !plan.highlighted && !plan.featured
+                                ? "bg-gray-100 dark:bg-gray-600 border border-solid border-gray-300 dark:border-gray-800"
+                                : "bg-slate-300/70 text-slate-foreground hover:bg-slate-400/70 dark:bg-slate-700 dark:hover:bg-slate-800/90",
+                            plan.featured ? "!bg-gray-100 dark:!bg-black" : ""
+                        )}
+                    >
+                        {subscription?.variant_id === plan.variant_id
+                            ? "Current plan"
+                            :
+                            <span>Get Started</span>
+                        }
+                    </button>
+                </Popconfirm>
+
 
             </a>
 
