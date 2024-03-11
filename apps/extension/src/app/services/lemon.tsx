@@ -1,6 +1,12 @@
 
 import supabase from "~src/utils/supabase";
 
+
+/**
+ * Fetches and cancels a subscription.
+ * @param subscription_id - The ID of the subscription to cancel.
+ * @returns The user abilities after the subscription is cancelled.
+ */
 export const fetchCancelSubscription = async (subscription_id: number) => {
     try {
         const api =
@@ -18,7 +24,7 @@ export const fetchCancelSubscription = async (subscription_id: number) => {
         console.log('responese fetchCancelSubscription', await response.json())
         const data = await response.json()
         const { status, user_email: email } = data.attributes
-        const { data: userAbilites, error } = await supabase.from("user_abilities").upsert(
+        const { data: UserAbilities, error } = await supabase.from("user_abilities").upsert(
             {
                 email,
                 subscription_status: status,
@@ -28,11 +34,11 @@ export const fetchCancelSubscription = async (subscription_id: number) => {
             }
         );
         if (error) {
-            console.log('error')
+            throw new Error("fetchCancelSubscription error");
         }
-        return userAbilites
+        return UserAbilities
     } catch (error) {
-        console.log('error', error)
+        throw new Error("fetchCancelSubscription error");
     }
 }
 
@@ -64,7 +70,7 @@ export const fetchResumeSubscription = async (subscription_id: number) => {
         console.log('responese fetchResumeSubscription', await response.json())
         const resData = await response.json()
         const { status, user_email: email } = resData.attributes
-        const { data: userAbilites, error } = await supabase.from("user_abilities").upsert(
+        const { data: UserAbilities, error } = await supabase.from("user_abilities").upsert(
             {
                 email,
                 subscription_status: status,
@@ -74,11 +80,11 @@ export const fetchResumeSubscription = async (subscription_id: number) => {
             }
         );
         if (error) {
-            console.log('error')
+            throw new Error("fetchResumeSubscription error");
         }
-        return userAbilites
+        return UserAbilities
     } catch (error) {
-        console.log('error', error)
+        throw new Error("fetchResumeSubscription error");
     }
 }
 

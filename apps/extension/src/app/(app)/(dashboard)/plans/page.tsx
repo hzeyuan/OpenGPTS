@@ -14,23 +14,19 @@ const Page = () => {
     const handleCancelSubscription = async () => {
         try {
             setLoading(true);
-            const res = await fetch("/api/lemon/fetchCancelSubscription", {
+            const res = await fetch("/api/lemon/cancel", {
                 method: "POST",
                 body: JSON.stringify({
                     subscription_id: subscription?.subscription_id,
                 }),
             });
             const resData = await res.json()
-            
+
             if (!res.ok || resData.code !== 0) {
                 message.error("fetchCancelSubscription error");
                 return
             }
-
             setSubscription(resData.data)
-
-            
-
         } catch (error) {
             message.error("error");
         } finally {
@@ -40,7 +36,7 @@ const Page = () => {
     const handleResumeSubscription = async () => {
         setLoading(true);
         try {
-            const res = await fetch("/api/lemon/fetchResumeSubscription", {
+            const res = await fetch("/api/lemon/resume", {
                 method: "POST",
                 body: JSON.stringify({
                     subscription_id: subscription?.subscription_id,
@@ -50,8 +46,9 @@ const Page = () => {
 
             if (!res.ok || resData.code !== 0) {
                 message.error("fetchResumeSubscription error");
+                return;
             }
-
+            setSubscription(resData.data)
         } catch (error) {
             message.error("error");
         } finally {
@@ -93,7 +90,7 @@ const Page = () => {
         <div className="  py-[30px] flex-1  min-h-[800px]  px-16 ">
             <Spin spinning={loading}>
                 <div className="section">
-                    <h2 className="text-2xl font-bold mb-4">billing</h2>
+                    <h2 className="mb-4 text-2xl font-bold">billing</h2>
 
                     <div className="flex flex-col w-full bg-white border border-gray-200 rounded-lg shadow-sm text-gray-950 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-50 sm:w-72">
                         <div className="flex flex-col space-y-1.5 p-6">
