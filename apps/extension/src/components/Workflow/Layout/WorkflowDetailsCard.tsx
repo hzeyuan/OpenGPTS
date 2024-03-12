@@ -9,6 +9,7 @@ import { map } from 'lodash-es'
 import { Input } from 'antd';
 import { useWorkflowStore } from '~src/store/useWorkflowStore';
 import { FilePenLine, Save } from 'lucide-react'
+import usePinnedBlocksStore from '~src/store/usePinnedBlocksStore';
 const WorkflowDetailsCard = () => {
 
 
@@ -20,21 +21,23 @@ const WorkflowDetailsCard = () => {
     const [name, setName] = useState('')
 
     const workflowData = useWorkflowStore((state) => state.workflowData);
-    const pinnedBlocks = useRef([]);
+    const pinnedBlocks = usePinnedBlocksStore(state => state.blocks);
 
 
-    const blocksArr: PRAWorkflow.Block[] = Object.entries(copyBlocks).map(([key, block]) => {
-        const localeKey = `workflow.blocks.${key}.name`;
 
-        return {
-            ...block,
-            id: key,
-            name: block.name,
-        };
-    });
 
     const blocks = useMemo(() => {
-        const categoryToBlocks = blocksArr.reduce((arr: Record<string, PRAWorkflow.Block[]>, block) => {
+        const blocksArr: PRAWorkflow.Block[] = Object.entries(copyBlocks).map(([key, block]) => {
+            const localeKey = `workflow.blocks.${key}.name`;
+
+            return {
+                ...block,
+                id: key,
+                name: block.name,
+            };
+        });
+
+        const categoryToBlocks = [...pinnedBlocks, ...blocksArr].reduce((arr: Record<string, PRAWorkflow.Block[]>, block) => {
             if (
                 block.name.toLocaleLowerCase().includes(searchName.toLocaleLowerCase())
             ) {
@@ -43,8 +46,7 @@ const WorkflowDetailsCard = () => {
             return arr;
         }, {})
         return categoryToBlocks
-
-    }, [searchName])
+    }, [searchName, pinnedBlocks])
 
     const handleUpdateWorkflowName = () => {
         setEditNameVisible(false)
@@ -104,6 +106,8 @@ const WorkflowDetailsCard = () => {
                 </div>
             </div>
             <div className='relative flex-1 px-4 overflow-auto bg-scroll scroll '>
+
+
                 {
                     map(blocks, (items, key) => {
                         return (
@@ -113,9 +117,9 @@ const WorkflowDetailsCard = () => {
                                 activeClass="custom-active-class"
                                 header={
                                     <>
-                                        <span className={`w-3 h-3 rounded-full ${categories[key]?.color}}`} />
+                                        <span className={`w-3 h-3 rounded-full ${key ==='pinned'? 'bg-black':categories[key]?.color}`} />
                                         <p className="flex-1 ml-2 text-lg capitalize">
-                                            {categories[key]?.name}
+                                            {key ==='pinned'? 'Pinned': categories[key]?.name}
                                         </p>
                                     </>
                                 }
