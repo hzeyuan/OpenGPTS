@@ -109,14 +109,14 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
           <img src={Logo.src} alt="Logo" width={40} />
         </Link>
 
-        <button
+        {/* <button
           ref={trigger}
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-controls="sidebar"
           aria-expanded={sidebarOpen}
         >
           {sidebarOpen ? <ArrowLeftToLine /> : <ArrowRightToLine />}
-        </button>
+        </button> */}
       </div>
       <div className="flex flex-col justify-between w-full h-full">
         {/* <!-- SIDEBAR HEADER --> */}

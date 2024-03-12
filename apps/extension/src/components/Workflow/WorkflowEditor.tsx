@@ -4,6 +4,8 @@ import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handl
 import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore, EdgeMouseHandler } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './index.css';
+import tippy from 'tippy.js'
+import 'tippy.js/dist/tippy.css';
 import BlockBasic from '../Blocks/BlockBasic';
 import BorderEdge from './Edge/BorderEdge';
 import { categories, getBlocks } from '~src/utils/workflow';
@@ -199,9 +201,9 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         }
         const blockNode = nodes?.find((node) => node.id === nodeId);
         const nodeData = blockNode?.data as PRAWorkflow.Block;
-        if(nodeData?.disableEdit){
+        if (nodeData?.disableEdit) {
             api.info({
-                message:"Block Info",
+                message: "Block Info",
                 description: "This block is not need to edit",
                 placement: "topRight"
             });
@@ -273,6 +275,17 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         console.log('onEdgeDoubleClick')
         setEdges((edges) => edges.filter((e) => e.id !== edge.id));
     }
+    const onEdgeMouseEnter: EdgeMouseHandler = (event, edge) => {
+        // 当鼠标键入，使用tippy 可以使用antd的Tooltip
+        console.log('onEdgeMouseEnter', edge)
+        console.log('event.target',event.target)
+        tippy(event.target, {
+            content:'double Click to delete',
+            placement: 'top',
+            animation: 'fade',
+            interactiveBorder:0,
+        })
+    }
 
     const handleSaveWorkflow = () => {
         if (!reactFlowInstanceRef?.current) {
@@ -339,6 +352,9 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                         onEdgeDoubleClick={onEdgeDoubleClick}
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
+                        onEdgeMouseEnter={
+                            onEdgeMouseEnter
+                        }
                         onConnect={onConnect}
                         defaultViewport={defaultViewport}
                         nodeTypes={nodeTypes}

@@ -29,6 +29,10 @@
   &.selected .react-flow__edge-path {
     stroke: theme("colors.green.300");
   }
+  * {
+    border: none;
+    outline: none;
+  }
 }
 
 .react-flow__edge-path {
@@ -48,5 +52,4 @@
       @apply w-4 h-4 max-w-4 max-h-4;
     }
   }
-  
 }
