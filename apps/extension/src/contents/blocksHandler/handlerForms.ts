@@ -24,7 +24,7 @@ async function forms(block) {
   }
 
   async function typeText(element) {
-    if (data.type === 'text-field') {
+    if (data.type === 'text') {
       // get lock
       await synchronizedLock.getLock();
       element.focus?.();

@@ -56,7 +56,7 @@ async function newTab({ id, data }) {
 
   this.activeTab.url = data.url;
   if (tab) {
-    if (this.settings.debugMode || data.customUserAgent) {
+    if (data.customUserAgent) {
       await attachDebugger(tab.id, this.activeTab.id);
       this.debugAttached = true;
 
@@ -99,7 +99,7 @@ async function newTab({ id, data }) {
 
   this.activeTab.frameId = 0;
 
-  if (isChrome && !this.settings.debugMode && data.customUserAgent) {
+  if (isChrome && data.customUserAgent) {
     chrome.debugger.detach({ tabId: tab.id });
   }
 
@@ -126,7 +126,8 @@ async function newTab({ id, data }) {
     await waitTabLoaded({
       listenError: true,
       tabId: this.activeTab.id,
-      ms: this.settings?.tabLoadTimeout ?? 30000,
+      // ms: this.settings?.tabLoadTimeout ?? 30000,
+      ms: 30000,
     });
   }
 

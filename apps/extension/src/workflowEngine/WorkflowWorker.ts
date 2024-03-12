@@ -227,14 +227,16 @@ class WorkflowWorker {
         }
 
 
-
+        console.log('toCamelCase(block.label)',toCamelCase(block.label))
         const blockHandler = this.engine.blocksHandler?.[toCamelCase(block.label)];
         console.log(`[workflowWorker] executeBlock  handlerBlockName: ${toCamelCase(block.label)}`, new Date())
 
-        const handler =
-            !blockHandler && this.blocksDetail[block.label]?.category === 'interaction'
-                ? this.engine.blocksHandler.interactionBlock
-                : blockHandler;
+        let handler = blockHandler;
+        if ((!blockHandler && this.blocksDetail[block.label]?.category === 'interaction')
+            || this.blocksDetail[block.label] == 'takeScreenshot'
+        ) {
+            handler = this.engine.blocksHandler.interactionBlock
+        }
 
         // console.log('this.engine.blocksHandler.interactionBlock',handler);
         if (!handler) {
@@ -263,7 +265,7 @@ class WorkflowWorker {
         console.log(
             `8. workflowWorker executeBlock -> replacedBlock`,
             replacedBlock
-          );
+        );
 
 
 
@@ -445,7 +447,8 @@ class WorkflowWorker {
             column: {
                 index: 0,
                 type: 'any',
-                name: this.settings?.defaultColumnName || 'column',
+                // name: this.settings?.defaultColumnName || 'column',
+                name:'column',
             },
         };
 
@@ -478,15 +481,16 @@ class WorkflowWorker {
             if (!runBeforeLoad) {
                 await waitTabLoaded({
                     tabId: this.activeTab.id,
-                    ms: this.settings?.tabLoadTimeout ?? 30000,
+                    // ms: this.settings?.tabLoadTimeout ?? 30000,
+                    ms : 30000
                 });
             }
 
-            const { executedBlockOnWeb, debugMode } = this.settings;
+            // const { executedBlockOnWeb } = this.settings;
             const messagePayload = {
                 isBlock: true,
-                debugMode,
-                executedBlockOnWeb,
+                debugMode: true,
+                executedBlockOnWeb: false,
                 loopEls: this.loopEls,
                 activeTabId: this.activeTab.id,
                 frameSelector: this.frameSelector,
@@ -504,7 +508,7 @@ class WorkflowWorker {
             } catch (error) {
                 console.log('rowser.tabs.sendMessage', error)
             }
-          
+
         } catch (error) {
             console.error("_sendMessageToTab", error);
             // const noConnection = error.message?.includes(

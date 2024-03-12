@@ -48,7 +48,7 @@ browser.runtime.onMessage.addListener(async (data) => {
         data: blockData,
       };
 
-      await blocksHandler().loopData(loopBlock);
+      // await blocksHandler().loopData(loopBlock);
       return executeBlock(block);
     }
   };
@@ -58,43 +58,43 @@ browser.runtime.onMessage.addListener(async (data) => {
     return res;
   }
 
-  switch (data.type) {
-    case 'input-workflow-params':
-      window.initPaletteParams?.(data.data);
-      return Boolean(window.initPaletteParams);
-    case 'content-script-exists':
-      return true;
-    case 'automa-element-selector': {
-      return elementSelectorInstance();
-    }
-    case 'context-element': {
-      let $ctxElSelector = '';
+  // switch (data.type) {
+  //   case 'input-workflow-params':
+  //     window.initPaletteParams?.(data.data);
+  //     return Boolean(window.initPaletteParams);
+  //   case 'content-script-exists':
+  //     return true;
+  //   case 'automa-element-selector': {
+  //     return elementSelectorInstance();
+  //   }
+  //   case 'context-element': {
+  //     let $ctxElSelector = '';
 
-      if (contextElement) {
-        $ctxElSelector = findSelector(contextElement);
-        contextElement = null;
-      }
-      if (!$ctxTextSelection) {
-        $ctxTextSelection = window.getSelection().toString();
-      }
+  //     if (contextElement) {
+  //       $ctxElSelector = findSelector(contextElement);
+  //       contextElement = null;
+  //     }
+  //     if (!$ctxTextSelection) {
+  //       $ctxTextSelection = window.getSelection().toString();
+  //     }
 
-      const cloneContextData = cloneDeep({
-        $ctxLink,
-        $ctxMediaUrl,
-        $ctxElSelector,
-        $ctxTextSelection,
-      });
+  //     const cloneContextData = cloneDeep({
+  //       $ctxLink,
+  //       $ctxMediaUrl,
+  //       $ctxElSelector,
+  //       $ctxTextSelection,
+  //     });
 
-      $ctxLink = '';
-      $ctxMediaUrl = '';
-      $ctxElSelector = '';
-      $ctxTextSelection = '';
+  //     $ctxLink = '';
+  //     $ctxMediaUrl = '';
+  //     $ctxElSelector = '';
+  //     $ctxTextSelection = '';
 
-      return cloneContextData;
-    }
-    default:
-      return null;
-  }
+  //     return cloneContextData;
+  //   }
+  //   default:
+  //     return null;
+  // }
 
 
 });

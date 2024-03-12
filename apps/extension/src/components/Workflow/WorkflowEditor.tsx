@@ -71,7 +71,6 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     const initialNodes = [];
     const initialEdges = [];
     const defaultViewport = { x: 0, y: 0, zoom: 1 };
-    // const [nodes, setNodes] = useState<Node[]>([]);
 
     const [nodes, setNodes, _onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, _onEdgesChange] = useEdgesState(initialEdges);
@@ -310,9 +309,9 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                     onDragEnd={clearHighlightedElements}
                     ref={reactFlowWrapperRef}
                 >
-                    {JSON.stringify(workflowData)}
-                    <div>连接数: {edges.length}</div>
-                    <div>节点数: {nodes.length}</div>
+                    {/* {JSON.stringify(workflowData)} */}
+                    {/* <div>连接数: {edges.length}</div>
+                    <div>节点数: {nodes.length}</div> */}
                     {/* {nodes.map(node => {
                         return <div>节点数:{JSON.stringify(node)}</div>
                     })} */}
@@ -366,9 +365,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                                 </div>
                             </div>
                         </div>
-
-
-                        <button className="absolute" style={{ zIndex: 9999 }} onClick={handleSaveWorkflow}>转换为object对象</button>
+                        {/* <button className="absolute" style={{ zIndex: 9999 }} onClick={handleSaveWorkflow}>转换为object对象</button> */}
                     </Flow>
 
                     <WorkflowEditBlock

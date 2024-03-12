@@ -92,7 +92,7 @@ const WorkflowDetailsCard = () => {
             {/* search */}
             <div className="inline-block w-full px-4 mb-2 input-ui ">
                 <div className="relative flex items-center w-full">
-                    <SearchIcon className='absolute left-0 w-6 h-6 ml-2 text-gray-600 dark:text-gray-200 '></SearchIcon>
+                    <SearchIcon className='absolute left-0 w-6 h-6 mt-2 ml-2 text-gray-600 dark:text-gray-200 '></SearchIcon>
                     <input placeholder="Search... (⌘+f)" type="text" className="w-full px-4 py-2 pl-10 mt-4 mb-2 transition bg-transparent rounded-lg bg-input" />
                 </div>
             </div>

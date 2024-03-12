@@ -118,7 +118,7 @@ class WorkflowEngine {
     // if (!this.workflow.settings) {
     //   this.workflow.settings = {};
     // }
-
+    console.log('triggerBlock', triggerBlock)
     // 获取工作流中所有块的定义
     blocks = getBlocks();
     console.log('blocks', blocks)

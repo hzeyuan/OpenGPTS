@@ -95,6 +95,15 @@ type injectPreloadScript = (props: {
 }) => Promise<browser.Scripting.InjectionResult[]>
 
 
+export function fileSaver(filename: string, data: string): void {
+    const anchor = document.createElement('a');
+    anchor.download = filename;
+    anchor.href = data;
+
+    anchor.dispatchEvent(new MouseEvent('click'));
+    anchor.remove();
+}
+
 export const injectPreloadScript: injectPreloadScript = ({ target, scripts, frameSelector }) => {
 
     return browser.scripting.executeScript({

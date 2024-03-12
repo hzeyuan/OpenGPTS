@@ -4,7 +4,10 @@
 import handlerNewTab from './blocksHandler/handlerNewTab'
 import handlerTrigger from './blocksHandler/handlerTrigger'
 import handlerInteractionBlock from './blocksHandler/handlerInteractionBlock';
-
+import handlerTakeScreenshot from './blocksHandler/handlerTakeScreenshot';
+import handlerGoBack from './blocksHandler/handlerGoBack';
+import handlerCloseTab from './blocksHandler/handlerClose';
+import handlerDelay from './blocksHandler/handlerDelay';
 interface Handler {
   [key: string]: any;
 }
@@ -16,6 +19,10 @@ export default function (): { [key: string]: Handler } {
   return {
     'newTab': handlerNewTab,
     trigger: handlerTrigger,
-    interactionBlock: handlerInteractionBlock
+    interactionBlock: handlerInteractionBlock,
+    'takeScreenshot': handlerTakeScreenshot,
+    'goBack': handlerGoBack,
+    'closeTab': handlerCloseTab,
+    'delay': handlerDelay,
   };
 }

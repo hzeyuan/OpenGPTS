@@ -43,7 +43,7 @@ export async function getActiveTab(): Promise<Tabs.Tab | null> {
 
 export function objectHasKey(obj, key) {
     return Object.prototype.hasOwnProperty.call(obj, key);
-  }
+}
 
 export function toCamelCase(str: string, capitalize = false) {
     const result = str.replace(/(?:^\w|[A-Z]|\b\w)/g, (letter, index) => {
@@ -140,14 +140,3 @@ export function visibleInViewport(element) {
 }
 
 
-export function attachDebugger(tabId, prevTab) {
-    return new Promise((resolve) => {
-      if (prevTab && tabId !== prevTab)
-        chrome.debugger.detach({ tabId: prevTab });
-  
-      chrome.debugger.attach({ tabId }, '1.3', () => {
-        chrome.debugger.sendCommand({ tabId }, 'Page.enable', resolve);
-      });
-    });
-  }
-  

@@ -37,8 +37,6 @@ const BlockBasic: ComponentType<NodeProps & {
             blockData={block}
             onEdit={data.onEdit}
             onDelete={data.onDelete}
-        // onUpdate={undefined}
-        // onSettings={undefined}
         >
             {block.details?.id !== 'trigger' && <Handle id={`${id}-input-1`} type="target" position={Position.Left} />}
             <div className="flex items-center">
@@ -54,7 +52,7 @@ const BlockBasic: ComponentType<NodeProps & {
                     >
                         {data?.name}
                     </p>
-                    {/* <p>描述</p> */}
+                    <p className='mt-1 break-words whitespace-break-spaces overflow line-clamp-1'>{data?.data.description || data?.description}</p>
                 </div>
 
                 {/* 其他内容... */}

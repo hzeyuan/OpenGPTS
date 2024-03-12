@@ -1,6 +1,7 @@
 import browser from 'webextension-polyfill';
 import { BROWSER_TYPE } from '~src/constant';
-import { attachDebugger, objectHasKey } from '~src/utils/helper';
+import { objectHasKey } from '~src/utils/helper';
+import { attachDebugger } from '../helper';
 
 async function checkAccess(blockName) {
   if (blockName === 'upload-file') {
@@ -25,17 +26,19 @@ async function checkAccess(blockName) {
 async function interactionHandler(block) {
   await checkAccess(block.label);
 
-  const debugMode =
-    (block.data.settings?.debugMode ?? false) && !this.settings.debugMode;
+  // const debugMode =
+  //   (block.data.settings?.debugMode ?? false) && !this.settings.debugMode;
+  const debugMode = true;
   const isChrome = BROWSER_TYPE === 'chrome';
 
   try {
+    console.log("interactionHandler",  isChrome)
     if (isChrome) {
       await attachDebugger(this.activeTab.id);
       block.debugMode = true;
     }
 
-    console.log(`before workflowEngine handlerInteractionBlock: data` ,block , new Date());
+    console.log(`before workflowEngine handlerInteractionBlock: data`, block, new Date());
     const data = await this._sendMessageToTab(block, {
       frameId: this.activeTab.frameId || 0,
     });
@@ -43,7 +46,7 @@ async function interactionHandler(block) {
     if (
       (block.data.saveData && block.label !== 'forms') ||
       (block.data.getValue && block.data.saveData)
-    ) { 
+    ) {
       const currentColumnType =
         this.engine.columns[block.data.dataColumn]?.type || 'any';
       const insertDataToColumn = (value) => {

@@ -1,16 +1,24 @@
 import React, { forwardRef, useState, useEffect, useMemo, useImperativeHandle } from 'react';
 import EditInteractionBase from './Edit/EditInteractionBase';
 import EditNewTab from './Edit/EditNewTab';
+import EditForms from './Edit/EditForms';
+import EditScrollElement from './Edit/EditScrollElement';
+import EditTakeScreenshot from './Edit/EditTakeScreenshot';
 import Drawer from 'antd/es/drawer';
 import { useCallback } from 'react';
 import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 import type { Node } from 'reactflow';
+import EditDelay from './Edit/EditDelay';
 
 
 
 const editComponents: { [key: string]: React.ElementType } = {
     'EditInteractionBase': EditInteractionBase,
-    'EditNewTab': EditNewTab
+    'EditNewTab': EditNewTab,
+    'EditForms': EditForms,
+    'EditTakeScreenshot': EditTakeScreenshot,
+    'EditScrollElement': EditScrollElement,
+    'EditDelay': EditDelay,
 }
 
 const WorkflowEditBlock = forwardRef<{

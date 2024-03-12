@@ -7,7 +7,9 @@ import {
   CameraIcon, // Suggested for 'take-screenshot'
   MousePointerClickIcon, // Suggested for 'browser-event' and 'event-click'
   FileTextIcon, // Suggested for 'get-text'
-  EyeIcon, // Suggested for 'element-scroll'
+  EyeIcon,
+  SquarePen, // Suggested for 'element-scroll'
+  XCircle
 } from 'lucide-react';
 
 
@@ -66,7 +68,7 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
     outputs: 1,
     allowedInputs: true,
     maxConnection: 1,
-    refDataKeys: ['url'],
+    refDataKeys: [],
     data: {
       disableBlock: false,
       description: '',
@@ -75,7 +77,6 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
       delay: 5,
       date: '',
       time: '00:00',
-      url: '',
       shortcut: '',
       activeInInput: false,
       isUrlRegex: false,
@@ -180,12 +181,11 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
     outputs: 1,
     allowedInputs: true,
     maxConnection: 1,
-    refDataKeys: ['url', 'userAgent'],
+    refDataKeys: ['url',],
     data: {
       disableBlock: false,
       description: '',
-      url: '',
-      userAgent: '',
+      url: 'https://www.google.com',
       active: true,
       tabZoom: 1,
       inGroup: false,
@@ -295,26 +295,26 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
   //     disableBlock: false,
   //   },
   // },
-  // 'close-tab': {
-  //   name: 'Close tab/window',
-  //   icon: 'riCloseCircleLine',
-  //   component: 'BlockBasic',
-  //   category: 'browser',
-  //   editComponent: 'EditCloseTab',
-  //   inputs: 1,
-  //   outputs: 1,
-  //   maxConnection: 1,
-  //   allowedInputs: true,
-  //   refDataKeys: ['url'],
-  //   data: {
-  //     disableBlock: false,
-  //     url: '',
-  //     description: '',
-  //     activeTab: true,
-  //     closeType: 'tab',
-  //     allWindows: false,
-  //   },
-  // },
+  'close-tab': {
+    name: 'Close tab/window',
+    icon: 'riCloseCircleLine',
+    component: 'BlockBasic',
+    category: 'browser',
+    editComponent: 'EditCloseTab',
+    inputs: 1,
+    outputs: 1,
+    maxConnection: 1,
+    allowedInputs: true,
+    refDataKeys: [],
+    data: {
+      disableBlock: false,
+      url: '',
+      description: '',
+      activeTab: true,
+      closeType: 'tab',
+      allWindows: false,
+    },
+  },
   'take-screenshot': {
     name: 'Take screenshot',
     description: 'Take a screenshot of current active tab',
@@ -384,7 +384,7 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
       findBy: 'cssSelector',
       waitForSelector: false,
       waitSelectorTimeout: 5000,
-      selector: '',
+      selector: 'center:nth-child(1) > .gNO89b',
       markEl: false,
       multiple: false,
     },
@@ -577,11 +577,11 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
     allowedInputs: true,
     maxConnection: 1,
     refDataKeys: [
-      'selector',
-      'variableName',
+      // 'selector',
+      // 'variableName',
       'value',
-      'optionPosition',
-      'delay',
+      // 'optionPosition',
+      // 'delay',
     ],
     autocomplete: ['variableName'],
     data: {
@@ -590,10 +590,10 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
       findBy: 'cssSelector',
       waitForSelector: false,
       waitSelectorTimeout: 5000,
-      selector: '',
+      selector: '#APjFqb',
       markEl: false,
       multiple: false,
-      selected: true,
+      selected: false,
       clearValue: true,
       getValue: false,
       saveData: false,
@@ -602,8 +602,8 @@ export const getBlocks: PRAWorkflow.getBlocks = () => ({
       optionPosition: '1',
       assignVariable: false,
       variableName: '',
-      type: 'text-field',
-      value: '',
+      type: 'text',
+      value: 'github opengpts',
       delay: 0,
       events: [],
     },
@@ -1567,4 +1567,6 @@ export const iconMap: Record<string, any> = {
   'event-click': MousePointerClickIcon, // Assuming 'event-click' is similar to 'browser-event'. If different, you might need to find a more suitable icon.
   'get-text': FileTextIcon,
   'element-scroll': EyeIcon,
+  'forms': SquarePen,
+  'close-tab': XCircle
 }

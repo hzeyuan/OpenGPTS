@@ -1,5 +1,5 @@
 import type { ApiDescription, OMessage, ToolRow } from "@opengpts/types";
-import {pick} from "lodash-es";
+import { pick } from "lodash-es";
 import { ofetch } from 'ofetch'
 import type { ChatCompletionMessageParam, ChatCompletionCreateParams } from "openai/resources";
 
@@ -48,7 +48,7 @@ function transformMessages(messages: OMessage[]): Array<ChatCompletionMessagePar
         };
     });
 
-    return transformedMessages as  Array<ChatCompletionMessageParam>
+    return transformedMessages as Array<ChatCompletionMessageParam>
 }
 
 
