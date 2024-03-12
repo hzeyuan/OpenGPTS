@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
   }
   //subscription_updated
   if (body?.meta.event_name === "subscription_updated") {
-    const { status } = body.data.attributes;
     //更新订阅
     updateSubscriptionStatus(body);
     //订阅信息记录
@@ -72,12 +71,13 @@ export async function POST(req: NextRequest) {
 async function updateSubscriptionStatus(body: {
   data: {
     attributes: {
-      user_email: any;
-      status: any;
-      product_id: any;
-      product_name: any;
-      variant_id: any;
-      variant_name: any;
+      user_email: string;
+      status: string;
+      product_id: number;
+      product_name: string;
+      variant_id: number;
+      variant_name: string;
+      renews_at: string;
       first_subscription_item: any;
     };
   };
@@ -89,6 +89,7 @@ async function updateSubscriptionStatus(body: {
     product_name,
     variant_id,
     variant_name,
+    renews_at,
     first_subscription_item,
   } = body.data.attributes;
 
@@ -99,6 +100,7 @@ async function updateSubscriptionStatus(body: {
     product_name,
     variant_id,
     variant_name,
+    renews_at,
     subscription_id: first_subscription_item.subscription_id,
   };
 
@@ -131,7 +133,7 @@ async function updateSubscriptionStatus(body: {
     // const { variant_name: user_variant_name } = user_info;
     const user_variant_name = user_info!.variant_name!;
     // user_info?.variant_name
-    const result = compareSubscriptions(user_variant_name, variant_name);
+    const result = compareSubscriptions(user_variant_name ,variant_name);
     if (result === "upgrade") {
       (update_data as any).power = power;
     }
@@ -251,9 +253,7 @@ export async function GET(
     };
   }
 ) {
-  console.log("req", req.url);
   const { name } = params;
-  console.log("123", req);
   return Response.json(req.url);
 }
 

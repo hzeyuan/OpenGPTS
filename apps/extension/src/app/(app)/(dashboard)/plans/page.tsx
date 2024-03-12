@@ -3,8 +3,15 @@ import type { UserAbilitiesRow } from "@opengpts/types";
 import { Button, Divider, Popconfirm, Spin, message } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useSessionContext } from "~src/app/context/SessionContext";
-import { getUserAbilities } from "~src/app/services/user";
 import Plans from "~src/components/plans";
+import dayjs from 'dayjs';
+import duration from 'dayjs/plugin/duration';
+dayjs.extend(duration);
+const now = dayjs();
+// const targetTime = '2024-12-25T00:00:00';
+// const target = dayjs(targetTime);
+// const remainingTime = dayjs.duration(target.diff(now));
+// const days = remainingTime.days();
 
 const Page = () => {
     const { session } = useSessionContext();
@@ -12,8 +19,8 @@ const Page = () => {
     const prevSubscription = useRef<UserAbilitiesRow>();
     const { subscription, setSubscription } = useSessionContext();
     const handleCancelSubscription = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
             const res = await fetch("/api/lemon/cancel", {
                 method: "POST",
                 body: JSON.stringify({
@@ -21,12 +28,19 @@ const Page = () => {
                 }),
             });
             const resData = await res.json()
+            const { status } = resData.data.attributes
+            const { subscription_id } = resData.data.attributes.first_subscription_item
 
             if (!res.ok || resData.code !== 0) {
                 message.error("fetchCancelSubscription error");
                 return
             }
-            setSubscription(resData.data)
+            setSubscription({
+                subscription_status: status,
+                subscription_id,
+                ...resData.data.attributes
+            })
+            message.success("cancel subscription success")
         } catch (error) {
             message.error("error");
         } finally {
@@ -43,43 +57,24 @@ const Page = () => {
                 }),
             });
             const resData = await res.json()
+            const { status } = resData.data.attributes
+            const { subscription_id } = resData.data.attributes.first_subscription_item
 
             if (!res.ok || resData.code !== 0) {
                 message.error("fetchResumeSubscription error");
                 return;
             }
-            setSubscription(resData.data)
+            setSubscription({
+                subscription_status: status,
+                subscription_id,
+                ...resData.data.attributes
+            })
+            message.success("resume subscription success")
         } catch (error) {
             message.error("error");
         } finally {
             setLoading(false);
         }
-    };
-
-    const fetchDataWithTimer = async () => {
-        let count = 0;
-        const intervalId = setInterval(async () => {
-            try {
-                if (!session?.user) return;
-                const email = session?.user.email!;
-                const data = await getUserAbilities(email);
-                count += 1; // 每次请求后增加时间
-                if (count >= 10) {
-                    clearInterval(intervalId);
-                    throw new Error("请求超时");
-                }
-                if (prevSubscription?.current?.subscription_id === data.subscription_id) return;
-                // 数据变化，清除计时器
-                clearInterval(intervalId);
-                setLoading(false);
-                setSubscription(data);
-            } catch (error) {
-                console.error("请求失败:", error);
-                clearInterval(intervalId);
-                setLoading(false);
-                // 请求失败也应当清除计时器
-            }
-        }, 2000); // 每2秒执行一次请求
     };
 
     useEffect(() => {
@@ -102,8 +97,16 @@ const Page = () => {
                                 <div className="mb-2">{subscription?.variant_name}</div>
                                 {/* {subscription?.subscription_status} */}
                             </h3>
+                            <h4 className="text-sm">Renews at:</h4>
+                            <h4>{dayjs(subscription?.renews_at).format('YYYY-MM-DD HH:mm:ss')}</h4>
+                            <h4 className="mt-4"> left: </h4>
+                            <h4>months: {dayjs.duration(dayjs(subscription?.renews_at).diff(now)).months()}  days: {dayjs.duration(dayjs(subscription?.renews_at).diff(now)).days()}</h4>
+
+                            {subscription?.downgrading ? <h4 className="mt-4"> downgrading </h4> : null}
+
                             {subscription?.subscription_status === "active" ? (
                                 <Popconfirm
+                                    className="mt-3"
                                     title="cancel subscription"
                                     description="Are you sure to cancel this subscription"
                                     onConfirm={handleCancelSubscription}

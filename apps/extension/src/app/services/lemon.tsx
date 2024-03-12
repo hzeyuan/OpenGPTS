@@ -21,9 +21,8 @@ export const fetchCancelSubscription = async (subscription_id: number) => {
                 Authorization: key,
             },
         })
-        console.log('responese fetchCancelSubscription', await response.json())
-        const data = await response.json()
-        const { status, user_email: email } = data.attributes
+        const resData = await response.json()
+        const { status, user_email: email } = resData.data.attributes
         const { data: UserAbilities, error } = await supabase.from("user_abilities").upsert(
             {
                 email,
@@ -34,9 +33,9 @@ export const fetchCancelSubscription = async (subscription_id: number) => {
             }
         );
         if (error) {
-            throw new Error("fetchCancelSubscription error");
+            throw new Error("fetchCancelSubscription.upsert error");
         }
-        return UserAbilities
+        return resData.data
     } catch (error) {
         throw new Error("fetchCancelSubscription error");
     }
@@ -67,9 +66,9 @@ export const fetchResumeSubscription = async (subscription_id: number) => {
             },
             body: JSON.stringify(data)
         })
-        console.log('responese fetchResumeSubscription', await response.json())
         const resData = await response.json()
-        const { status, user_email: email } = resData.attributes
+        const { status, user_email: email } = resData.data.attributes
+
         const { data: UserAbilities, error } = await supabase.from("user_abilities").upsert(
             {
                 email,
@@ -80,16 +79,15 @@ export const fetchResumeSubscription = async (subscription_id: number) => {
             }
         );
         if (error) {
-            throw new Error("fetchResumeSubscription error");
+            throw new Error("fetchResumeSubscription.upsert error");
         }
-        return UserAbilities
+        return resData.data
     } catch (error) {
         throw new Error("fetchResumeSubscription error");
     }
 }
 
 export const fetchChangeSubscription = async (subscription_id: number, product_id: number, variant_id: number) => {
-    console.log("subscription_id", subscription_id, product_id, variant_id)
     const data = {
         data: {
             type: "subscriptions",
@@ -101,7 +99,6 @@ export const fetchChangeSubscription = async (subscription_id: number, product_i
         }
     }
     try {
-        console.log('resume')
         const api =
             process.env.NEXT_PUBLIC_LEMONSQUEEZY_URL +
             `/subscriptions/${subscription_id}`;
@@ -115,8 +112,29 @@ export const fetchChangeSubscription = async (subscription_id: number, product_i
             },
             body: JSON.stringify(data)
         })
-        console.log('responese', response)
+        const resData = await response.json()
+        const { status, user_email: email, variant_id, product_id, product_name, variant_name } = resData.data.attributes
+
+        const { error } = await supabase.from("user_abilities").upsert(
+            {
+                email,
+                subscription_status: status,
+                variant_id,
+                product_id,
+                product_name,
+                variant_name
+            },
+            {
+                onConflict: "email",
+            }
+        );
+        if (error) {
+            throw new Error("fetchChangeSubscription.upsert error");
+        }
+        return resData.data
+
     } catch (error) {
-        console.log('error', error)
+        throw new Error("fetchChangeSubscription error");
+
     }
 }
