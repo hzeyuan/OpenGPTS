@@ -14,10 +14,11 @@ const WorkflowDetailsCard = () => {
 
     const copyBlocks = getBlocks();
     delete copyBlocks['block-package'];
-    const query = useRef('');
+    const [searchName, setSearchName] = useState('');
     const updateWorkflowData = useWorkflowStore((state) => state.updateWorkflowData);
     const [editNameVisible, setEditNameVisible] = useState(false);
     const [name, setName] = useState('')
+
     const workflowData = useWorkflowStore((state) => state.workflowData);
     const pinnedBlocks = useRef([]);
 
@@ -33,16 +34,17 @@ const WorkflowDetailsCard = () => {
     });
 
     const blocks = useMemo(() => {
-        return blocksArr.reduce((arr: Record<string, PRAWorkflow.Block[]>, block) => {
+        const categoryToBlocks = blocksArr.reduce((arr: Record<string, PRAWorkflow.Block[]>, block) => {
             if (
-                block.name.toLocaleLowerCase().includes(query.current?.toLocaleLowerCase())
+                block.name.toLocaleLowerCase().includes(searchName.toLocaleLowerCase())
             ) {
                 (arr[block.category] = arr[block.category] || []).push(block);
             }
-
             return arr;
         }, {})
-    }, [])
+        return categoryToBlocks
+
+    }, [searchName])
 
     const handleUpdateWorkflowName = () => {
         setEditNameVisible(false)
@@ -93,7 +95,12 @@ const WorkflowDetailsCard = () => {
             <div className="inline-block w-full px-4 mb-2 input-ui ">
                 <div className="relative flex items-center w-full">
                     <SearchIcon className='absolute left-0 w-6 h-6 mt-2 ml-2 text-gray-600 dark:text-gray-200 '></SearchIcon>
-                    <input placeholder="Search... (⌘+f)" type="text" className="w-full px-4 py-2 pl-10 mt-4 mb-2 transition bg-transparent rounded-lg bg-input" />
+                    <input
+                        placeholder="Search... (⌘+f)"
+                        type="text"
+                        className="w-full px-4 py-2 pl-10 mt-4 mb-2 transition bg-transparent rounded-lg bg-input"
+                        onChange={(e) => setSearchName(e.target.value)}
+                    />
                 </div>
             </div>
             <div className='relative flex-1 px-4 overflow-auto bg-scroll scroll '>
@@ -101,6 +108,7 @@ const WorkflowDetailsCard = () => {
                     map(blocks, (items, key) => {
                         return (
                             <ExpandPanel
+                                modelValue={true}
                                 panelClass="custom-panel-class"
                                 activeClass="custom-active-class"
                                 header={

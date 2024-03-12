@@ -14,6 +14,7 @@ import { WorkflowEditorContext, useWorkflowEditorContext } from '~src/app/contex
 import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
 import { useWorkflowStore } from '~src/store/useWorkflowStore';
 import { Play, Save } from 'lucide-react';
+import notification from 'antd/es/notification';
 
 
 
@@ -66,7 +67,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     // const workflow = useWorkflowStore((state) => state);
     const updateWorkflowData = useWorkflowStore(state => state.updateWorkflowData)
     const workflowData = useWorkflowStore(state => state.workflowData)
-
+    const [api, contextHolder] = notification.useNotification();
     const isMac = navigator.appVersion.indexOf('Mac') !== -1;
     const initialNodes = [];
     const initialEdges = [];
@@ -190,12 +191,22 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
 
 
     const handleEdit = useCallback((nodeId: string) => {
+        // if disabled, do not allow to edit
         const nodes = reactFlowInstanceRef.current?.getNodes();
         console.log('edit', nodes, nodeId, nodes)
         if (!nodes) {
             return;
         }
         const blockNode = nodes?.find((node) => node.id === nodeId);
+        const nodeData = blockNode?.data as PRAWorkflow.Block;
+        if(nodeData?.disableEdit){
+            api.info({
+                message:"Block Info",
+                description: "This block is not need to edit",
+                placement: "topRight"
+            });
+            return;
+        }
         handleUpdateNodeData(blockNode);
         editBlockDrawerRef.current?.setOpen(true);
     }, [nodes])
@@ -302,6 +313,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             value={{ executeFromBlock }}
         >
             <ReactFlowProvider>
+                {contextHolder}
                 <div
                     className='w-full h-full'
                     onDrop={onDropInEditor}
