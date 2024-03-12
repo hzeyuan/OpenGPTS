@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 const crypto = require("crypto");
 import supabase from "~src/utils/supabase";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// };
 
 enum SubscriptionLevel {
   Basic = "basic",
