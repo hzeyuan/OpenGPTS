@@ -1,23 +1,26 @@
 "use client"
-import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect, useContext } from 'react';
-import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, Handle, MiniMap, Position, ReactFlowProvider, addEdge, applyEdgeChanges, applyNodeChanges, useViewport, useNodesState, useEdgesState } from 'reactflow';
-import type { ReactFlowProps, OnNodesChange, Node, Edge, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, ReactFlowRefType, useStore, EdgeMouseHandler } from 'reactflow';
+import React, { forwardRef, useCallback, useImperativeHandle, useRef, useState, type DragEventHandler, useEffect, } from 'react';
+import ReactFlow, { useReactFlow, Background, BackgroundVariant, Controls, MiniMap, ReactFlowProvider, addEdge, useNodesState, useEdgesState, MarkerType, updateEdge } from 'reactflow';
+import type { ReactFlowProps, OnNodesChange, Node, NodeTypes, EdgeTypes, OnConnect, OnEdgesChange, ReactFlowInstance, EdgeMouseHandler, OnEdgeUpdateFunc, Edge } from 'reactflow';
 import 'reactflow/dist/style.css';
 import './index.css';
 import tippy from 'tippy.js'
 import 'tippy.js/dist/tippy.css';
 import BlockBasic from '../Blocks/BlockBasic';
-import BorderEdge from './Edge/BorderEdge';
+// import BorderEdge from './Edge/BorderEdge';
 import { categories, getBlocks } from '~src/utils/workflow';
 import WorkflowEditBlock from './WorkflowEditBlock';
 import { nanoid } from '~shared/utils';
 import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 import { WorkflowEditorContext, useWorkflowEditorContext } from '~src/app/context/WorkflowEditorContext';
 import { sendToBackgroundViaRelay } from '@plasmohq/messaging';
-import { useWorkflowStore } from '~src/store/useWorkflowStore';
 import { Play, Save } from 'lucide-react';
 import notification from 'antd/es/notification';
-
+import useRPAFlowStore from '~src/store/useRPAflowStore';
+import message from 'antd/es/message';
+import { updateWorkflowRequest } from '~src/app/services/workflow';
+import { useLeavePageConfirm } from '~src/hooks/useWarnOnPageLeave';
+import { find, omit } from 'lodash-es';
 
 
 export type WorkflowEditorHandles = {
@@ -26,6 +29,7 @@ export type WorkflowEditorHandles = {
 
 type Props = {
     ref: React.MutableRefObject<HTMLDivElement>
+    setLoading: (loading: boolean) => void;
     options?: Partial<ReactFlowProps>
 }
 
@@ -33,52 +37,184 @@ type Props = {
 const nodeTypes: NodeTypes = { blockBasic: BlockBasic };
 
 
-const edgeTypes: EdgeTypes = {
-    borderEdge: BorderEdge, // 注册自定义边缘
-};
-
-
+// const edgeTypes: EdgeTypes = {
+//     borderEdge: BorderEdge, // 注册自定义边缘
+// };
 
 const blocks = getBlocks();
 
 
 
 const Flow: React.FC<{
-    setReactFlowInstance: (instance: ReactFlowInstance) => void
+    setReactFlowInstance: (instance: ReactFlowInstance) => void;
 } & ReactFlowProps>
     = ({ setReactFlowInstance, ...props }) => {
-        // you can access the internal state here
         const reactFlowInstance = useReactFlow();
 
-        // Pass reactFlowInstance to the parent component
         React.useEffect(() => {
             if (setReactFlowInstance) {
                 setReactFlowInstance(reactFlowInstance);
             }
         }, [reactFlowInstance, setReactFlowInstance]);
 
-        return <ReactFlow {...props} />;
+        return <ReactFlow defaultMarkerColor='green' {...props} />;
     }
 
 const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => {
-
     useImperativeHandle(ref, () => ({
         getBoundingClientRect,
     }));
 
-    // const workflow = useWorkflowStore((state) => state);
-    const updateWorkflowData = useWorkflowStore(state => state.updateWorkflowData)
-    const workflowData = useWorkflowStore(state => state.workflowData)
+    const receiveMessage: (this: Window, ev: MessageEvent<any>) => any = (event) => {
+        const message = event.data;
+        if (!['BLOCK_STARTED', 'BLOCK_EXECUTED'].includes(message.type)) return;
+        console.log('Message received in web', message)
+        // if(message.name==='workflow')return;
+        const { block, input } = message?.data
+        if (message.type === 'BLOCK_STARTED') {
+            console.log('message', message, event);
+            // 更新edge,根据 running状态
+            setEdges((edges) => edges.map((edge) => {
+                if (edge.source === block?.id) {
+                    return {
+                        ...edge,
+                        animated: true,
+                    }
+                }
+                return edge;
+            }
+            ));
+            setNodes((nodes) => nodes.map((node) => {
+                if (node.id === block?.id) {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            running: true,
+                            input
+                        }
+                    }
+                }
+                return node;
+            }
+            ));
+        }
+        if (message.type === 'BLOCK_EXECUTED') {
+            const { block, output } = message.data
+
+            // 更新edge,根据 running状态
+            setEdges((edges) => edges.map((edge) => {
+                if (edge.source === block?.id) {
+                    return {
+                        ...edge,
+                        animated: false,
+                    }
+                }
+                return edge;
+            }
+            ));
+            setNodes((nodes) => nodes.map((node) => {
+                if (node.id === block?.id) {
+                    return {
+                        ...node,
+                        data: {
+                            ...node.data,
+                            running: false,
+                            output
+                        }
+                    }
+                }
+                return node;
+            }
+            ));
+        }
+    }
+
+
+    const edgeUpdateSuccessful = useRef(true);
+    const workflowData = useRPAFlowStore(state => state.workflow);
+    const updateWorkflowData = useRPAFlowStore(state => state.updateWorkflow)
+
     const [api, contextHolder] = notification.useNotification();
     const isMac = navigator.appVersion.indexOf('Mac') !== -1;
-    const initialNodes = [];
-    const initialEdges = [];
     const defaultViewport = { x: 0, y: 0, zoom: 1 };
 
-    const [nodes, setNodes, _onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, _onEdgesChange] = useEdgesState(initialEdges);
+    const [nodes, setNodes, _onNodesChange] = useNodesState<any>([]);
+    const [edges, setEdges, _onEdgesChange] = useEdgesState<any>([]);
+    const [isDirty, setIsDirty] = useState(true);
+    // useLeavePageConfirm(isDirty);
 
-    // const [edges, setEdges] = useState<Edge[]>([]);
+    // console.log('workflowData', workflowData)
+
+    const handleDelete = useCallback((id: string) => {
+        const nodes = reactFlowInstanceRef.current?.getNodes() || []
+        const edges = reactFlowInstanceRef.current?.getEdges() || []
+        console.log('handleDelete', id, nodes, edges)
+        console.log('delete', id, editBlockDrawerRef)
+        const filteredNodes = nodes.filter((node) => node.id !== id)
+        const filteredEdges = edges.filter((edge) => edge.source !== id && edge.target !== id)
+
+        setNodes(filteredNodes);
+        setEdges(filteredEdges);
+        editBlockDrawerRef.current?.setOpen(false);
+    }, [nodes, edges]);
+
+    const handleEdit = useCallback((nodeId: string) => {
+        // if disabled, do not allow to edit
+        const nodes = reactFlowInstanceRef.current?.getNodes();
+        console.log('edit', nodes, nodeId, nodes)
+        if (!nodes) {
+            return;
+        }
+        const blockNode = nodes?.find((node) => node.id === nodeId);
+        const nodeData = blockNode?.data as PRAWorkflow.Block;
+        if (nodeData?.disableEdit) {
+            api.info({
+                message: "Block Info",
+                description: "This block is not need to edit",
+                placement: "topRight"
+            });
+            return;
+        }
+        handleUpdateNodeData(blockNode);
+        editBlockDrawerRef.current?.setOpen(true);
+    }, [nodes, edges])
+
+
+
+    useEffect(() => {
+        console.log('触发')
+        if (!workflowData) return;
+        if (!workflowData?.drawflow) return;
+        const initialNode = workflowData?.drawflow.nodes?.map(node => {
+            console.log('node', node)
+            return {
+                ...node,
+                type: 'blockBasic',
+                data: {
+                    ...node.data,
+                    onDelete: handleDelete,
+                    onEdit: handleEdit,
+                },
+            }
+        }
+        ) || [];
+
+        const initialEdges = workflowData?.drawflow.edges || [];
+
+        setNodes(
+            (prevNodes) => [...initialNode]
+        )
+        setEdges(
+            (prevEdges) => [...initialEdges]
+        )
+        window.addEventListener("message", receiveMessage);
+
+        return () => {
+            window.removeEventListener("message", receiveMessage);
+        }
+    }, [])
+
     const [curNode, setCurNode] = useState<Node<PRAWorkflow.Block> | undefined>(undefined);
     const reactFlowInstanceRef = useRef<ReactFlowInstance<any, any> | null>(null);
     const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
@@ -91,9 +227,24 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             console.log(`executeFromBlock: ${blockId}`)
             if (!blockId) return;
             const workflowOptions = { blockId };
-            console.log('workflowData', workflowData)
-
-
+            //TODO 处理下workflowdata
+            const sanitizedNodes = nodes?.map(node => {
+                return {
+                    id: node.id,
+                    data: node.data?.data,
+                    position: node.position,
+                    label: node.label,
+                    event: node.event,
+                    type: node.type
+                }
+            })
+            const workflowData = {
+                drawflow: {
+                    nodes: sanitizedNodes,
+                    edges,
+                }
+            }
+            console.log('executeFromBlock workflowData drawflow', workflowData)
 
             await sendToBackgroundViaRelay({
                 name: 'workflow',
@@ -125,8 +276,9 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             return node;
         }
         ));
-
     }
+
+
     // 为了在minimap中显示不同的颜色
     const minimapNodeClassName = (node: Node) => {
         // console.log("node", node)
@@ -151,13 +303,17 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     }
     // 更新节点
     const onNodesChange: OnNodesChange = (changes) => {
+        setIsDirty(true);
         _onNodesChange(changes);
     }
     // 连接节点
     const onConnect: OnConnect = useCallback(
         (connection) => {
             console.log('onConnect', connection)
-            setEdges((eds) => addEdge(connection, eds))
+            setEdges((eds) => addEdge({
+                ...connection,
+                type: 'smoothstep',
+            }, eds))
         },
         []
     );
@@ -178,40 +334,10 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         const edgesWithClearedSelection = currentEdges?.map(edge => ({
             ...edge,
             selected: false,
-            className: '' // 清除自定义的选中类名
+            className: ''
         }));
         setEdges(edgesWithClearedSelection);
     }
-
-    const handleDelete = (id: string) => {
-        console.log('delete', id, editBlockDrawerRef)
-        setNodes((nodes) => nodes.filter((node) => node.id !== id));
-        setEdges((edges) => edges.filter((edge) => edge.source !== id && edge.target !== id));
-        editBlockDrawerRef.current?.setOpen(false);
-    }
-
-
-
-    const handleEdit = useCallback((nodeId: string) => {
-        // if disabled, do not allow to edit
-        const nodes = reactFlowInstanceRef.current?.getNodes();
-        console.log('edit', nodes, nodeId, nodes)
-        if (!nodes) {
-            return;
-        }
-        const blockNode = nodes?.find((node) => node.id === nodeId);
-        const nodeData = blockNode?.data as PRAWorkflow.Block;
-        if (nodeData?.disableEdit) {
-            api.info({
-                message: "Block Info",
-                description: "This block is not need to edit",
-                placement: "topRight"
-            });
-            return;
-        }
-        handleUpdateNodeData(blockNode);
-        editBlockDrawerRef.current?.setOpen(true);
-    }, [nodes])
 
     const onDropInEditor: DragEventHandler = useCallback((event) => {
         console.log('Dropped item in editor')
@@ -232,6 +358,7 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             y: clientY - editorRect.top,
             x: clientX - editorRect.left,
         });
+
         console.log('viewport', blockKey, block, viewport, position, clientX, clientY,)
         // add node
 
@@ -242,7 +369,6 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                 id: blockKey,
                 onDelete: handleDelete,
                 onEdit: handleEdit,
-                // runworkflow
                 ...block,
             },
             position: {
@@ -251,8 +377,8 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
             },
             label: blockKey,
         } as Node
-        setNodes((prevNodes) => [...prevNodes, node]);
 
+        setNodes((prevNodes) => [...prevNodes, node]);
         clearHighlightedElements();
 
     }, [reactFlowInstanceRef, reactFlowWrapperRef])
@@ -261,11 +387,10 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
         event.preventDefault()
     }
 
-
     // 更新边缘
     const onEdgesChange: OnEdgesChange = useCallback(
         (changes) => {
-            clearHighlightedElements();
+            // clearHighlightedElements();
             _onEdgesChange(changes);
         },
         [_onEdgesChange]
@@ -277,53 +402,74 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     }
     const onEdgeMouseEnter: EdgeMouseHandler = (event, edge) => {
         // 当鼠标键入，使用tippy 可以使用antd的Tooltip
-        console.log('onEdgeMouseEnter', edge)
-        console.log('event.target',event.target)
+        // console.log('onEdgeMouseEnter', edge)
+        // console.log('event.target', event.target)
         tippy(event.target, {
-            content:'double Click to delete',
+            content: 'double Click to delete',
             placement: 'top',
             animation: 'fade',
-            interactiveBorder:0,
+            interactiveBorder: 0,
         })
     }
 
     const handleSaveWorkflow = () => {
+        console.log('handleSaveWorkflow', nodes, edges)
         if (!reactFlowInstanceRef?.current) {
             return;
         }
-        // const drawFlow = reactFlowInstanceRef?.current?.toObject();
-        updateWorkflowData({
+        if (!workflowData) return;
+        props.setLoading(true);
+        console.log('workflowData?.id', workflowData, workflowData?.id, edges)
+        updateWorkflowRequest(workflowData?.id, {
+            ...workflowData,
             drawflow: {
+                ...workflowData?.drawflow,
                 edges,
-                nodes: nodes.map((node) => {
-                    return {
-                        id: node.id,
-                        data: node.data.data,
-                        position: node.position,
-                        label: node.label,
-                        event: node.event,
-                        type: node.type,
-
-                    }
-                })
+                nodes,
             },
+        }).then(() => {
+            updateWorkflowData({
+                ...workflowData,
+                drawflow: {
+                    ...workflowData?.drawflow,
+                    edges,
+                    nodes,
+                },
+            })
+            setIsDirty(false);
+            props.setLoading(false);
+            message.success("Save Workflow")
         })
+            .catch(err => {
+                message.error('Failed to update workflow')
+                props.setLoading(false);
+            })
+
     }
 
-    useEffect(() => {
-        handleSaveWorkflow();
-    }, [edges, nodes])
+    const onEdgeUpdateStart = useCallback(() => {
+        edgeUpdateSuccessful.current = false;
+    }, []);
 
-    // useEffect(() => {
-    //     const editor = reactFlowInstanceRef.current;
-    //     editor?.setViewport({ zoom: 3,  x: 0, y: 0  });
-    // },[reactFlowInstanceRef])
+    const onEdgeUpdate: OnEdgeUpdateFunc = useCallback((oldEdge, newConnection) => {
+        edgeUpdateSuccessful.current = true;
+        setEdges((els) => updateEdge(oldEdge, newConnection, els));
+    }, []);
 
+    const onEdgeUpdateEnd: ReactFlowProps['onEdgeUpdateEnd'] = useCallback((event: MouseEvent | TouchEvent, edge: Edge) => {
+        if (!edgeUpdateSuccessful.current) {
+            setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+        }
+
+        edgeUpdateSuccessful.current = true;
+    }, []);
 
     return (
 
         <WorkflowEditorContext.Provider
-            value={{ executeFromBlock }}
+            value={{
+                executeFromBlock,
+            }}
         >
             <ReactFlowProvider>
                 {contextHolder}
@@ -352,13 +498,28 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
                         onEdgeDoubleClick={onEdgeDoubleClick}
                         onNodesChange={onNodesChange}
                         onEdgesChange={onEdgesChange}
+                        onEdgeUpdate={onEdgeUpdate}
+                        onEdgeUpdateStart={onEdgeUpdateStart}
+                        onEdgeUpdateEnd={onEdgeUpdateEnd}
+                        snapToGrid
+                        defaultEdgeOptions={{
+                            type: 'step',
+                            updatable: true,
+                            // selected: true,
+                            deletable: true,
+                            markerEnd: {
+                                type: MarkerType.ArrowClosed,
+                                color: 'bisque',
+
+                            },
+                        }}
                         onEdgeMouseEnter={
                             onEdgeMouseEnter
                         }
+                        fitView
                         onConnect={onConnect}
                         defaultViewport={defaultViewport}
                         nodeTypes={nodeTypes}
-                        edgeTypes={edgeTypes}
                         style={{ width: '100%', height: '100vh' }}
                         {...reactFlowProps}
                     >

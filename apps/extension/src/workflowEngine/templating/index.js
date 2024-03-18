@@ -11,6 +11,8 @@ export default async function ({ block, refKeys, data, isPopup }) {
     copyBlock.replacedValue = { ...copyBlock.replacedValue, ...value };
   };
 
+  console.log(`[DEBUG] templating: ${JSON.stringify(data.prevBlockData)}`);
+  // objectPath.set(copyBlock, 'prevBlockData', data.prevBlockData)
   for (const blockDataKey of refKeys) {
     const currentData = objectPath.get(copyBlock.data, blockDataKey);
     /* eslint-disable-next-line */

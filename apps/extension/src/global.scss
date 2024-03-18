@@ -62,33 +62,33 @@ select:focus,
 }
 
 input,
-input:focus
-{
+input:focus {
   // border:none !important;
   // box-shadow:none !important;
 }
 
-/* @layer base {
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-weight: 500;
-    margin: 0;
-  }
-} */
+@layer base {
+  // a {
+  //   text-decoration: none;
+  //   color: inherit;
+  // }
+  // h1,
+  // h2,
+  // h3,
+  // h4,
+  // h5,
+  // h6 {
+  //   font-weight: 500;
+  //   margin: 0;
+  // }
+}
 
-/* html,
+html,
 body {
   height: 100%;
   width: 100%;
-} */
+  // background: var(--opengpts-html-bg-color)
+}
 
 // [type="text"],
 // input:where(:not([type])),
@@ -224,6 +224,8 @@ body {
   --opengpts-function-border-color: #4e5052;
   --opengpts-sidebar-tools-btn-bg-color: #1f1f1f;
   --opengpts-sidebar-tools-btn-color: rgba(var(--opengpts-fg-rgb), 0.45);
+
+  --opengpts-workflow-card-hover-bg-color: black;
 }
 
 :root,
@@ -352,6 +354,8 @@ body {
   --opengpts-function-border-color: #e3e3e3;
   --opengpts-sidebar-tools-btn-bg-color: #f7f7f8;
   --opengpts-sidebar-tools-btn-color: rgba(var(--opengpts-fg-rgb), 0.45);
+
+  --opengpts-workflow-card-hover-bg-color: #e7e7e9;
 }
 
 :root[data-gpts-theme="dark"] .markdown-body {

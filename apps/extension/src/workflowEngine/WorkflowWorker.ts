@@ -3,8 +3,10 @@ import { toCamelCase } from "~src/utils/helper";
 import browser from 'webextension-polyfill';
 import templating from './templating';
 import { waitTabLoaded } from "./helper";
+import { sendToContentScript } from "@plasmohq/messaging";
 import injectContentScript from "./injectContentScript";
 // import renderString from './templating/renderString';
+import { sendMessage } from '~src/utils/message';
 
 function blockExecutionWrapper(blockHandler: () => Promise<any>, blockData: { settings: { blockTimeout: any; }; }) {
     return new Promise((resolve, reject) => {
@@ -38,12 +40,13 @@ class WorkflowWorker {
     loopList: {};
     repeatedTasks: {};
     preloadScripts: never[];
-    breakpointState: null;
+    // breakpointState: null;
     windowId: null;
     currentBlock: null;
     childWorkflowId: null;
     debugAttached: boolean;
     activeTab: { url: string; frameId: number; frames: {}; groupId: null; id: any; };
+    frameSelector:any;
     constructor(id: any, engine: { workflow: { settings: any; }; options: { tabId: any; }; }, options = {}) {
         this.id = id;
         this.engine = engine;
@@ -54,7 +57,7 @@ class WorkflowWorker {
         this.loopList = {};
         this.repeatedTasks = {};
         this.preloadScripts = [];
-        this.breakpointState = null;
+        // this.breakpointState = null;
 
         this.windowId = null;
         this.currentBlock = null;
@@ -69,6 +72,8 @@ class WorkflowWorker {
             groupId: null,
             id: engine.options?.tabId,
         };
+
+        this.frameSelector = '';
     }
 
     init({ blockId, execParam, state }) {
@@ -164,23 +169,11 @@ class WorkflowWorker {
         });
     }
 
-    // zh: 暂停/恢复当前worker
-    resume(nextBlock: any) {
-        if (!this.breakpointState) return;
-
-        const { block, execParam, isRetry } = this.breakpointState;
-        const payload = { ...execParam, resume: true };
-
-        payload.nextBlockBreakpointCount = nextBlock ? 1 : null;
-
-        this.executeBlock(block, payload, isRetry);
-
-        this.breakpointState = null;
-    }
 
     async executeBlock(block, execParam = {}, isRetry = false) {
-        //打印绿色，时间，参数
-        console.log(`[workflowWorker] executeBlock: ${block.label}`, execParam)
+        console.log(`[workflowWorker] executeBlock label: ${block.label}`)
+        console.log(`[workflowWorker] executeBlock execParam: ${JSON.stringify(execParam)}`,)
+        console.log(`[workflowWorker] executeBlock engine: ${JSON.stringify(this.engine)}`,)
         const currentState = await this.engine.states.get(this.engine.id);
 
         // zh: 如果当前状态不存在或者已经被销毁，那么直接销毁当前worker
@@ -215,21 +208,19 @@ class WorkflowWorker {
             await this.engine.updateState(payload);
         }
 
-        if (execParam.nextBlockBreakpointCount) {
-            execParam.nextBlockBreakpointCount -= 1;
-        }
+        // if (execParam.nextBlockBreakpointCount) {
+        //     execParam.nextBlockBreakpointCount -= 1;
+        // }
 
-        if (isInBreakpoint || currentState.status === 'breakpoint') {
-            this.engine.isInBreakpoint = true;
-            this.breakpointState = { block, execParam, isRetry };
+        // if (isInBreakpoint || currentState.status === 'breakpoint') {
+        //     this.engine.isInBreakpoint = true;
+        //     this.breakpointState = { block, execParam, isRetry };
 
-            return;
-        }
+        //     return;
+        // }
 
 
-        console.log('toCamelCase(block.label)',toCamelCase(block.label))
         const blockHandler = this.engine.blocksHandler?.[toCamelCase(block.label)];
-        console.log(`[workflowWorker] executeBlock  handlerBlockName: ${toCamelCase(block.label)}`, new Date())
 
         let handler = blockHandler;
         if ((!blockHandler && this.blocksDetail[block.label]?.category === 'interaction')
@@ -252,15 +243,21 @@ class WorkflowWorker {
             activeTabUrl: this.activeTab.url,
         };
 
-        console.log('this.engine.referenceData', this.engine.referenceData);
+        console.log('[workflowWorker] executeBlock refData', this.engine.referenceData);
+        // 动态地处理和更新block中的数据，特别是在需要根据某些外部或动态数据来替换block内部数据
         const replacedBlock = await templating({
-            block,
+            block: {
+                ...block,
+                prevBlockData
+            },
             data: refData,
             isPopup: this.engine.isPopup,
             refKeys:
                 isRetry || block.data.disableBlock
                     ? null
-                    : this.blocksDetail[block.label].refDataKeys,
+                    : [
+                        ...this.blocksDetail[block.label].refDataKeys,
+                    ],
         });
         console.log(
             `8. workflowWorker executeBlock -> replacedBlock`,
@@ -303,7 +300,7 @@ class WorkflowWorker {
         };
 
         try {
-            let result;
+            let result: any;
             // zh: 如果block是禁用的，那么直接返回
             if (block.data.disableBlock) {
                 result = {
@@ -319,7 +316,45 @@ class WorkflowWorker {
                 });
                 // console.log(`blockExecutionWrapper: ${replacedBlock.label}`, new Date())
                 console.log(`blockExecutionWrapper: ${replacedBlock.label}`, new Date())
+                chrome.tabs.query({ url: "*://localhost/*" }, function (tabs) {
+                    tabs.forEach(function (tab) {
+                        if (!tab.id) return;
+                        chrome.tabs.sendMessage(tab.id, {
+                            type: 'BLOCK_STARTED',
+                            data: {
+                                type: 'BLOCK_STARTED',
+                                block: block,
+                                input: {
+                                    prevBlockData, //上一个Block的输入
+                                    // 编辑器中输入的数据
+                                    ...block.data
+                                },
+                            }
+
+                        }, function (response) {
+                            console.log('Response from tab ' + tab.id, response);
+                            // 可以在这里处理来自内容脚本的响应
+                        });
+                    });
+                });
                 result = await blockExecutionWrapper(bindedHandler, block.data);
+                chrome.tabs.query({ url: "*://localhost/*" }, function (tabs) {
+                    tabs.forEach(function (tab) {
+                        if (!tab.id) return;
+                        chrome.tabs.sendMessage(tab.id, {
+                            type: 'BLOCK_EXECUTED',
+                            data: {
+                                type: 'BLOCK_EXECUTED',
+                                block: block,
+                                output: result.data || "",
+                            }
+
+                        }, function (response) {
+                            console.log('Response from tab ' + tab.id, response);
+                            // 可以在这里处理来自内容脚本的响应
+                        });
+                    });
+                });
                 console.log(`blockExecutionWrapper: ${replacedBlock.label} result`, result, new Date())
 
 
@@ -337,7 +372,7 @@ class WorkflowWorker {
             // zh: 如果block有下一个block，那么执行下一个block,否则销毁当前worker
 
 
-            console.log(`[workflowWorker] has next block`, result.nextBlockId, new Date())
+            console.log(`[workflowWorker] has next block`, result.nextBlockId, result.data, new Date())
             if (result.nextBlockId && !result.destroyWorker) {
                 if (blockDelay > 0) {
                     setTimeout(() => {
@@ -350,7 +385,7 @@ class WorkflowWorker {
                 console.log(`[workflowWorker] destroyWorker`, new Date())
                 this.engine.destroyWorker(this.id);
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
 
             const errorLogData = {
@@ -432,6 +467,21 @@ class WorkflowWorker {
         }
     }
 
+    // zh: 暂停/恢复当前worker
+    // resume(nextBlock: any) {
+    //     if (!this.breakpointState) return;
+
+    //     const { block, execParam, isRetry } = this.breakpointState;
+    //     const payload = { ...execParam, resume: true };
+
+    //     payload.nextBlockBreakpointCount = nextBlock ? 1 : null;
+
+    //     this.executeBlock(block, payload, isRetry);
+
+    //     this.breakpointState = null;
+    // }
+
+
     // zh: 重置当前worker
     reset() {
         this.loopList = {};
@@ -448,7 +498,7 @@ class WorkflowWorker {
                 index: 0,
                 type: 'any',
                 // name: this.settings?.defaultColumnName || 'column',
-                name:'column',
+                name: 'column',
             },
         };
 
@@ -482,7 +532,7 @@ class WorkflowWorker {
                 await waitTabLoaded({
                     tabId: this.activeTab.id,
                     // ms: this.settings?.tabLoadTimeout ?? 30000,
-                    ms : 30000
+                    ms: 30000
                 });
             }
 

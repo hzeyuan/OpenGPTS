@@ -24,6 +24,7 @@ async function checkAccess(blockName) {
 }
 
 async function interactionHandler(block) {
+  console.log('block', block);
   await checkAccess(block.label);
 
   // const debugMode =
@@ -32,7 +33,7 @@ async function interactionHandler(block) {
   const isChrome = BROWSER_TYPE === 'chrome';
 
   try {
-    console.log("interactionHandler",  isChrome)
+    console.log("interactionHandler", isChrome)
     if (isChrome) {
       await attachDebugger(this.activeTab.id);
       block.debugMode = true;
@@ -42,39 +43,39 @@ async function interactionHandler(block) {
     const data = await this._sendMessageToTab(block, {
       frameId: this.activeTab.frameId || 0,
     });
-    console.log(`after workflowEngine handlerInteractionBlock: data`, data, new Date());
-    if (
-      (block.data.saveData && block.label !== 'forms') ||
-      (block.data.getValue && block.data.saveData)
-    ) {
-      const currentColumnType =
-        this.engine.columns[block.data.dataColumn]?.type || 'any';
-      const insertDataToColumn = (value) => {
-        this.addDataToColumn(block.data.dataColumn, value);
+    console.log(`after workflowEngine handlerInteractionBlock:`, data, new Date());
+    // if (
+    //   (block.data.saveData && block.label !== 'forms') ||
+    //   (block.data.getValue && block.data.saveData)
+    // ) {
+    //   const currentColumnType =
+    //     this.engine.columns[block.data.dataColumn]?.type || 'any';
+    //   const insertDataToColumn = (value) => {
+    //     this.addDataToColumn(block.data.dataColumn, value);
 
-        const addExtraRow =
-          objectHasKey(block.data, 'extraRowDataColumn') &&
-          block.data.addExtraRow;
-        if (addExtraRow) {
-          this.addDataToColumn(
-            block.data.extraRowDataColumn,
-            block.data.extraRowValue
-          );
-        }
-      };
+    //     const addExtraRow =
+    //       objectHasKey(block.data, 'extraRowDataColumn') &&
+    //       block.data.addExtraRow;
+    //     if (addExtraRow) {
+    //       this.addDataToColumn(
+    //         block.data.extraRowDataColumn,
+    //         block.data.extraRowValue
+    //       );
+    //     }
+    //   };
 
-      if (Array.isArray(data) && currentColumnType !== 'array') {
-        data.forEach((value) => {
-          insertDataToColumn(value);
-        });
-      } else {
-        insertDataToColumn(data);
-      }
-    }
+    //   if (Array.isArray(data) && currentColumnType !== 'array') {
+    //     data.forEach((value) => {
+    //       insertDataToColumn(value);
+    //     });
+    //   } else {
+    //     insertDataToColumn(data);
+    //   }
+    // }
 
-    if (block.data.assignVariable) {
-      await this.setVariable(block.data.variableName, data);
-    }
+    // if (block.data.assignVariable) {
+    //   await this.setVariable(block.data.variableName, data);
+    // }
 
     // if (isChrome) {
     //   chrome.debugger.detach({ tabId: this.activeTab.id });

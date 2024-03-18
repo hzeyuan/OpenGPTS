@@ -19,13 +19,21 @@ console.log('opengpts inject', chrome.runtime)
 //     }
 // })
 
-// chrome.runtime.onMessage.addListener(
-//     function (request, sender, sendResponse) {
-//         console.log("Message received in content script:", request);
-//         // 可以根据需要处理消息
-//         return true;
-//     }
-// );
+chrome.runtime.onMessage.addListener(
+  function (request, sender, sendResponse) {
+    console.log("Message received in content script:", request);
+    // 可以根据需要处理消息
+// type: request.type,
+    window.postMessage({
+      type:request.type,
+       data: request.data
+    }, "*");
+
+    return true;
+  }
+);
+
+
 
 
 

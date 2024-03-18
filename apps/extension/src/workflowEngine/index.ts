@@ -15,7 +15,7 @@ const workflowStateStorage = {
             .get('workflowStates')
             .then(({ workflowStates }) => workflowStates || []);
     },
-    set(key, value) {
+    set(key: string, value: any) {
         console.log(`[workflowStateStorage] set`, key, value)
         const states = Object.values(value);
 
@@ -31,7 +31,7 @@ export const workflowState = new WorkflowState({
 
 
 
-const stopWorkflowExec = (executionId) => {
+const stopWorkflowExec = (executionId: string) => {
     // 停止 workflow 的逻辑
     workflowState.stop(executionId);
     // sendMessage('workflow:stop', executionId, 'background');

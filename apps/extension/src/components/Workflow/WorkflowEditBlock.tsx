@@ -9,6 +9,8 @@ import { useCallback } from 'react';
 import type PRAWorkflow from '@opengpts/types/rpa/workflow';
 import type { Node } from 'reactflow';
 import EditDelay from './Edit/EditDelay';
+import EditGetText from './Edit/EditGetText';
+import EditExportData from './Edit/EditExportData'
 
 
 
@@ -19,6 +21,8 @@ const editComponents: { [key: string]: React.ElementType } = {
     'EditTakeScreenshot': EditTakeScreenshot,
     'EditScrollElement': EditScrollElement,
     'EditDelay': EditDelay,
+    'EditGetText': EditGetText,
+    'EditExportData':EditExportData
 }
 
 const WorkflowEditBlock = forwardRef<{

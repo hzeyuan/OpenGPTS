@@ -13,7 +13,7 @@ class WorkflowEngine {
   workflow: any;
   logger: any;
   isDestroyed: boolean;
-  eventListeners: { [event: string]: Function[] };
+  eventListeners?: { [event: string]: Function[] };
 
   blocks: any;
   states: any;
@@ -68,7 +68,7 @@ class WorkflowEngine {
 
       if (!isActiveTabEvent) return;
 
-      (this.eventListeners[method] || []).forEach((listener) => {
+      (this.eventListeners?.[method] || []).forEach((listener) => {
         listener(params);
       });
     };
@@ -102,7 +102,7 @@ class WorkflowEngine {
       console.error(`${this.workflow.name} doesn't have blocks`);
       return;
     }
-
+    console.log('nodes', nodes)
     // 在节点中查找触发器块，这是工作流开始执行的地方
     const triggerBlock = nodes.find((node) => {
       if (this.options?.blockId) return node.id === this.options.blockId;
@@ -186,7 +186,7 @@ class WorkflowEngine {
       return acc;
     }, {});
 
-    console.log("this.blocks",nodes,  this.blocks)
+    console.log("this.blocks", nodes, this.blocks)
 
     // 构建连接映射，这是节点之间连接的详细描述
     this.connectionsMap = edges.reduce(
@@ -286,7 +286,6 @@ class WorkflowEngine {
     // 为触发器块添加一个新的工作器
     console.debug(`[workflowEngine] addWorker: ${this.workerId}`)
     this.addWorker({ blockId: triggerBlock.id });
-
   }
 
   // 停止工作流
@@ -309,7 +308,7 @@ class WorkflowEngine {
       this.id = null;
       this.states = null;
       this.logger = null;
-      this.saveLog = null;
+      // this.saveLog = null;
       this.workflow = null;
       this.blocksHandler = null;
       this.parentWorkflow = null;
@@ -387,7 +386,14 @@ class WorkflowEngine {
   addWorker(detail) {
     this.workerId += 1;
     const workerId = `worker-${this.workerId}`;
-    const worker = new WorkflowWorker(workerId, this, { blocksDetail: blocks });
+    console.log(`detail:`, detail)
+    const blocksDetail = {
+      ...blocks,
+      // previousResult: this.referenceData[detail.previousBlockId] // 获取前一个block的结果
+    };
+    const worker = new WorkflowWorker(workerId, this, {
+      blocksDetail
+    });
     worker.init(detail);
 
     this.workers.set(worker.id, worker);

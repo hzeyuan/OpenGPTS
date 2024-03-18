@@ -11,6 +11,7 @@ import enUS from 'antd/locale/en_US';
 import { useTranslation } from '../i18n/client';
 import useColorMode from '~src/hooks/useColorMode';
 import './DefaultLayout.css'
+import useLayoutStore from '~src/store/useLayoutStore';
 interface Props {
   children?: ReactNode;
   lng: string
@@ -30,9 +31,10 @@ const RootContext = createContext<RootContextType>({
 export const useRootContext = () => useContext(RootContext);
 
 const DefaultLayout: FC<Props> = ({ children, lng }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const sidebarOpen = useLayoutStore(state => state.exposed);
+  const setSidebarOpen = useLayoutStore(state => state.setExposed);
   // const [session, setSession] = useState<Session | null>(null)
-  const { t } = useTranslation(lng);
+  // const { t } = useTranslation(lng);
   const { theme, setTheme } = useColorMode();
 
   const [language] = useStorage({
@@ -86,7 +88,7 @@ const DefaultLayout: FC<Props> = ({ children, lng }) => {
             {/* <!-- ===== Page Wrapper Start ===== --> */}
             <div className="flex h-screen overflow-hidden">
               {/* <!-- ===== Sidebar Start ===== --> */}
-              <Sidebar lng={lng} sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+              <Sidebar lng={lng}  />
               {/* <!-- ===== Sidebar End ===== --> */}
 
               {/* <!-- ===== Content Area Start ===== --> */}
@@ -103,18 +105,18 @@ const DefaultLayout: FC<Props> = ({ children, lng }) => {
 
                 // style="transform: translateX(260px) translateY(-50%) rotate(0deg) translateZ(0px);"
                 >
-                  <button className='rotate-on-hover' onClick={() => setSidebarOpen(!sidebarOpen)}>
-                    <span className="" data-state="closed">
-                      <div className="flex h-[72px] w-8 items-center justify-center">
+                  <button className='h-full rotate-on-hover' onClick={() => setSidebarOpen(!sidebarOpen)}>
+                    <span className="h-full" data-state="closed">
+                      <div className="flex   h-[72px] w-6 items-center justify-center">
                         <div className="flex flex-col items-center w-6 h-6">
                           <div
-                            className={`w-1 h-3 rounded-full rotate-left ${!sidebarOpen?'':'rotate-hidden'} translate-y-[0.15rem]  transform    `}
+                            className={`w-1 h-3 rounded-full rotate-left ${!sidebarOpen ? '' : 'rotate-hidden'} translate-y-[0.15rem]  transform    `}
                             style={{
                               background: "var(--opengpts-primary-color)",
                             }}
                           ></div>
                           <div
-                            className={`w-1 h-3 rounded-full ${!sidebarOpen?'':'rotate-hidden'} rotate-right   translate-y-[-0.15rem]  transform `}
+                            className={`w-1 h-3 rounded-full ${!sidebarOpen ? '' : 'rotate-hidden'} rotate-right   translate-y-[-0.15rem]  transform `}
                             style={{
                               background: "var(--opengpts-primary-color)",
                             }}

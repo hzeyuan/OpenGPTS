@@ -36,7 +36,7 @@
 }
 
 .react-flow__edge-path {
-  stroke: theme("colors.primary");
+  stroke: theme("colors.meta-5");
   stroke-width: 4;
   transition: stroke 100ms ease;
   &:hover {

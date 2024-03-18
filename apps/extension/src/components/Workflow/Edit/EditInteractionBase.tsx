@@ -27,7 +27,7 @@ const EditInteractionBase = ({ initialData, onUpdate, children }) => {
                 onChange={(e) => updateData({ description: e.target.value })}
             />
 
-            <div className='my-2'>Find Element By{data.selector}</div>
+            <div className='my-2'>Find Element By</div>
             <Select
                 value={data.findBy}
                 options={[

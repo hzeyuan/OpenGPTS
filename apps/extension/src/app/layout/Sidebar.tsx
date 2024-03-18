@@ -1,6 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useMemo } from "react";
 import Logo from "~assets/icon.png";
 import Link from "next/link";
+import useLayoutStore from '~src/store/useLayoutStore';
 // import SidebarLinkGroup from './SidebarLinkGroup';
 import {
   MoreHorizontal,
@@ -11,8 +12,6 @@ import {
   LogOut,
   Settings2,
   Wrench,
-  ArrowLeftToLine,
-  ArrowRightToLine,
 } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
 import QQIcon from "~assets/qq.svg";
@@ -26,8 +25,8 @@ import { Dropdown, Popover, message } from "antd";
 import { useSessionContext } from "../context/SessionContext";
 
 interface SidebarProps {
-  sidebarOpen: boolean;
-  setSidebarOpen: (arg: boolean) => void;
+  // sidebarOpen: boolean;
+  // setSidebarOpen: (arg: boolean) => void;
   lng: string;
 }
 
@@ -72,16 +71,16 @@ const sidebarVariants: Variants = {
   },
 };
 
-const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
+const Sidebar = ({  lng }: SidebarProps) => {
   const pathname = usePathname();
   const router = useRouter();
-  const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
   const { session, logout } = useSessionContext();
   const { t } = useTranslation(lng);
   // const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
-  const sidebarAnimation = sidebarOpen ? "open" : "collapsed";
-
+  const sidebarOpen = useLayoutStore(state => state.exposed);
+  const sidebarAnimation = useMemo(()=>sidebarOpen ? "open" : "collapsed",[sidebarOpen]);
+  
   const handleMenuClick: MenuProps["onClick"] = (e) => {
     if (e.key === "logout") {
       logout();
@@ -100,7 +99,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
       animate={sidebarAnimation}
       transition={{ duration: 0 }}
       variants={sidebarVariants}
-      className={`absolute bg-[#faebd7e0]  dark:bg-black   border-solid border-r border-r-gray-200    dark:border-r-gray-800 left-0 top-0  z-100 flex h-screen w-60 flex-col overflow-y-hidden  duration-300 ease-linear  lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+      // bg-[#faebd7e0]
+      className={`absolute  bg-gray-100 dark:bg-black   border-solid border-r border-r-gray-200    dark:border-r-gray-800 left-0 top-0  z-100 flex h-screen w-60 flex-col overflow-y-hidden  duration-300 ease-linear  lg:static lg:translate-x-0 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
@@ -108,21 +108,16 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, lng }: SidebarProps) => {
         <Link href="/">
           <img src={Logo.src} alt="Logo" width={40} />
         </Link>
-
-        {/* <button
-          ref={trigger}
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-controls="sidebar"
-          aria-expanded={sidebarOpen}
-        >
-          {sidebarOpen ? <ArrowLeftToLine /> : <ArrowRightToLine />}
-        </button> */}
       </div>
       <div className="flex flex-col justify-between w-full h-full">
         {/* <!-- SIDEBAR HEADER --> */}
         <div className="flex flex-col overflow-y-auto duration-300 ease-linear no-scrollbar">
           {/* <!-- Sidebar Menu --> */}
           <nav className="px-4 py-4 ">
+            <Link href="/home" className="flex  items-center justify-center  bg-[var(--opengpts-option-card-bg-color)] rounded-lg  text-sm my-4 px-4 py-3">
+              <MousePointerSquare className="w-4 h-4" />
+              {<span className="ml-2 cursor-pointer">{t("仪表盘")}</span>}
+            </Link>
             <div className="flex  items-center justify-center  bg-[var(--opengpts-option-card-bg-color)] rounded-lg  text-sm my-4 px-4 py-3">
               <MousePointerSquare className="w-4 h-4" />
               {sidebarOpen && <span className="ml-2 cursor-pointer">{t("Discover")}</span>}

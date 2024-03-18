@@ -52,7 +52,7 @@ const BlockBasic: ComponentType<NodeProps & {
                     >
                         {data?.name}
                     </p>
-                    <p className='mt-1 break-words whitespace-break-spaces overflow line-clamp-1'>{data?.data.description || data?.description}</p>
+                    <p className='my-1 text-sm break-words whitespace-break-spaces overflow line-clamp-1'>{data?.data?.description || data?.description}</p>
                 </div>
 
                 {/* 其他内容... */}

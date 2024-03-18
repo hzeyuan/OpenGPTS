@@ -1,6 +1,6 @@
 
 import React from 'react';
-// import DynamicSplitChatPanel from '~src/components/Panels/DynamicSplitChatPanel';
+import DynamicSplitChatPanel from '~src/components/Panels/DynamicSplitChatPanel';
 
 // export const getServerSideProps = withPageAuth({ redirectTo: '/login' });
 

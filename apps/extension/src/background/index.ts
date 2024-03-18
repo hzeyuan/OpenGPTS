@@ -30,7 +30,6 @@ message.on('workflow:stop', (stateId) => workflowState.stop(stateId));
 message.on('workflow:execute', async (workflowData, sender) => {
 
     console.log('background', 'workflow:execute', workflowData, sender);
-    // const context = workflowData.settings.execContext;
     const context = 'background'
 
     // const isMV2 = browser.runtime.getManifest().manifest_version === 2;

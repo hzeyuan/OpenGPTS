@@ -8,6 +8,7 @@ import handlerTakeScreenshot from './blocksHandler/handlerTakeScreenshot';
 import handlerGoBack from './blocksHandler/handlerGoBack';
 import handlerCloseTab from './blocksHandler/handlerClose';
 import handlerDelay from './blocksHandler/handlerDelay';
+import handlerExportData from './blocksHandler/handlerExportData';
 interface Handler {
   [key: string]: any;
 }
@@ -24,5 +25,6 @@ export default function (): { [key: string]: Handler } {
     'goBack': handlerGoBack,
     'closeTab': handlerCloseTab,
     'delay': handlerDelay,
+    'exportData':handlerExportData
   };
 }
