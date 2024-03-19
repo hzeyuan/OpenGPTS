@@ -1,3 +1,4 @@
+import type { Node, Edge } from 'reactflow'
 declare namespace PRAWorkflow {
     export interface Category {
         name: string;
@@ -7,17 +8,23 @@ declare namespace PRAWorkflow {
 
 
     interface WorkflowData {
-        drawflow: any;
-        name: string,
+        id: string,
+        // uid: string,
+        is_public: number,
+        drawflow?: Drawflow;
+        name?: string,
         description?: string,
         icon?: string,
-        globalData: any,
-        settings: any,
-        createAt: number,
-        updateAt: number,
-        id: string,
-        
+        globalData?: any,
+        settings?: any,
+        created_at?: number,
+        update_at?: number,
     }
+
+    type Drawflow = {
+        nodes: Node[],
+        edges: Edge[],
+    };
 
     interface Block {
         id?: string;
@@ -28,13 +35,14 @@ declare namespace PRAWorkflow {
         component: string;
         editComponent?: string;
         category: string;
+        pinned: boolean;
         inputs: number;
         outputs: number;
         allowedInputs: boolean;
         maxConnection: number;
         refDataKeys?: string[];
         autocomplete?: string[];
-        data: any;
+        data: BlockData;
         disableDelete?: boolean;
         disableEdit?: boolean;
         // [key: string]: any;
@@ -46,6 +54,14 @@ declare namespace PRAWorkflow {
         // maxConnection: 1,
     }
 
+
+    type BlockData = any;
+
+    interface BlockContext {
+        running: boolean;
+        input: any;
+        output: any;
+    }
 
     type getBlocks = () => Record<string, Block>;
 
