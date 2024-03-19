@@ -68,11 +68,10 @@ const WorkflowEditor = forwardRef<WorkflowEditorHandles, Props>((props, ref) => 
     const receiveMessage: (this: Window, ev: MessageEvent<any>) => any = (event) => {
         const message = event.data;
         if (!['BLOCK_STARTED', 'BLOCK_EXECUTED'].includes(message.type)) return;
-        console.log('Message received in web', message)
+        // console.log('Message received in web', message)
         // if(message.name==='workflow')return;
         const { block, input } = message?.data
         if (message.type === 'BLOCK_STARTED') {
-            console.log('message', message, event);
             // 更新edge,根据 running状态
             setEdges((edges) => edges.map((edge) => {
                 if (edge.source === block?.id) {

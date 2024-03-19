@@ -75,6 +75,7 @@ async function newTab({ id, data }) {
     }
 
     this.activeTab.id = tab.id;
+    console.log('this.activeTab.id', this.activeTab.id);
     this.windowId = tab.windowId;
   }
 

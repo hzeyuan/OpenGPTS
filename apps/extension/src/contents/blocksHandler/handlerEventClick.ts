@@ -3,13 +3,12 @@ import { sendMessage } from "~src/utils/message";
 import handleSelector from "~src/contents/handleSelector";
 import { getElementPosition } from "~src/contents/utils";
 import { sleep } from "~src/utils/rpa";
-import type { PlasmoCSConfig } from "plasmo";
 
 
 
 function eventClick(block): Promise<string> {
   return new Promise((resolve, reject) => {
-    console.log(`eventClick, block:`, block);
+    console.log(`eventClick, block:`, block.activeTabId,window.document);
     handleSelector(block, {
       async onSelected(element) {
 
@@ -23,6 +22,7 @@ function eventClick(block): Promise<string> {
             button: 'left',
           },
         };
+        console.log('payload', payload.tabId)
         const executeCommand = (type) => {
           payload.params.type = type;
 

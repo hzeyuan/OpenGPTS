@@ -72,7 +72,7 @@ class WorkflowWorker {
             groupId: null,
             id: engine.options?.tabId,
         };
-
+        console.log('engine.options?.tabId', engine.options?.tabId)
         this.frameSelector = '';
     }
 
