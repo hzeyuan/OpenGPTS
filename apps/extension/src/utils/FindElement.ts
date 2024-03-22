@@ -20,6 +20,7 @@ const specialSelectorsRegex = new RegExp(specialSelectors.join('|'));
 
 class FindElement {
   static cssSelector(data, documentCtx = document) {
+    console.log(`[FindElement] cssSelector, data:`, data, documentCtx);
     const selector = data.markEl
       ? `${data.selector.trim()}:not([${data.blockIdAttr}])`
       : data.selector;
@@ -47,6 +48,8 @@ class FindElement {
 
       return elements;
     }
+    console.log('document.querySelector', document.querySelector(selector));
+    console.log('documentCtx.querySelector(selector)', documentCtx.querySelector(selector));
 
     return documentCtx.querySelector(selector);
   }

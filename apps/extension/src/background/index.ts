@@ -55,6 +55,7 @@ message.on('workflow:execute', async (workflowData, sender) => {
 
 message.on('debugger:send-command', ({ tabId, method, params }) => {
     return new Promise((resolve) => {
+        console.log('background:debugger:send-command', tabId, method, params, new Date() )
         chrome.debugger.sendCommand({ tabId }, method, params, resolve);
     });
 });
@@ -79,7 +80,7 @@ message.on('debugger:type', ({ tabId, commands, delay }) => {
                 command,
                 async () => {
                     if (delay > 0) await sleep(delay);
-
+                    console.log('command', command)
                     index += 1;
                     executeCommands();
                 }

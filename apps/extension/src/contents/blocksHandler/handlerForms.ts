@@ -1,12 +1,13 @@
 import handleSelector, { markElement } from "~src/contents/handleSelector"
 import synchronizedLock from '~src/contents/synchronizedLock';
+import { sleep } from "~src/utils/helper";
 import { sendMessage } from "~src/utils/message";
 
 async function forms(block) {
   const { data } = block;
   console.trace('forms', block);
   const elements = await handleSelector(block, { returnElement: true });
-
+  console.log('handleForms', elements, document);
   if (!elements) {
     throw new Error('element-not-found');
   }
@@ -74,6 +75,7 @@ async function forms(block) {
     const promises = Array.from(elements).map((element) => typeText(element));
 
     await Promise.allSettled(promises);
+    await sleep(100);
   } else {
     await typeText(elements);
   }

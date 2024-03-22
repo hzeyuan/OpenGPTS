@@ -174,7 +174,7 @@ async function clickAtPosition(
 
 
 async function click(tabId: number, payload: { uniqueSelector: string }) {
-
+    console.log('src/utils/rpa', tabId)
     const objectId = await getObjectId(tabId, payload.uniqueSelector);
     console.log('objectId:', objectId); // Debug log
     await scrollIntoView(tabId, objectId);
@@ -287,7 +287,7 @@ async function captureFullPageScreenshot(tabId: number) {
         format: 'png', // 或者 'jpeg'
         clip: clip,
         captureBeyondViewport: true,
-    })  as any
+    }) as any
 
     return 'data:image/png;base64,' + screenshotData.data
 }
@@ -309,7 +309,7 @@ async function captureFixedAreaScreenshot(tabId: number) {
     };
 
     // 使用clip参数捕获指定区域
-    const screenshotData:any = await sendCommand(tabId, 'Page.captureScreenshot', {
+    const screenshotData: any = await sendCommand(tabId, 'Page.captureScreenshot', {
         format: 'png', // 或者 'jpeg'
         clip: clip
     });
@@ -333,7 +333,7 @@ async function waitForPageLoadUsingDebugger(tabId: number, options: {
         async function checkPageLoad() {
             try {
                 const { currentIndex, entries } = await sendCommand(tabId, 'Page.getNavigationHistory') as any;
-                console.log('currentIndex',currentIndex,entries)
+                console.log('currentIndex', currentIndex, entries)
                 if (entries[currentIndex].title !== "") { // 假设标题非空表示页面已加载
                     console.log("Page already loaded.");
                     resolve(true);

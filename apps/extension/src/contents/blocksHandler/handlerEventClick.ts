@@ -9,6 +9,10 @@ import { sleep } from "~src/utils/rpa";
 function eventClick(block): Promise<string> {
   return new Promise((resolve, reject) => {
     console.log(`eventClick, block:`, block.activeTabId,window.document);
+    const e = document.querySelector(block.data.selector);
+    console.log('document.querySelector(block.data.selector)', e);
+    // 判断元素是否被遮挡
+    
     handleSelector(block, {
       async onSelected(element) {
 
@@ -22,7 +26,7 @@ function eventClick(block): Promise<string> {
             button: 'left',
           },
         };
-        console.log('payload', payload.tabId)
+        console.log('payload', payload)
         const executeCommand = (type) => {
           payload.params.type = type;
 

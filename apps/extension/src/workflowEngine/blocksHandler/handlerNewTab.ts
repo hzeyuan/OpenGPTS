@@ -41,6 +41,8 @@ async function newTab({ id, data }) {
   let tab = null;
   const isChrome = BROWSER_TYPE === 'chrome';
 
+  console.log('[handle new Tab ]data.updatePrevTab && this.activeTab.id',data.active, data.updatePrevTab && this.activeTab.id, this.windowId)
+
   if (data.updatePrevTab && this.activeTab.id) {
     tab = await browser.tabs.update(this.activeTab.id, {
       url: data.url,
@@ -56,6 +58,7 @@ async function newTab({ id, data }) {
 
   this.activeTab.url = data.url;
   if (tab) {
+    console.log('data.customUserAgent',data.customUserAgent)
     if (data.customUserAgent) {
       await attachDebugger(tab.id, this.activeTab.id);
       this.debugAttached = true;

@@ -1,6 +1,6 @@
-import type { PlasmoCSConfig } from 'plasmo';
 import FindElement from '~src/utils/FindElement';
 import { visibleInViewport, isXPath } from '~src/utils/helper';
+import { markPage } from '~src/utils/view';
 
 
 
@@ -12,6 +12,8 @@ export function markElement(el, { id, data }) {
   if (data.markEl) {
     el.setAttribute(`block--${id}`, '');
   }
+  console.log('markElement', el, data.selector, data)
+  markPage(data.selector)
 }
 
 
@@ -41,6 +43,7 @@ export function queryElements(data, documentCtx = document) {
       if (isTimeout) return;
 
       const selectorType = data.findBy || 'cssSelector';
+      console.log('selectorType', selectorType, data, documentCtx)
       const elements = FindElement[selectorType](data, documentCtx);
       const isElNotFound = !elements || elements.length === 0;
 
@@ -73,7 +76,7 @@ export default async function (
     if (onError) onError(new Error('selector-empty'));
     return null;
   }
-
+  console.log('[handle Selector]frameSelector', frameSelector)
   const documentCtx = getDocumentCtx(frameSelector);
 
   if (!documentCtx) {
@@ -84,9 +87,9 @@ export default async function (
 
   try {
     data.blockIdAttr = `block--${id}`;
-
+    console.log('[handle Selector] documentCtx', documentCtx);
     const elements = await queryElements(data, documentCtx);
-
+    console.log('[handle Selector] elements', elements);
     if (!elements || elements.length === 0) {
       if (onError) onError(new Error('element-not-found'));
 
@@ -98,7 +101,7 @@ export default async function (
     await Promise.allSettled(
       elementsArr.map(async (el) => {
         markElement(el, { id, data });
-
+        console.log('debug Mode', debugMode, el)
         if (debugMode) {
           const isInViewport = visibleInViewport(el);
           if (!isInViewport) el.scrollIntoView();
