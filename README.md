@@ -7,6 +7,8 @@
 <img src="images/logo.png" width="500" >
 </div>
 
+
+
 # OpenGPTs
 
 OpenGPTs is an open-source browser plugin that supports voice input, function calls, multiple models, multimodality, batch conversation, and can be invoked on the web or through an API key. <br/>
@@ -38,6 +40,20 @@ We hope that this plugin can help you use GPT more efficiently and even replace 
 [![][share-linkedin-shield]][share-linkedin-link]
 
 </div>
+
+## Donation
+<div>
+  <img src="https://static.usesless.com/bookmarks.ai/1500-400.jpg" width="500" />
+</div>
+
+ 302.AI是一个汇集全球顶级品牌的AI超市，按需付费，零月费，零门槛使用各种类型AI。
+
+功能全面: 将最好用的AI集成到在平台之上，包括不限于AI聊天，图片生成，图片处理，视频生成，全方位覆盖。
+简单易用: 提供机器人，工具和API多种使用方法，可以满足从小白到开发者多种角色的需求。
+按需付费零门槛: 不提供月付套餐，对产品不设任何门槛，按需付费，全部开放。充值余额永久有效。
+管理者和使用者分离： 管理者一键分享，使用者无需登录。
+
+
 
 ## 👋🏻 Getting Started and Introduction
 
