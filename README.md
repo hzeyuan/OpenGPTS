@@ -43,7 +43,7 @@ We hope that this plugin can help you use GPT more efficiently and even replace 
 
 ## Donation
 <div>
-  <img src="https://static.usesless.com/bookmarks.ai/1500-400.jpg" width="500" />
+  <img src="https://static.usesless.com/bookmarks.ai/1500-400.jpg" width="100%" />
 </div>
 
  302.AI是一个汇集全球顶级品牌的AI超市，按需付费，零月费，零门槛使用各种类型AI。
